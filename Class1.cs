@@ -1,8 +1,6 @@
 ﻿using System;
 
-namespace sky_programming_extension_kit
+namespace SPEkit
 {
-    public class Class1
-    {
-    }
+    
 }
