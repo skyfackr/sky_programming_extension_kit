@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace funcInvokeUtils.binLikeClassSelector
+namespace SPEkit.BinLikeClassSelector
 {
     /// <summary>
     /// 此模块可以用于借助二进制形式数值<see cref="long"/>以及位运算达到极快速判断输入选项是否被选中（仅限或运算）

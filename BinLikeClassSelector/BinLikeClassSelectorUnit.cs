@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace funcInvokeUtils.binLikeClassSelector
+namespace SPEkit.BinLikeClassSelector
 {
     /// <summary>
     /// 此模块可以用于借助二进制形式数值 <see cref="long"/> 以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
@@ -23,7 +23,7 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// </summary>
         /// <remarks>与强制转换为 <see cref="long"/> 效果等同</remarks>
         /// <returns>一个数值，以 <see cref="long"/> 导出</returns>
-        public long getBin()
+        public long GetBin()
         {
             return this._binObject;
         }
@@ -49,7 +49,7 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// </para>
         /// </para>
         /// </example>
-        public List<long> getValidBinList()
+        public List<long> GetValidBinList()
         {
             var lastBin = this._binObject;
             var binList = new List<long>();
@@ -64,8 +64,8 @@ namespace funcInvokeUtils.binLikeClassSelector
         }
 
         /// <summary>
-        /// <see cref="getValidBinList"/> 的转换为 <see cref="Array"/> 版本
-        /// <para>具体用法请参阅 <seealso cref="getValidBinList"/></para>
+        /// <see cref="GetValidBinList"/> 的转换为 <see cref="Array"/> 版本
+        /// <para>具体用法请参阅 <seealso cref="GetValidBinList"/></para>
         /// </summary>
         /// <returns>
         /// 一个 <see cref="long"/> 组成的 <see cref="Array"/>
@@ -85,9 +85,9 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// </para>
         /// </para>
         /// </example>
-        public long[] getValidBinArray()
+        public long[] GetValidBinArray()
         {
-            return this.getValidBinList().ToArray();
+            return this.GetValidBinList().ToArray();
         }
 
         /// <summary>
@@ -100,22 +100,22 @@ namespace funcInvokeUtils.binLikeClassSelector
             this._binObject = binObject;
         }
 
-        /// <inheritdoc cref="getBin"/>
+        /// <inheritdoc cref="GetBin"/>
         public static implicit operator long(BinLikeClassSelectorUnit data)
         {
-            return data.getBin();
+            return data.GetBin();
         }
 
-        /// <inheritdoc cref="getValidBinList"/>
+        /// <inheritdoc cref="GetValidBinList"/>
         public static implicit operator List<long>(BinLikeClassSelectorUnit data)
         {
-            return data.getValidBinList();
+            return data.GetValidBinList();
         }
 
-        /// <inheritdoc cref="getValidBinArray"/>
+        /// <inheritdoc cref="GetValidBinArray"/>
         public static implicit operator long[](BinLikeClassSelectorUnit data)
         {
-            return data.getValidBinArray();
+            return data.GetValidBinArray();
         }
 
         /// <summary>
@@ -133,16 +133,16 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// <summary>
         /// 如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则执行 <paramref
         /// name="executor"/> 委托
-        /// <para>对应关系判断规则详见 <seealso cref="match"/></para>
+        /// <para>对应关系判断规则详见 <seealso cref="Match"/></para>
         /// </summary>
         /// <param name="matchRuleCode">以二进制数值表示期望的选中位</param>
         /// <param name="executor">详见 <seealso cref="Executor"/></param>
         /// <returns>被调用方法所属对象自身，用于linq编程风格</returns>
         /// <remarks>此函数支持linq编程风格，每次调用返回自身，可以继续调用</remarks>
         [Obsolete("可使用action替代的情况下不建议使用此委托及其对应方法，已提供使用了action类型参数的重载")]
-        public virtual BinLikeClassSelectorUnit matchDo(long matchRuleCode,Executor executor)
+        public virtual BinLikeClassSelectorUnit MatchDo(long matchRuleCode,Executor executor)
         {
-            if (this.match(matchRuleCode))
+            if (this.Match(matchRuleCode))
             {
                 executor(this);
             }
@@ -153,15 +153,15 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// <summary>
         /// 如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则执行 <paramref
         /// name="executor"/> 委托
-        /// <para>对应关系判断规则详见 <seealso cref="match"/></para>
+        /// <para>对应关系判断规则详见 <seealso cref="Match"/></para>
         /// </summary>
         /// <param name="matchRuleCode">以二进制数值表示期望的选中位</param>
         /// <param name="executor">一个<see cref="Action{T}"/>对象，接收一个<see cref="BinLikeClassSelectorUnit"/>自身指针作为参数</param>
         /// <returns>被调用方法所属对象自身，用于linq编程风格</returns>
         /// <remarks>此函数支持linq编程风格，每次调用返回自身，可以继续调用</remarks>
-        public virtual BinLikeClassSelectorUnit matchDo(long matchRuleCode, Action<BinLikeClassSelectorUnit> executor)
+        public virtual BinLikeClassSelectorUnit MatchDo(long matchRuleCode, Action<BinLikeClassSelectorUnit> executor)
         {
-            if (this.match(matchRuleCode))
+            if (this.Match(matchRuleCode))
             {
                 executor(this);
             }
@@ -193,7 +193,7 @@ namespace funcInvokeUtils.binLikeClassSelector
         /// </summary>
         /// <param name="matchRuleCode"></param>
         /// <returns>判断结果</returns>
-        public virtual bool match(long matchRuleCode)
+        public virtual bool Match(long matchRuleCode)
         {
             if ((matchRuleCode | this._binObject) != 0)
             {
