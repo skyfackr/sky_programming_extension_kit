@@ -5,6 +5,11 @@
     <LanguageLevel>10.0</LanguageLevel>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+    <DocumentationFile>D:\code\sky_programming_extension_kit\SPEkit.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="GlobalLock\" />
     <Folder Include="InvokeReflection\" />
