@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+#nullable enable
 
 namespace SPEkit.BinLikeClassSelector
 {
@@ -17,6 +18,8 @@ namespace SPEkit.BinLikeClassSelector
         /// <para>请注意，此对象仅允许创建时赋值，因此本类禁止无参构造</para>
         /// </summary>
         protected readonly long _binObject;
+
+        private List<long>? _binListCache = null;
 
         /// <summary>
         /// 可直接获取输入的被选中位数据，以 <see cref="long"/> 数值导出
@@ -51,6 +54,10 @@ namespace SPEkit.BinLikeClassSelector
         /// </example>
         public List<long> GetValidBinList()
         {
+            if (this._binListCache != null)
+            {
+                return this._binListCache;
+            }
             var lastBin = this._binObject;
             var binList = new List<long>();
             while ((lastBin|0)!=0)
@@ -60,6 +67,7 @@ namespace SPEkit.BinLikeClassSelector
                 lastBin -= now;
             }
 
+            this._binListCache = binList;
             return binList;
         }
 
@@ -118,16 +126,22 @@ namespace SPEkit.BinLikeClassSelector
             return data.GetValidBinArray();
         }
 
+
+#pragma warning disable CS0419 // cref 特性中有不明确的引用
+
+#pragma warning disable CS1734 // XML 注释中有 paramref 标记，但是没有该名称的参数
         /// <summary>
-        /// 用于方法 <see cref="BinLikeClassSelectorUnit.matchDo"/> 中参数 <paramref name="executer"/> 的
+        /// 用于方法 <see cref="BinLikeClassSelectorUnit.MatchDo"/> 中参数 <paramref name="executer"/> 的
         /// <see cref="Delegate"/> 约定
         /// <para>要求无输出，会提供该实例化对象本身作为参数 <paramref name="mine"/> 传递</para>
         /// </summary>
         /// <param name="mine">
-        /// 被调用的 <see cref="BinLikeClassSelectorUnit.matchDo"/> 所属的 <see
+        /// 被调用的 <see cref="BinLikeClassSelectorUnit.MatchDo"/> 所属的 <see
         /// cref="BinLikeClassSelectorUnit"/> 实例对象
         /// </param>
         [Obsolete("可使用action替代的情况下不建议使用此委托及其对应方法，已提供使用了action类型参数的重载")]
+#pragma warning restore CS1734 // XML 注释中有 paramref 标记，但是没有该名称的参数
+#pragma warning restore CS0419 // cref 特性中有不明确的引用
         public delegate void Executor(BinLikeClassSelectorUnit mine);
 
         /// <summary>
@@ -169,7 +183,7 @@ namespace SPEkit.BinLikeClassSelector
             return this;
         }
         /// <summary>
-        /// 如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则返回 <paramref name="true"/>
+        /// 如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则返回 <see cerf="true"/>
         /// <para>
         /// <list type="table">
         /// <listheader>

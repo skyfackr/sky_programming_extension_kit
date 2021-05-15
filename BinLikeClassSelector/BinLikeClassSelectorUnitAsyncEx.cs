@@ -5,14 +5,21 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace SPEkit.BinLikeClassSelector
 {
     public partial class BinLikeClassSelectorUnit
     {
+        /// <inheritdoc cref="GetValidBinList"/>
         public async Task<List<long>> GetValidBinListAsync() => await Task.Run(this.GetValidBinList);
 
+        /// <inheritdoc cref="GetValidBinArray"/>
         public async Task<long[]> GetValidBinArrayAsync() => await Task.Run(this.GetValidBinArray);
 
+        /// <inheritdoc cref="Match"/>
         public virtual async Task<bool> MatchAsync(long matchRuleCode) => await Task.Run(() => this.Match(matchRuleCode));
+        
     }
+
+    
 }
