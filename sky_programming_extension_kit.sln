@@ -5,13 +5,15 @@ VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinLikeClassSelector", "BinLikeClassSelector.csproj", "{19D4E638-73E0-4EDF-BA38-9AB6491060A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisposibleSemaphoreSlim", "DisposibleSemaphoreSlim\DisposibleSemaphoreSlim.csproj", "{9C569E3C-1BA2-43C3-9E94-F27645CE29BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisposibleSemaphoreSlim", "DisposibleSemaphoreSlim\DisposibleSemaphoreSlim.csproj", "{9C569E3C-1BA2-43C3-9E94-F27645CE29BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalSemaphoreAttribute", "GlobalSemaphoreAttribute\GlobalSemaphoreAttribute.csproj", "{AD7FD110-A321-49C7-960A-D12183DAEF20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalSemaphoreAttribute", "GlobalSemaphoreAttribute\GlobalSemaphoreAttribute.csproj", "{AD7FD110-A321-49C7-960A-D12183DAEF20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvokeReflection", "InvokeReflection\InvokeReflection.csproj", "{2BD083BB-FE1F-4E02-A12E-1AF8D6A06F9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvokeReflection", "InvokeReflection\InvokeReflection.csproj", "{2BD083BB-FE1F-4E02-A12E-1AF8D6A06F9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormVarData", "WinFormVarData\WinFormVarData.csproj", "{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormVarData", "WinFormVarData\WinFormVarData.csproj", "{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinLikeClassSelectorTests", "..\BinLikeClassSelectorTests\BinLikeClassSelectorTests.csproj", "{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

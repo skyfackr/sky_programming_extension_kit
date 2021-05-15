@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BinLikeClassSelector</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.BinLikeClassSelector.BinLikeClassSelector">
+            <summary>
+            此模块可以用于借助二进制形式数值<see cref="T:System.Int64"/>以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
+            <para>具体功能详见<seealso cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/><para>此类不得直接创建或者无参构造，可使用<see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(System.Int64)"/>创建或对其派生新类</para></para>
+            </summary>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(System.Int64)">
+            <summary>
+            创建一个<see cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"></see>
+            </summary>
+            <param name="binObject">以二进制表明被选中位的数字，可以以十进制输入</param>
+            <returns>一个实例化的<see cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/></returns>
+        </member>
+        <member name="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit">
+            <summary>
+            此模块可以用于借助二进制形式数值 <see cref="T:System.Int64"/> 以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
+            <para>该unit为最低单元，由 <see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(System.Int64)"/> 创建，不得自行创建或者无参构造</para>
+            </summary>
+        </member>
+        <member name="F:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit._binObject">
+            <summary>
+            这是用于存储创建对象时保存数据的只读成员
+            <para>请注意，此对象仅允许创建时赋值，因此本类禁止无参构造</para>
+            </summary>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetBin">
+            <summary>
+            可直接获取输入的被选中位数据，以 <see cref="T:System.Int64"/> 数值导出
+            </summary>
+            <remarks>与强制转换为 <see cref="T:System.Int64"/> 效果等同</remarks>
+            <returns>一个数值，以 <see cref="T:System.Int64"/> 导出</returns>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList">
+            <summary>
+            获取一个 <see cref="T:System.Int64"/> 组成的 <see cref="T:System.Collections.Generic.List`1"/>，以被选中位数值组成
+            </summary>
+            <returns>
+            一个 <see cref="T:System.Int64"/> 组成的 <see cref="T:System.Collections.Generic.List`1"/>
+            <para>每个数值为在二进制上仅有一个位是1的 <see cref="T:System.Int64"/> 数值，表示被选中位</para>
+            </returns>
+            <example>
+            如果输入选中位数值的二进制为
+            <code>1010111000</code>
+            ,则可以得到如下 <see cref="T:System.Int64"/> 二进制数值得到的list
+            <para>1000000000
+            <para>10000000
+            <para>100000
+            <para>10000
+            <para>1000</para>
+            </para>
+            </para>
+            </para>
+            </para>
+            </example>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArray">
+            <summary>
+            <see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/> 的转换为 <see cref="T:System.Array"/> 版本
+            <para>具体用法请参阅 <seealso cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/></para>
+            </summary>
+            <returns>
+            一个 <see cref="T:System.Int64"/> 组成的 <see cref="T:System.Array"/>
+            <para>每个数值为在二进制上仅有一个位是1的 <see cref="T:System.Int64"/> 数值，表示被选中位</para>
+            </returns>
+            <example>
+            如果输入选中位数值的二进制为
+            <code>1010111000</code>
+            ,则可以得到如下 <see cref="T:System.Int64"/> 二进制数值得到的list
+            <para>1000000000
+            <para>10000000
+            <para>100000
+            <para>10000
+            <para>1000</para>
+            </para>
+            </para>
+            </para>
+            </para>
+            </example>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.#ctor(System.Int64)">
+            <summary>
+            标准构造函数，在外部请以 <see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(System.Int64)"/> 调用
+            </summary>
+            <param name="binObject">以二进制表明被选中位的数字，可以以十进制输入</param>
+            <remarks>如对该类派生以自定义构造方法，请注意对成员 <see cref="F:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit._binObject"/> 初始化</remarks>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.op_Implicit(SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit)~System.Int64">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetBin"/>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.op_Implicit(SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit)~System.Collections.Generic.List{System.Int64}">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.op_Implicit(SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit)~System.Int64[]">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArray"/>
+        </member>
+        <member name="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Executor">
+            <summary>
+            用于方法 <see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchDo(System.Int64,SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Executor)"/> 中参数 <paramref name="executer"/> 的
+            <see cref="T:System.Delegate"/> 约定
+            <para>要求无输出，会提供该实例化对象本身作为参数 <paramref name="mine"/> 传递</para>
+            </summary>
+            <param name="mine">
+            被调用的 <see cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchDo(System.Int64,SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Executor)"/> 所属的 <see
+            cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/> 实例对象
+            </param>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchDo(System.Int64,SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Executor)">
+            <summary>
+            如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则执行 <paramref
+            name="executor"/> 委托
+            <para>对应关系判断规则详见 <seealso cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)"/></para>
+            </summary>
+            <param name="matchRuleCode">以二进制数值表示期望的选中位</param>
+            <param name="executor">详见 <seealso cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Executor"/></param>
+            <returns>被调用方法所属对象自身，用于linq编程风格</returns>
+            <remarks>此函数支持linq编程风格，每次调用返回自身，可以继续调用</remarks>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchDo(System.Int64,System.Action{SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit})">
+            <summary>
+            如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则执行 <paramref
+            name="executor"/> 委托
+            <para>对应关系判断规则详见 <seealso cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)"/></para>
+            </summary>
+            <param name="matchRuleCode">以二进制数值表示期望的选中位</param>
+            <param name="executor">一个<see cref="T:System.Action`1"/>对象，接收一个<see cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/>自身指针作为参数</param>
+            <returns>被调用方法所属对象自身，用于linq编程风格</returns>
+            <remarks>此函数支持linq编程风格，每次调用返回自身，可以继续调用</remarks>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)">
+            <summary>
+            如果 <paramref name="matchRuleCode"/> 中的二进制选中位在被选中位中均有对应（or关系），则返回 <see cerf="true"/>
+            <para>
+            <list type="table">
+            <listheader>
+            <term>被选中位</term>
+            <description>输入参数 <paramref name="matchRuleCode"/> 及输出</description>
+            </listheader>
+            <item>
+            <term>1010</term>
+            <description>1000 √</description>
+            </item>
+            <item>
+            <term>110010</term>
+            <description>10010 √</description>
+            </item>
+            <item>
+            <term>100010</term>
+            <description>100 ×</description>
+            </item>
+            </list>
+            </para>
+            </summary>
+            <param name="matchRuleCode"></param>
+            <returns>判断结果</returns>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinListAsync">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArrayAsync">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArray"/>
+        </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchAsync(System.Int64)">
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)"/>
+        </member>
+    </members>
+</doc>
