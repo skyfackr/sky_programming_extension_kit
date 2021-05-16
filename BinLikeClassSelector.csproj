@@ -15,14 +15,17 @@
     <Compile Remove="DisposibleSemaphoreSlim\**" />
     <Compile Remove="GlobalSemaphoreAttribute\**" />
     <Compile Remove="InvokeReflection\**" />
+    <Compile Remove="SPEkitTests\**" />
     <Compile Remove="WinFormVarData\**" />
     <EmbeddedResource Remove="DisposibleSemaphoreSlim\**" />
     <EmbeddedResource Remove="GlobalSemaphoreAttribute\**" />
     <EmbeddedResource Remove="InvokeReflection\**" />
+    <EmbeddedResource Remove="SPEkitTests\**" />
     <EmbeddedResource Remove="WinFormVarData\**" />
     <None Remove="DisposibleSemaphoreSlim\**" />
     <None Remove="GlobalSemaphoreAttribute\**" />
     <None Remove="InvokeReflection\**" />
+    <None Remove="SPEkitTests\**" />
     <None Remove="WinFormVarData\**" />
   </ItemGroup>
 

@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvokeReflection", "InvokeR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormVarData", "WinFormVarData\WinFormVarData.csproj", "{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPEKitTests", "..\BinLikeClassSelectorTests\SPEKitTests.csproj", "{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPEkitTests", "SPEkitTests\SPEkitTests.csproj", "{0E1D7BCC-1480-493D-855B-353BC78B7364}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC45B5D3-9C89-49E7-BF54-8E1C0622DDED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37A60629-AAC3-4D43-96DB-C31F0CB43DA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1D7BCC-1480-493D-855B-353BC78B7364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1D7BCC-1480-493D-855B-353BC78B7364}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1D7BCC-1480-493D-855B-353BC78B7364}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1D7BCC-1480-493D-855B-353BC78B7364}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
