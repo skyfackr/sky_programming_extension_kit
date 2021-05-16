@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
@@ -8,9 +9,8 @@ namespace SPEkit.DisposableSemaphoreSlim
     /// <summary>
     ///     在<see cref="DisposableSemaphoreSlim" />中进锁后返回的实现了<see cref="IDisposable" />的类
     /// </summary>
-#pragma warning disable IDE0079 // 请删除不必要的忽略
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-#pragma warning restore IDE0079 // 请删除不必要的忽略
+    [DebuggerDisplay("Released:{IsReleased},Entered:{IsEntered}")]
     public sealed class DisposableSemaphoreUnit : IDisposable
     {
         private readonly SemaphoreSlim _instance;

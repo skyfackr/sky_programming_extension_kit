@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Nito.AsyncEx;
-
+//[assembly: InternalsVisibleTo("SPEkitTests")]
 // ReSharper disable once CheckNamespace
 namespace SPEkit.DisposableSemaphoreSlim
 {
+    
     /// <summary>
     ///     实现了<see cref="IDisposable" />的<see cref="SemaphoreSlim" />替代品，可以通过using语法糖方便使用
     /// </summary>
