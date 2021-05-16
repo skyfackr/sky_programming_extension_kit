@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 #nullable enable
@@ -10,6 +11,7 @@ namespace SPEkit.BinLikeClassSelector
     /// 此模块可以用于借助二进制形式数值 <see cref="long"/> 以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
     /// <para>该unit为最低单元，由 <see cref="BinLikeClassSelector.CreateBinLikeClassSelectorUnit"/> 创建，不得自行创建或者无参构造</para>
     /// </summary>
+    [DebuggerDisplay("{_binObject}")]
     public partial class BinLikeClassSelectorUnit
     {
         
@@ -20,6 +22,8 @@ namespace SPEkit.BinLikeClassSelector
         protected readonly long _binObject;
 
         private List<long>? _binListCache = null;
+
+        private static List<long>? _listClone(List<long>? origin) => origin == null ? null : new List<long>(origin.ToArray());
 
         /// <summary>
         /// 可直接获取输入的被选中位数据，以 <see cref="long"/> 数值导出
@@ -54,9 +58,10 @@ namespace SPEkit.BinLikeClassSelector
         /// </example>
         public List<long> GetValidBinList()
         {
+#pragma warning disable CS8603 // 可能的 null 引用返回。
             if (this._binListCache != null)
             {
-                return this._binListCache;
+                return _listClone(this._binListCache);
             }
             var lastBin = this._binObject;
             var binList = new List<long>();
@@ -68,7 +73,9 @@ namespace SPEkit.BinLikeClassSelector
             }
 
             this._binListCache = binList;
-            return binList;
+
+            return _listClone(this._binListCache);
+#pragma warning restore CS8603 // 可能的 null 引用返回。
         }
 
         /// <summary>
@@ -209,7 +216,7 @@ namespace SPEkit.BinLikeClassSelector
         /// <returns>判断结果</returns>
         public virtual bool Match(long matchRuleCode)
         {
-            if ((matchRuleCode | this._binObject) != 0)
+            if ((matchRuleCode | this._binObject) ==this._binObject)
             {
                 return true;
             }

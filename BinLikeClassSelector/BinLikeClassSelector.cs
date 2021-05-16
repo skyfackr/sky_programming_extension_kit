@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace SPEkit.BinLikeClassSelector
@@ -11,13 +12,27 @@ namespace SPEkit.BinLikeClassSelector
     public static partial class BinLikeClassSelector
     {
         /// <summary>
-        /// 创建一个<see cref="BinLikeClassSelectorUnit"></see>
+        /// 创建一个<see cref="BinLikeClassSelectorUnit"></see>，同样的输入将导致输出同一个实例引用
         /// </summary>
         /// <param name="binObject">以二进制表明被选中位的数字，可以以十进制输入</param>
-        /// <returns>一个实例化的<see cref="BinLikeClassSelectorUnit"/></returns>
+        /// <returns>一个实例化的<see cref="BinLikeClassSelectorUnit"/>，同样的输入将导致输出同一个实例引用</returns>
         public static BinLikeClassSelectorUnit CreateBinLikeClassSelectorUnit(long binObject)
         {
-            return new BinLikeClassSelectorUnit(binObject);
+            BinLikeClassSelectorUnit ans;
+            if (_cache.ContainsKey(binObject))
+            {
+                ans = _cache[binObject];
+            }
+            else
+            {
+                ans = new BinLikeClassSelectorUnit(binObject);
+                _cache.Add(binObject,ans);
+            }
+
+            return ans;
         }
+
+        private static readonly Dictionary<long, BinLikeClassSelectorUnit> _cache =
+            new Dictionary<long, BinLikeClassSelectorUnit>();
     }
 }
