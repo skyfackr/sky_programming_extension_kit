@@ -5,4 +5,8 @@
     <AssemblyVersion>1.2.21136.19422</AssemblyVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="PostSharp" Version="6.9.5" />
+  </ItemGroup>
+
 </Project>

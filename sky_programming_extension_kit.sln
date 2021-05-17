@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinLikeClassSelector", "Bin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisposableSemaphoreSlim", "DisposibleSemaphoreSlim\DisposableSemaphoreSlim.csproj", "{9C569E3C-1BA2-43C3-9E94-F27645CE29BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalSemaphoreAttribute", "GlobalSemaphoreAttribute\GlobalSemaphoreAttribute.csproj", "{AD7FD110-A321-49C7-960A-D12183DAEF20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SemaphoreSlimAttribute", "GlobalSemaphoreAttribute\SemaphoreSlimAttribute.csproj", "{AD7FD110-A321-49C7-960A-D12183DAEF20}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvokeReflection", "InvokeReflection\InvokeReflection.csproj", "{2BD083BB-FE1F-4E02-A12E-1AF8D6A06F9C}"
 EndProject
