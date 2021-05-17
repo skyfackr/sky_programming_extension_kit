@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DisposableSemaphoreSlim</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit">
+            <summary>
+                在<see cref="T:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim" />中进锁后返回的实现了<see cref="T:System.IDisposable" />的类
+            </summary>
+        </member>
+        <member name="P:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.Factory">
+            <summary>
+                用于获取父对象引用
+            </summary>
+        </member>
+        <member name="P:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.IsEntered">
+            <summary>
+                获取此次进锁是否成功，若不成功，将直接标记为已释放
+            </summary>
+            <remarks>
+                仅当超时下进锁失败时，会返回被标记为进锁失败的实例。在通过<see cref="T:System.Threading.CancellationToken" />阻断进锁时，将由<see cref="T:System.Threading.SemaphoreSlim" />实例抛出
+                <see cref="T:System.OperationCanceledException" />异常
+            </remarks>
+        </member>
+        <member name="P:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.IsReleased">
+            <summary>
+                标记是否已经被释放
+            </summary>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.Dispose">
+            <summary>
+                与<see cref="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.Release" />等效
+            </summary>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit.Release">
+            <summary>
+                一个实例最多执行一次，可以为父对象的<see cref="T:System.Threading.SemaphoreSlim" />对象增加一个信号量并标记为已释放
+            </summary>
+            <remarks>此方法使用同步锁</remarks>
+        </member>
+        <member name="T:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim">
+            <summary>
+                实现了<see cref="T:System.IDisposable" />的<see cref="T:System.Threading.SemaphoreSlim" />替代品，可以通过using语法糖方便使用
+            </summary>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.Dispose">
+            <summary>
+                将所有生成的未标记为释放的<see cref="T:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreUnit" />释放，然后释放全部资源
+            </summary>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.DangerousGetSemaphoreSlimInstance">
+            <summary>
+                直接返回内部的<see cref="T:System.Threading.SemaphoreSlim" />引用
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.#ctor">
+            <summary>
+                默认允许一个信号并初始即可使用
+            </summary>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.#ctor(System.Int32)">
+            <summary>
+                允许<paramref name="initialCount" />个信号并初始可使用
+            </summary>
+            <param name="initialCount">允许信号量</param>
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.#ctor(System.Int32,System.Int32)">
+            <summary>
+                初始允许<paramref name="initialCount" />个信号量，并最大允许<paramref name="maxCount" />个信号量
+            </summary>
+            <param name="initialCount">初始允许信号量</param>
+            <param name="maxCount">最大允许信号量</param>
+        </member>
+        <member name="P:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.CurrentCount">
+            <inheritdoc cref="P:System.Threading.SemaphoreSlim.CurrentCount" />
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.Release">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release" />
+        </member>
+        <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.Release(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release(System.Int32)" />
+        </member>
+    </members>
+</doc>
