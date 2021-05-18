@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InvokeReflection</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.InvokeReflection.InvokeReflection">
+            <summary>
+                便于通过反射进行动态调用函数的包装
+            </summary>
+        </member>
+        <member name="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError">
+            <summary>
+                函数没找着异常
+            </summary>
+        </member>
+        <member name="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError">
+            <summary>
+                函数找着太多个异常
+            </summary>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.IsExists(System.Object,System.String)">
+            <summary>
+                检查是否存在此无参函数
+            </summary>
+            <param name="callerObject">检查的对象实例</param>
+            <param name="methodName">方法名</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.IsExists(System.Object,System.String,System.Type[])">
+            <summary>
+                检查是否存在此有参函数
+            </summary>
+            <param name="callerObject">检查的对象实例</param>
+            <param name="methodName">方法名</param>
+            <param name="typeClass">方法参数类表</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.IsUnique(System.Object,System.String)">
+            <summary>
+                检查无参函数是否是独有的
+            </summary>
+            <param name="callerObject">检查的对象实例</param>
+            <param name="methodName">方法名</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.IsUnique(System.Object,System.String,System.Type[])">
+            <summary>
+                检查有参函数是否是独有的
+            </summary>
+            <param name="callerObject">检查的对象实例</param>
+            <param name="methodName">方法名</param>
+            <param name="typeClass">方法参数类表</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.Invoke(System.Object,System.String)">
+            <summary>
+                反射调用无参数函数
+            </summary>
+            <param name="callObject">包含函数的实例对象</param>
+            <param name="methodName">方法名</param>
+            <returns>此函数返回的结果</returns>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.Invoke(System.Object,System.String,System.Object[])">
+            <summary>
+                反射调用带参数函数
+            </summary>
+            <param name="callObject">包含函数的实例对象</param>
+            <param name="methodName">方法名</param>
+            <param name="args">参数</param>
+            <returns>函数返回的结果</returns>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String)">
+            <summary>
+                通过反射查找一个无参函数并创建其委托
+            </summary>
+            <typeparam name="T">可用于该函数的委托类型</typeparam>
+            <param name="caller">含有该函数的实例</param>
+            <param name="methodName">函数名</param>
+            <returns>函数委托</returns>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Type[])">
+            <summary>
+                通过反射查找一个有参函数并创建其委托
+            </summary>
+            <typeparam name="T">可用于该函数的委托类型</typeparam>
+            <param name="caller">含有该函数的实例</param>
+            <param name="methodName">函数名</param>
+            <param name="typeClass">此函数参数各自类型</param>
+            <returns>函数委托</returns>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
+            <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
+        </member>
+    </members>
+</doc>

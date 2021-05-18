@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyVersion>1.26.21137.14972</AssemblyVersion>
+    <AssemblyVersion>1.33.21138.17459</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BinLikeClassSelector.csproj" />
     <ProjectReference Include="..\DisposibleSemaphoreSlim\DisposableSemaphoreSlim.csproj" />
+    <ProjectReference Include="..\InvokeReflection\InvokeReflection.csproj" />
   </ItemGroup>
 
 </Project>

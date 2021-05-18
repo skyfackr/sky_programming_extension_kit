@@ -1,25 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SPEkit.InvokeReflection
 {
-    public static partial class InvokeMethodAsString
+    public static partial class InvokeReflection
     {
-        public class FuncNotExistsError : Exception
+        /// <summary>
+        ///     函数没找着异常
+        /// </summary>
+        public sealed class FuncNotExistsError : Exception
         {
-            public FuncNotExistsError() : base() { }
-            public FuncNotExistsError(string s) : base(s) { }
-            public FuncNotExistsError(string s,Exception e) : base(s, e) { }
-        };
+            internal FuncNotExistsError()
+            {
+            }
 
-        public class AmbiguityFuncError : Exception
+            internal FuncNotExistsError(string s) : base(s)
+            {
+            }
+
+            internal FuncNotExistsError(string s, Exception e) : base(s, e)
+            {
+            }
+        }
+
+        /// <summary>
+        ///     函数找着太多个异常
+        /// </summary>
+        public sealed class AmbiguousFuncError : Exception
         {
-            public AmbiguityFuncError() : base() { }
-            public AmbiguityFuncError(string s) : base() { }
-            public AmbiguityFuncError(string s,Exception e) : base(s, e) { }
-        };
+            internal AmbiguousFuncError()
+            {
+            }
 
+            internal AmbiguousFuncError(string s)
+            {
+            }
 
+            internal AmbiguousFuncError(string s, Exception e) : base(s, e)
+            {
+            }
+        }
     }
 }
