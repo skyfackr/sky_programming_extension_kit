@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <LanguageLevel>10.0</LanguageLevel>
-    <AssemblyVersion>1.10.21139.13909</AssemblyVersion>
+    <AssemblyVersion>1.12.21139.31067</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,16 +20,19 @@
     <Compile Remove="GlobalSemaphoreAttribute\**" />
     <Compile Remove="InvokeReflection\**" />
     <Compile Remove="SPEkitTests\**" />
+    <Compile Remove="UnitTestExtension\**" />
     <Compile Remove="WinFormVarData\**" />
     <EmbeddedResource Remove="DisposibleSemaphoreSlim\**" />
     <EmbeddedResource Remove="GlobalSemaphoreAttribute\**" />
     <EmbeddedResource Remove="InvokeReflection\**" />
     <EmbeddedResource Remove="SPEkitTests\**" />
+    <EmbeddedResource Remove="UnitTestExtension\**" />
     <EmbeddedResource Remove="WinFormVarData\**" />
     <None Remove="DisposibleSemaphoreSlim\**" />
     <None Remove="GlobalSemaphoreAttribute\**" />
     <None Remove="InvokeReflection\**" />
     <None Remove="SPEkitTests\**" />
+    <None Remove="UnitTestExtension\**" />
     <None Remove="WinFormVarData\**" />
   </ItemGroup>
 
