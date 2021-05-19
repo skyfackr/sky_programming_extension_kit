@@ -3,12 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <LanguageLevel>10.0</LanguageLevel>
-    <AssemblyVersion>1.9.21138.16963</AssemblyVersion>
+    <AssemblyVersion>1.10.21139.13909</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <DocumentationFile>D:\code\sky_programming_extension_kit\SPEkit.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>D:\code\sky_programming_extension_kit\BinLikeClassSelector.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

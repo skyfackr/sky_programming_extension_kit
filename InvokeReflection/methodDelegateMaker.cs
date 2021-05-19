@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace SPEkit.InvokeReflection
@@ -33,7 +34,8 @@ namespace SPEkit.InvokeReflection
             }
 
             if (method == null) throw new FuncNotExistsError();
-            return method.CreateDelegate<T>();
+            //Trace.WriteLine(typeof(T).GetMethod("Invoke").ToString());
+            return _createReturnDelegate<T>(caller, method);
         }
 
         /// <summary>
@@ -66,7 +68,13 @@ namespace SPEkit.InvokeReflection
             }
 
             if (method == null) throw new FuncNotExistsError();
-            return method.CreateDelegate<T>();
+            return _createReturnDelegate<T>(caller, method);
+        }
+
+        private static T _createReturnDelegate<T>(object caller, MethodInfo method) where T:Delegate
+        {
+            if (method.IsStatic) return method.CreateDelegate<T>(null);
+            return method.CreateDelegate<T>(caller);
         }
     }
 }
