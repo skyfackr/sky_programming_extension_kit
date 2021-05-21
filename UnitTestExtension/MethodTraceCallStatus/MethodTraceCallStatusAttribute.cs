@@ -42,7 +42,7 @@ namespace SPEkit.UnitTestExtension
             internal Stopwatch _stopwatch = new Stopwatch();
             public DateTime? StartTime { get; internal set; } = null;
             public DateTime? EndTime { get; internal set; } = null;
-            public StackFrame Stack { get; internal set; } = null;
+            public StackTrace Stack { get; internal set; } = null;
         }
 
         //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
@@ -78,7 +78,7 @@ namespace SPEkit.UnitTestExtension
             session.StartTime = DateTime.UtcNow;
             session.Status = TraceStatus.Running;
             session.Arguments = args.Arguments.ToArray();
-            session.Stack = new StackFrame();
+            session.Stack = new StackTrace();
             
             session._stopwatch.Reset();
             session._stopwatch.Start();

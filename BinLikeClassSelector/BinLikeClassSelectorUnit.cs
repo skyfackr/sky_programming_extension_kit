@@ -246,20 +246,20 @@ namespace SPEkit.BinLikeClassSelector
         }
 
         /// <summary>
-        /// 转为<see cref="string"/>
+        ///     转为<see cref="string" />
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return this.GetBin().ToString();
+            return GetBin().ToString();
         }
 
-        /// <inheritdoc cref="Object.Equals(object?)"/>
+        /// <inheritdoc cref="Object.Equals(object?)" />
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
-            if (obj is BinLikeClassSelectorUnit unit) return this.GetBin().Equals(unit.GetBin());
-            if (obj is long unitLong) return this.GetBin().Equals(unitLong);
+            if (obj is BinLikeClassSelectorUnit unit) return GetBin().Equals(unit.GetBin());
+            if (obj is long unitLong) return GetBin().Equals(unitLong);
             return false;
         }
     }
