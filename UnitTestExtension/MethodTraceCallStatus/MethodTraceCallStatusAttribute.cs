@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using PostSharp.Aspects;
@@ -15,7 +17,9 @@ namespace SPEkit.UnitTestExtension
     
     public sealed partial class MethodTraceCallStatusAttribute
     {
+        public MethodBase Method { get; private set; } = null;
         public MethodTraceCallStatusAttribute():base(){}
+        [Flags]
         public enum TraceStatus
         {
             NotStart,
@@ -27,26 +31,70 @@ namespace SPEkit.UnitTestExtension
         [Serializable]
         public sealed class CallSession
         {
-            public TraceStatus Status { get; internal set; } = TraceStatus.NotStart;
-            public object[] Arguments { get; internal set; } = { };
-            public object ReturnValue { get; internal set; } = null;
-            public Exception exce { get; internal set; } = null;
+            public TraceStatus Status
+            {
+                get => _status;
+                internal set => _status = value;
+            }
+
+            public object[] Arguments
+            {
+                get => _arguments;
+                internal set => _arguments = value;
+            }
+
+            public object ReturnValue
+            {
+                get => _returnValue;
+                internal set => _returnValue = value;
+            }
+
+            public Exception exce
+            {
+                get => _exce;
+                internal set => _exce = value;
+            }
 
             public TimeSpan ExcuteTime
             {
-                get;
-                internal set;
-            } = new(0, 0, 0);
+                get => _excuteTime;
+                internal set => _excuteTime = value;
+            }
 
             //internal DateTime? _ThisEventExecutionStartTime = null;
-            internal Stopwatch _stopwatch = new Stopwatch();
-            public DateTime? StartTime { get; internal set; } = null;
-            public DateTime? EndTime { get; internal set; } = null;
-            public StackTrace Stack { get; internal set; } = null;
+            internal volatile Stopwatch _stopwatch = new Stopwatch();
+            private volatile TraceStatus _status = TraceStatus.NotStart;
+            private volatile object[] _arguments = { };
+            private volatile object _returnValue = null;
+            private volatile Exception _exce = null;
+            
+            private TimeSpan _excuteTime = new(0, 0, 0);
+            private DateTime? _startTime = null;
+            private DateTime? _endTime = null;
+            private volatile StackTrace _stack = null;
+
+            
+            public DateTime? StartTime
+            {
+                get => _startTime;
+                internal set => _startTime = value;
+            }
+
+            public DateTime? EndTime
+            {
+                get => _endTime;
+                internal set => _endTime = value;
+            }
+
+            public StackTrace Stack
+            {
+                get => _stack;
+                internal set => _stack = value;
+            }
         }
 
         //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
-        private Dictionary<object, CallSession> Sessions  = new Dictionary<object, CallSession>();
+        private volatile Dictionary<object, CallSession> Sessions  = new Dictionary<object, CallSession>();
         private readonly object _sessionsAddLock = new();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -59,6 +107,11 @@ namespace SPEkit.UnitTestExtension
         public ImmutableDictionary<object, CallSession> GetSessions()
         {
             return Sessions.ToImmutableDictionary();
+        }
+
+        public FixedMethodTraceCallStatus ToFixed()
+        {
+            return new FixedMethodTraceCallStatus(this);
         }
         public override void OnEntry(MethodExecutionArgs args)
         {
@@ -126,6 +179,12 @@ namespace SPEkit.UnitTestExtension
             var session = GetSession(args.MethodExecutionTag);
             session.Status = TraceStatus.Running;
             session._stopwatch.Start();
+        }
+
+        public override void RuntimeInitialize(MethodBase method)
+        {
+            base.RuntimeInitialize(method);
+            this.Method = method;
         }
     }
 }
