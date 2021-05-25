@@ -14,12 +14,13 @@ namespace SPEkit.UnitTestExtension
         public MethodTraceCallStatusSummarizeAttribute(Type[] includeExtraTypes = null, bool ignoreThisType = false) :
             base()
         {
-            this._includeExtraTypes = includeExtraTypes;
+            this._includeExtraTypes = includeExtraTypes ?? Array.Empty<Type>();
             this._ignoreThisType = ignoreThisType;
         }
 
         private readonly Type[] _includeExtraTypes;
         private readonly bool _ignoreThisType;
+        private  MethodBase _method;
 
         public static Dictionary<MethodInfo, MethodTraceCallStatusAttribute> GetTraceMsgInSpecifiedClass(Type type)
         {
@@ -80,6 +81,24 @@ namespace SPEkit.UnitTestExtension
             if (!types.Any()) throw new AttributeConfigurationNullException();
             return types.ToDictionary(
                 type => type, GetTraceMsgInSpecifiedClass);
+        }
+
+        public override bool IsDefaultAttribute()
+        {
+            return this._ignoreThisType == false && this._includeExtraTypes.Length == 0;
+            
+        }
+
+        public override void RuntimeInitialize(MethodBase method)
+        {
+            base.RuntimeInitialize(method);
+            this._method = method;
+            _registerThis();
+        }
+
+        public MethodBase GetDeclaringMethod()
+        {
+            return this._method;
         }
     }
 }

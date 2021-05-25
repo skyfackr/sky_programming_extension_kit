@@ -8,7 +8,7 @@ namespace SPEkit.UnitTestExtension
     {
         
     }
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method , AllowMultiple = true, Inherited = false)]
     public sealed partial class MethodTraceCallStatusSummarizeAttribute : OnMethodBoundaryAspect
     {
 
