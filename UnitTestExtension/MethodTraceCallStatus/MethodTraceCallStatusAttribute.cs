@@ -2,90 +2,175 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-using PostSharp.Aspects;
-using PostSharp.Constraints;
 
 namespace SPEkit.UnitTestExtension
 {
-    
     public sealed partial class MethodTraceCallStatusAttribute
     {
-        public MethodBase Method { get; private set; } = null;
-        public MethodTraceCallStatusAttribute():base(){}
+        /// <summary>
+        ///     跟踪状态标识
+        /// </summary>
         [Flags]
         public enum TraceStatus
         {
+            /// <summary>
+            ///     还没跑
+            /// </summary>
             NotStart,
+
+            /// <summary>
+            ///     跑着
+            /// </summary>
             Running,
+
+            /// <summary>
+            ///     跑成了
+            /// </summary>
             Success,
+
+            /// <summary>
+            ///     异常了
+            /// </summary>
             Fail,
+
+            /// <summary>
+            ///     歇会（resume状态）
+            /// </summary>
             Pause
         }
+
+        private readonly object _sessionsAddLock = new();
+
+        //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
+        private volatile Dictionary<object, CallSession> _sessions = new();
+
+        /// <summary>
+        ///     代表设定了这个属性的方法
+        /// </summary>
+        public MethodBase Method { get; private set; }
+
+        /// <summary>
+        ///     获取指定跟踪会话
+        /// </summary>
+        /// <param name="tag">会话标识符</param>
+        /// <returns>单个会话信息</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public CallSession GetSession(object tag)
+        {
+            return _sessions[tag];
+        }
+
+        /// <summary>
+        ///     获取会话列表不可变字典<see cref="ImmutableDictionary{TKey,TValue}" />
+        /// </summary>
+        /// <returns>会话列表</returns>
+        public ImmutableDictionary<object, CallSession> GetSessions()
+        {
+            return _sessions.ToImmutableDictionary();
+        }
+
+        /// <summary>
+        ///     转化为<see cref="FixedMethodTraceCallStatus" />
+        /// </summary>
+        /// <returns></returns>
+        public FixedMethodTraceCallStatus ToFixed()
+        {
+            return new(this);
+        }
+
+        /// <summary>
+        ///     会话列表定义
+        /// </summary>
         [Serializable]
         public sealed class CallSession
         {
+            private volatile object[] _arguments = { };
+            private DateTime? _endTime;
+            private volatile Exception _exce;
+
+            private TimeSpan _excuteTime = new(0, 0, 0);
+            private volatile object _returnValue;
+            private volatile StackTrace _stack;
+            private DateTime? _startTime;
+            private volatile TraceStatus _status = TraceStatus.NotStart;
+
+            //internal DateTime? _ThisEventExecutionStartTime = null;
+            internal volatile Stopwatch _stopwatch = new();
+
+            internal CallSession()
+            {
+            }
+
+            /// <summary>
+            ///     获取当前会话状态
+            /// </summary>
             public TraceStatus Status
             {
                 get => _status;
                 internal set => _status = value;
             }
 
+            /// <summary>
+            ///     获取当前会话所传入参数
+            /// </summary>
             public object[] Arguments
             {
                 get => _arguments;
                 internal set => _arguments = value;
             }
 
+            /// <summary>
+            ///     获取当前会话返回值
+            /// </summary>
             public object ReturnValue
             {
                 get => _returnValue;
                 internal set => _returnValue = value;
             }
 
+            /// <summary>
+            ///     获取当前会话的异常
+            /// </summary>
             public Exception exce
             {
                 get => _exce;
                 internal set => _exce = value;
             }
 
+            /// <summary>
+            /// 获取当前调用时间
+            /// </summary>
+            /// <remarks>注意如果当前处于<see cref="TraceStatus.Running"/>则当前运行期间时间不计入</remarks>
             public TimeSpan ExcuteTime
             {
                 get => _excuteTime;
                 internal set => _excuteTime = value;
             }
 
-            //internal DateTime? _ThisEventExecutionStartTime = null;
-            internal volatile Stopwatch _stopwatch = new Stopwatch();
-            private volatile TraceStatus _status = TraceStatus.NotStart;
-            private volatile object[] _arguments = { };
-            private volatile object _returnValue = null;
-            private volatile Exception _exce = null;
-            
-            private TimeSpan _excuteTime = new(0, 0, 0);
-            private DateTime? _startTime = null;
-            private DateTime? _endTime = null;
-            private volatile StackTrace _stack = null;
 
-            
+            /// <summary>
+            /// 开始的utc时间
+            /// </summary>
             public DateTime? StartTime
             {
                 get => _startTime;
                 internal set => _startTime = value;
             }
 
+            /// <summary>
+            /// 结束的utc时间
+            /// </summary>
             public DateTime? EndTime
             {
                 get => _endTime;
                 internal set => _endTime = value;
             }
 
+            /// <summary>
+            /// 函数调用栈
+            /// </summary>
             public StackTrace Stack
             {
                 get => _stack;
@@ -93,98 +178,10 @@ namespace SPEkit.UnitTestExtension
             }
         }
 
-        //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
-        private volatile Dictionary<object, CallSession> Sessions  = new Dictionary<object, CallSession>();
-        private readonly object _sessionsAddLock = new();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public CallSession GetSession(object tag)
+        /// <inheritdoc />
+        public override string ToString()
         {
-            return Sessions[tag];
-            
-        }
-
-        public ImmutableDictionary<object, CallSession> GetSessions()
-        {
-            return Sessions.ToImmutableDictionary();
-        }
-
-        public FixedMethodTraceCallStatus ToFixed()
-        {
-            return new FixedMethodTraceCallStatus(this);
-        }
-        public override void OnEntry(MethodExecutionArgs args)
-        {
-            base.OnEntry(args);
-            var tag = new object();
-            var session = new CallSession();
-            lock (_sessionsAddLock)
-            {
-                while (!Sessions.TryAdd(tag, session))
-                {
-                    tag = new object();
-                }
-            }
-            args.MethodExecutionTag = tag;
-            args.FlowBehavior = FlowBehavior.Default;
-            //session._ThisEventExecutionStartTime=DateTime.UtcNow;
-            session.StartTime = DateTime.UtcNow;
-            session.Status = TraceStatus.Running;
-            session.Arguments = args.Arguments.ToArray();
-            session.Stack = new StackTrace();
-            
-            session._stopwatch.Reset();
-            session._stopwatch.Start();
-        }
-
-        public override void OnExit(MethodExecutionArgs args)
-        {
-            base.OnExit(args);
-            //var tag = args.MethodExecutionTag;
-            var session = GetSession(args.MethodExecutionTag);
-            session.EndTime=DateTime.UtcNow;
-            if (session._stopwatch.IsRunning) session._stopwatch.Stop();
-            session.ExcuteTime = session._stopwatch.Elapsed;
-            if (session.Status == TraceStatus.Pause)
-                session.Status = TraceStatus.Success;
-        }
-
-        public override void OnSuccess(MethodExecutionArgs args)
-        {
-            base.OnSuccess(args);
-            var session = GetSession(args.MethodExecutionTag);
-            session.Status = TraceStatus.Success;
-            session.ReturnValue = args.ReturnValue;
-        }
-
-        public override void OnException(MethodExecutionArgs args)
-        {
-            base.OnException(args);
-            var session = GetSession(args.MethodExecutionTag);
-            session.Status = TraceStatus.Fail;
-            session.exce = args.Exception;
-        }
-
-        public override void OnYield(MethodExecutionArgs args)
-        {
-            base.OnYield(args);
-            var session = GetSession(args.MethodExecutionTag);
-            session._stopwatch.Stop();
-            session.Status = TraceStatus.Pause;
-        }
-
-        public override void OnResume(MethodExecutionArgs args)
-        {
-            base.OnResume(args);
-            var session = GetSession(args.MethodExecutionTag);
-            session.Status = TraceStatus.Running;
-            session._stopwatch.Start();
-        }
-
-        public override void RuntimeInitialize(MethodBase method)
-        {
-            base.RuntimeInitialize(method);
-            this.Method = method;
+            return $"{nameof(Method)}: {Method}";
         }
     }
 }

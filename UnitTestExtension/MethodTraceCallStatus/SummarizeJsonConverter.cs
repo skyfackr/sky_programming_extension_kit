@@ -1,28 +1,26 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace SPEkit.UnitTestExtension
 {
-    
-
     internal class
         SessionsDictionaryConverter : JsonConverter<Dictionary<object, MethodTraceCallStatusAttribute.CallSession>>
     {
+        public override bool CanRead => false;
 
 
-        public override void WriteJson(JsonWriter writer, Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? value, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer,
+            Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? value, JsonSerializer serializer)
         {
             if (value == null)
             {
                 writer.WriteNull();
                 return;
-
             }
 
             var resolver = serializer.ContractResolver as DefaultContractResolver;
@@ -44,7 +42,7 @@ namespace SPEkit.UnitTestExtension
                     writer.WriteStartObject();
                     if (argument.GetType().IsDefined(typeof(SerializableAttribute)))
                     {
-                        serializer.Serialize(writer,argument);
+                        serializer.Serialize(writer, argument);
                     }
                     else
                     {
@@ -55,50 +53,44 @@ namespace SPEkit.UnitTestExtension
                         writer.WritePropertyName(ResolveName("Type", resolver));
                         writer.WriteValue(argument.GetType().ToString());
                     }
+
                     writer.WriteEndObject();
                 }
+
                 writer.WriteEndArray();
 
                 #endregion
 
                 #region EndTime
 
-                writer.WritePropertyName(ResolveName("EndTime",resolver));
+                writer.WritePropertyName(ResolveName("EndTime", resolver));
                 if (session.EndTime == null)
-                {
                     writer.WriteNull();
-                }
                 else
-                {
-                    serializer.Serialize(writer,session.EndTime.Value.ToLocalTime());
-                }
+                    serializer.Serialize(writer, session.EndTime.Value.ToLocalTime());
 
                 #endregion
 
                 #region exce
 
-                writer.WritePropertyName(ResolveName("Exception",resolver));
+                writer.WritePropertyName(ResolveName("Exception", resolver));
                 if (session.exce == null)
-                {
                     writer.WriteNull();
-                }
                 else
-                {
-                    serializer.Serialize(writer,session.exce);
-                }
+                    serializer.Serialize(writer, session.exce);
 
                 #endregion
 
                 #region ExcuteTime
 
-                writer.WritePropertyName(ResolveName("ExcuteTime",resolver));
-                serializer.Serialize(writer,session.ExcuteTime);
+                writer.WritePropertyName(ResolveName("ExcuteTime", resolver));
+                serializer.Serialize(writer, session.ExcuteTime);
 
                 #endregion
 
                 #region ReturnValue
 
-                writer.WritePropertyName(ResolveName("ReturnValue",resolver));
+                writer.WritePropertyName(ResolveName("ReturnValue", resolver));
                 if (session.ReturnValue == null)
                 {
                     writer.WriteNull();
@@ -106,7 +98,7 @@ namespace SPEkit.UnitTestExtension
                 else
                 {
                     var argument = session.ReturnValue;
-                    
+
                     if (argument.GetType().IsDefined(typeof(SerializableAttribute)))
                     {
                         serializer.Serialize(writer, argument);
@@ -115,70 +107,64 @@ namespace SPEkit.UnitTestExtension
                     {
                         writer.WriteStartObject();
                         writer.WritePropertyName(ResolveName("HashCode", resolver));
-                        writer.WriteValue( argument.GetHashCode());
+                        writer.WriteValue(argument.GetHashCode());
                         writer.WritePropertyName(ResolveName("StringValue", resolver));
                         writer.WriteValue(argument.ToString());
                         writer.WritePropertyName(ResolveName("Type", resolver));
                         writer.WriteValue(argument.GetType().ToString());
                         writer.WriteEndObject();
                     }
-                    
                 }
 
                 #endregion
 
                 #region Stack
 
-                writer.WritePropertyName(ResolveName("Stack",resolver));
+                writer.WritePropertyName(ResolveName("Stack", resolver));
                 if (session.Stack == null)
-                {
                     writer.WriteNull();
-                }
                 else
-                {
                     writer.WriteValue(session.Stack.ToString());
-                }
 
                 #endregion
 
                 #region StartTime
 
-                writer.WritePropertyName(ResolveName("StartTime",resolver));
+                writer.WritePropertyName(ResolveName("StartTime", resolver));
                 if (session.StartTime == null)
-                {
                     writer.WriteNull();
-                }
                 else
-                {
                     serializer.Serialize(writer, session.StartTime.Value.ToLocalTime());
-                }
 
                 #endregion
 
                 #region Status
 
-                writer.WritePropertyName(ResolveName("Status",resolver));
+                writer.WritePropertyName(ResolveName("Status", resolver));
                 writer.WriteValue(Enum.GetName(session.Status));
 
                 #endregion
 
                 #endregion
+
                 writer.WriteEndObject();
             }
+
             writer.WriteEndObject();
         }
 
-        public override Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? ReadJson(JsonReader reader, Type objectType, Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? existingValue, bool hasExistingValue,
+        public override Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? ReadJson(JsonReader reader,
+            Type objectType, Dictionary<object, MethodTraceCallStatusAttribute.CallSession>? existingValue,
+            bool hasExistingValue,
             JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }
 
-        private string ResolveName(string name, DefaultContractResolver? resolver)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string ResolveName(string name, DefaultContractResolver? resolver)
         {
             return resolver == null ? name : resolver.GetResolvedPropertyName(name);
         }
-
-        public override bool CanRead => false;
     }
 }
