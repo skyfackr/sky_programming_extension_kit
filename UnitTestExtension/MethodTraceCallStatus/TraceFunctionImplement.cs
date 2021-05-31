@@ -11,8 +11,8 @@ namespace SPEkit.UnitTestExtension
         public override void OnEntry(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
-            
+
+
             base.OnEntry(args);
             var tag = new object();
             var session = new CallSession();
@@ -37,7 +37,7 @@ namespace SPEkit.UnitTestExtension
         public override void OnExit(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
+
             base.OnExit(args);
             //var tag = args.MethodExecutionTag;
             var session = GetSession(args.MethodExecutionTag);
@@ -52,8 +52,8 @@ namespace SPEkit.UnitTestExtension
         public override void OnSuccess(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
-            
+
+
             base.OnSuccess(args);
             var session = GetSession(args.MethodExecutionTag);
             session.Status = TraceStatus.Success;
@@ -64,18 +64,19 @@ namespace SPEkit.UnitTestExtension
         public override void OnException(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
-            
+
+
             base.OnException(args);
             var session = GetSession(args.MethodExecutionTag);
             session.Status = TraceStatus.Fail;
             session.exce = args.Exception;
         }
+
         ///<inheritdoc />
         public override void OnYield(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
+
             base.OnYield(args);
             var session = GetSession(args.MethodExecutionTag);
             session._stopwatch.Stop();
@@ -86,7 +87,7 @@ namespace SPEkit.UnitTestExtension
         public override void OnResume(MethodExecutionArgs args)
         {
             if (TestExSwitch.CheckOff()) return;
-            
+
             base.OnResume(args);
             var session = GetSession(args.MethodExecutionTag);
             session.Status = TraceStatus.Running;

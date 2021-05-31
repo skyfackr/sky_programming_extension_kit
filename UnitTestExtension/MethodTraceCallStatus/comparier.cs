@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SPEkit.UnitTestExtension
 {
@@ -29,7 +25,6 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -40,7 +35,6 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>

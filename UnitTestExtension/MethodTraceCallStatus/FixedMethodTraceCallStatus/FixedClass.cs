@@ -17,7 +17,7 @@ namespace SPEkit.UnitTestExtension
     /// </summary>
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
-    public sealed class FixedMethodTraceCallStatus
+    public sealed partial class FixedMethodTraceCallStatus
     {
         /// <summary>
         ///     被定义的属性
@@ -97,6 +97,12 @@ namespace SPEkit.UnitTestExtension
         public string ToJson(Formatting formatting)
         {
             return JsonConvert.SerializeObject(this, formatting);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{nameof(MetaDataToken)}: {MetaDataToken}, {nameof(Method)}: {Method}";
         }
     }
 }

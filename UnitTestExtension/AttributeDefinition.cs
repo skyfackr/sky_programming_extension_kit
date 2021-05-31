@@ -2,8 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using PostSharp.Aspects;
 using JetBrains.Annotations;
+using PostSharp.Aspects;
 
 namespace SPEkit.UnitTestExtension
 {
@@ -55,22 +55,20 @@ namespace SPEkit.UnitTestExtension
         internal static bool CheckOff()
         {
             return !Status;
-            
         }
 
         [SourceTemplate]
-        [Macro(Target = "null",Expression = "complete()")]
+        [Macro(Target = "null", Expression = "complete()")]
         internal static void CheckSwitch([CanBeNull] this object a)
         {
             //$ if (TestExSwitch.CheckOff()) return $null$;$END$
-            
         }
+
         [SourceTemplate]
         //[Macro(Target = "null", Expression = "complete()")]
         internal static void CheckSwitchNull([CanBeNull] this object a)
         {
             //$ if (TestExSwitch.CheckOff()) return ;$END$
-
         }
     }
 }

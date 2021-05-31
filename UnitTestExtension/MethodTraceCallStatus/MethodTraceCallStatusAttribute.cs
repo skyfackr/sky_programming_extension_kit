@@ -59,7 +59,8 @@ namespace SPEkit.UnitTestExtension
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public CallSession GetSession(object tag)
         {
-            return _sessions[tag];
+            if (TestExSwitch.CheckOff()) return null;
+            return !_sessions.ContainsKey(tag) ? null : _sessions[tag];
         }
 
         /// <summary>
@@ -68,7 +69,9 @@ namespace SPEkit.UnitTestExtension
         /// <returns>会话列表</returns>
         public ImmutableDictionary<object, CallSession> GetSessions()
         {
-            return _sessions.ToImmutableDictionary();
+            return TestExSwitch.CheckOff()
+                ? ImmutableDictionary<object, CallSession>.Empty
+                : _sessions.ToImmutableDictionary();
         }
 
         /// <summary>
@@ -78,6 +81,12 @@ namespace SPEkit.UnitTestExtension
         public FixedMethodTraceCallStatus ToFixed()
         {
             return new(this);
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return $"{nameof(Method)}: {Method}";
         }
 
         /// <summary>
@@ -140,9 +149,9 @@ namespace SPEkit.UnitTestExtension
             }
 
             /// <summary>
-            /// 获取当前调用时间
+            ///     获取当前调用时间
             /// </summary>
-            /// <remarks>注意如果当前处于<see cref="TraceStatus.Running"/>则当前运行期间时间不计入</remarks>
+            /// <remarks>注意如果当前处于<see cref="TraceStatus.Running" />则当前运行期间时间不计入</remarks>
             public TimeSpan ExcuteTime
             {
                 get => _excuteTime;
@@ -151,7 +160,7 @@ namespace SPEkit.UnitTestExtension
 
 
             /// <summary>
-            /// 开始的utc时间
+            ///     开始的utc时间
             /// </summary>
             public DateTime? StartTime
             {
@@ -160,7 +169,7 @@ namespace SPEkit.UnitTestExtension
             }
 
             /// <summary>
-            /// 结束的utc时间
+            ///     结束的utc时间
             /// </summary>
             public DateTime? EndTime
             {
@@ -169,19 +178,13 @@ namespace SPEkit.UnitTestExtension
             }
 
             /// <summary>
-            /// 函数调用栈
+            ///     函数调用栈
             /// </summary>
             public StackTrace Stack
             {
                 get => _stack;
                 internal set => _stack = value;
             }
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"{nameof(Method)}: {Method}";
         }
     }
 }

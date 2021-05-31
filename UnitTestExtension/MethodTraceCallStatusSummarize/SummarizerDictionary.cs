@@ -10,11 +10,20 @@ namespace SPEkit.UnitTestExtension
     {
         private static readonly Dictionary<MethodBase, Type[]> _summarizers = new(); //<summarizer,tracees[]>
 
+        /// <summary>
+        ///     获取当前代码所有注册了<see cref="MethodTraceCallStatusSummarizeAttribute" />的方法实例
+        /// </summary>
+        /// <returns></returns>
         public static MethodBase[] GetSummarizers()
         {
             return _summarizers.Keys.ToArray();
         }
 
+        /// <summary>
+        ///     返回一个数组，其中包含所有可以处理<paramref name="obj" />的方法实例
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static MethodBase[] GetSummarizer(Type obj)
         {
             if (!obj.IsClass) return Array.Empty<MethodBase>();
@@ -24,6 +33,7 @@ namespace SPEkit.UnitTestExtension
             return result.ToArray();
         }
 
+        /// <inheritdoc cref="GetSummarizer(System.Type)" />
         public static MethodBase[] GetSummarizer(MethodBase obj)
         {
             if (!obj.IsDefined(typeof(MethodTraceCallStatusAttribute))) return Array.Empty<MethodBase>();
@@ -33,6 +43,7 @@ namespace SPEkit.UnitTestExtension
             return objFather == null ? Array.Empty<MethodBase>() : GetSummarizer(objFather);
         }
 
+        /// <inheritdoc cref="GetSummarizer(System.Type)" />
         public static MethodBase[] GetSummarizer(PropertyInfo obj)
         {
             if (!obj.IsDefined(typeof(MethodTraceCallStatusAttribute))) return Array.Empty<MethodBase>();
@@ -42,6 +53,12 @@ namespace SPEkit.UnitTestExtension
             return objFather == null ? Array.Empty<MethodBase>() : GetSummarizer(objFather);
         }
 
+        /// <summary>
+        ///     返回方法中注册的<see cref="MethodTraceCallStatusSummarizeAttribute" />已声明的可处理类型
+        /// </summary>
+        /// <param name="summarizer"></param>
+        /// <returns></returns>
+        /// <remarks>如果传入方法未注册<see cref="MethodTraceCallStatusSummarizeAttribute" />则直接返回空数组</remarks>
         public static Type[] GetTracees(MethodBase summarizer)
         {
             if (!IsRegistered(summarizer)) return Array.Empty<Type>();

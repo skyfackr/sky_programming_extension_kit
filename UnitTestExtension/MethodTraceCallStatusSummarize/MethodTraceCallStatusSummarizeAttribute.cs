@@ -15,7 +15,7 @@ namespace SPEkit.UnitTestExtension
         private MethodBase _method;
 
         /// <summary>
-        /// 构造函数
+        ///     构造函数
         /// </summary>
         /// <param name="includeExtraTypes">包含的其他的该方法可以分析的类</param>
         /// <param name="ignoreThisType">表明此方法是否不能分析自己所在类</param>
@@ -26,13 +26,15 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
-        /// 获取指定类的跟踪会话集合
+        ///     获取指定类的跟踪会话集合
         /// </summary>
         /// <param name="type">查询的类</param>
         /// <returns></returns>
         /// <exception cref="AttributeNotFoundException"></exception>
         public static Dictionary<MethodInfo, MethodTraceCallStatusAttribute> GetTraceMsgInSpecifiedClass(Type type)
         {
+            if (TestExSwitch.CheckOff()) return new Dictionary<MethodInfo, MethodTraceCallStatusAttribute>();
+
             var methods = _getRegisteredMethods(type);
             if (!methods.Any())
                 throw new AttributeNotFoundException(typeof(MethodTraceCallStatusAttribute).ToString(), type);
@@ -42,7 +44,7 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
-        /// 查询此函数是否标记了<see cref="MethodTraceCallStatusSummarizeAttribute"/>
+        ///     查询此函数是否标记了<see cref="MethodTraceCallStatusSummarizeAttribute" />
         /// </summary>
         /// <param name="method">查询的函数</param>
         /// <returns></returns>
@@ -53,15 +55,16 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
-        /// 获取调用函数所注册的类的跟踪会话列表
+        ///     获取调用函数所注册的类的跟踪会话列表
         /// </summary>
         /// <returns></returns>
         /// <exception cref="AttributeNotFoundException"></exception>
         /// <exception cref="AttributeNotRegisterException"></exception>
-        
         public static Dictionary<MethodInfo, MethodTraceCallStatusAttribute> GetTraceMsg()
         {
-            var callMethod = new StackTrace().GetFrame(1).GetMethod();
+            if (TestExSwitch.CheckOff()) return new Dictionary<MethodInfo, MethodTraceCallStatusAttribute>();
+
+            var callMethod = new StackTrace().GetFrame(1)?.GetMethod();
             if (callMethod == null || IsRegistered(callMethod))
                 throw new AttributeNotRegisterException(typeof(MethodTraceCallStatusSummarizeAttribute).ToString());
 
@@ -85,9 +88,18 @@ namespace SPEkit.UnitTestExtension
                 select method;
         }
 
+        /// <summary>
+        ///     获取调用函数在属性中声明的可处理类的全部会话列表
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="AttributeNotFoundException"></exception>
+        /// <exception cref="AttributeNotRegisterException"></exception>
         public static Dictionary<Type, Dictionary<MethodInfo, MethodTraceCallStatusAttribute>> GetTraceMsgs()
         {
-            var callMethod = new StackTrace().GetFrame(1).GetMethod();
+            if (TestExSwitch.CheckOff())
+                return new Dictionary<Type, Dictionary<MethodInfo, MethodTraceCallStatusAttribute>>();
+
+            var callMethod = new StackTrace().GetFrame(1)?.GetMethod();
             if (callMethod == null || IsRegistered(callMethod))
                 throw new AttributeNotRegisterException(typeof(MethodTraceCallStatusSummarizeAttribute).ToString());
 
@@ -98,16 +110,20 @@ namespace SPEkit.UnitTestExtension
             var types = attr._includeExtraTypes.AsEnumerable();
             if (!attr._ignoreThisType)
                 types = types.Append(callClass);
-            if (!types.Any()) throw new AttributeConfigurationNullException();
-            return types.ToDictionary(
+            var typesArray = types as Type[] ?? types.ToArray();
+            if (!typesArray.Any()) throw new AttributeConfigurationNullException();
+            return typesArray.ToDictionary(
                 type => type, GetTraceMsgInSpecifiedClass);
         }
 
+
+        /// <inheritdoc />
         public override bool IsDefaultAttribute()
         {
             return _ignoreThisType == false && _includeExtraTypes.Length == 0;
         }
 
+        /// <inheritdoc />
         public override void RuntimeInitialize(MethodBase method)
         {
             base.RuntimeInitialize(method);
@@ -115,6 +131,10 @@ namespace SPEkit.UnitTestExtension
             _registerThis();
         }
 
+        /// <summary>
+        ///     获得注册此属性的方法实例
+        /// </summary>
+        /// <returns></returns>
         public MethodBase GetDeclaringMethod()
         {
             return _method;
