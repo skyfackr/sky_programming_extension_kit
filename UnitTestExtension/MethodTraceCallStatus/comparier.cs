@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SPEkit.UnitTestExtension
 {
     public sealed partial class MethodTraceCallStatusAttribute : IEquatable<MethodTraceCallStatusAttribute>
     {
+        private int? _hashCodeCache;
+        private int _baseHashCode => base.GetHashCode();
+
         /// <inheritdoc />
         public bool Equals(MethodTraceCallStatusAttribute other)
         {
@@ -19,9 +23,13 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <inheritdoc />
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
-            return HashCode.Combine(base.GetHashCode(), Method);
+            if (_hashCodeCache != null) return _hashCodeCache.Value;
+            _hashCodeCache = Method != null ? HashCode.Combine(_baseHashCode, Method) : HashCode.Combine(_baseHashCode);
+
+            return _hashCodeCache.Value;
         }
 
         /// <summary>
