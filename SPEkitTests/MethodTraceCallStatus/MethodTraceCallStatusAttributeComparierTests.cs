@@ -10,7 +10,7 @@ namespace SPEkit.UnitTestExtension.Tests
     public partial class MethodTraceCallStatusAttributeTests
     {
         [TestMethod]
-        [Timeout(500)]
+        [Timeout(1500)]
         public void EqualsTestGeneric()
         {
             var a = _getInstance();
@@ -25,6 +25,7 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [TestMethod]
+        [Timeout(800)]
         public void EqualsTestBoxed()
         {
             var t1 = _extractAttribute(_getMethod(_test1Name));
@@ -34,6 +35,7 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [TestMethod]
+        [Timeout(2000)]
         public void GetHashCodeTest()
         {
             var a = _getInstance();
