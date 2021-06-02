@@ -29,7 +29,7 @@ namespace SPEkit.UnitTestExtension
             ///     跑成了
             /// </summary>
             Success,
-            
+
             /// <summary>
             ///     跑路了
             /// </summary>

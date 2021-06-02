@@ -51,6 +51,12 @@ namespace SPEkit.UnitTestExtension.Tests
         {
             return typeof(MethodTraceCallStatusAttributeTests).GetMethod(name) ?? throw new ArgumentException("无法找到函数");
         }
+
+        [MethodTraceCallStatus]
+        private MethodInfo _test3()
+        {
+            return (MethodInfo) MethodBase.GetCurrentMethod();
+        }
     }
 
     public static class MethodTraceCallStatusUtils
