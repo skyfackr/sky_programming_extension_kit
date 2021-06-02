@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssert;
-using SPEkit.BinLikeClassSelector;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SPEkit.BinLikeClassSelector.Tests
 {
@@ -13,7 +12,9 @@ namespace SPEkit.BinLikeClassSelector.Tests
     {
         private static readonly long _testBin = _byteLike2Long(1000111001);
         private static readonly long[] _testBinArrayMaker = {1000000000, 100000, 10000, 1000, 1};
-        private static readonly long[] _testBinArray = (from i in _testBinArrayMaker select _byteLike2Long(i)).ToArray();
+
+        private static readonly long[]
+            _testBinArray = (from i in _testBinArrayMaker select _byteLike2Long(i)).ToArray();
 
         private static long _byteLike2Long(long byteLike)
         {
@@ -25,7 +26,8 @@ namespace SPEkit.BinLikeClassSelector.Tests
 
             return ans;
         }
-        [TestInitialize()]
+
+        [ClassInitialize]
         public void Init()
         {
             Array.Sort(_testBinArray);

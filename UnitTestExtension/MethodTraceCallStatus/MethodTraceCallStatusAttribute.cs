@@ -90,6 +90,25 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
+        ///     删除指定的某个会话
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public (bool, CallSession) Remove(object tag)
+        {
+            var ans = _sessions.TryRemove(tag, out var deleted);
+            return (ans, deleted);
+        }
+
+        /// <summary>
+        ///     删除全部现有会话
+        /// </summary>
+        public void RemoveAll()
+        {
+            foreach (var session in _sessions) _sessions.TryRemove(session);
+        }
+
+        /// <summary>
         ///     会话列表定义
         /// </summary>
         [Serializable]

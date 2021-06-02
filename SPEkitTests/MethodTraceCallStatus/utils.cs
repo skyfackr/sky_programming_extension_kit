@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssert;
 using JetBrains.Annotations;
 
@@ -56,6 +59,31 @@ namespace SPEkit.UnitTestExtension.Tests
         private MethodInfo _test3()
         {
             return (MethodInfo) MethodBase.GetCurrentMethod();
+        }
+
+        [MethodTraceCallStatus]
+        internal MethodBase SuccessTestFunc()
+        {
+            return MethodBase.GetCurrentMethod();
+        }
+
+        [MethodTraceCallStatus]
+        private async Task RunningTestFunc(CancellationToken token)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(100), token);
+        }
+
+        [MethodTraceCallStatus]
+        private void ExceptionTestFunc()
+        {
+            throw new ArgumentException();
+        }
+
+        [MethodTraceCallStatus]
+        private IEnumerable<int> YieldTestFunc()
+        {
+            yield return 1;
+            yield return 2;
         }
     }
 
