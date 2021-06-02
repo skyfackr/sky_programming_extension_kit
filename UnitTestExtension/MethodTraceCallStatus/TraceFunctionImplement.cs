@@ -16,10 +16,9 @@ namespace SPEkit.UnitTestExtension
             base.OnEntry(args);
             var tag = new object();
             var session = new CallSession();
-            lock (_sessionsAddLock)
-            {
-                while (!_sessions.TryAdd(tag, session)) tag = new object();
-            }
+
+            while (!_sessions.TryAdd(tag, session)) tag = new object();
+
 
             args.MethodExecutionTag = tag;
             args.FlowBehavior = FlowBehavior.Default;

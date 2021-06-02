@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Reflection;
@@ -29,22 +29,22 @@ namespace SPEkit.UnitTestExtension
             ///     跑成了
             /// </summary>
             Success,
-
+            
             /// <summary>
-            ///     异常了
+            ///     跑路了
             /// </summary>
             Fail,
 
             /// <summary>
-            ///     歇会（resume状态）
+            ///     饮茶先啦（resume状态）
             /// </summary>
             Pause
         }
 
-        private readonly object _sessionsAddLock = new();
+        //private readonly object _sessionsAddLock = new();
 
         //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
-        private volatile Dictionary<object, CallSession> _sessions = new();
+        private readonly ConcurrentDictionary<object, CallSession> _sessions = new();
 
         /// <summary>
         ///     代表设定了这个属性的方法
