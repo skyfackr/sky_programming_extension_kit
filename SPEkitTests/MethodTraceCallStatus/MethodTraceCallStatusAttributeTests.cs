@@ -38,7 +38,9 @@ namespace SPEkit.UnitTestExtension.Tests
         public void GetSessionsTest()
         {
             var t3 = _test3();
-            var t3attr = (MethodTraceCallStatusAttribute) t3.GetCustomAttribute(typeof(MethodTraceCallStatusAttribute));
+            Trace.WriteLine(TestExSwitch.Status);
+            var dbg1 = t3.GetCustomAttributes();
+            var t3attr = t3.GetCustomAttribute<MethodTraceCallStatusAttribute>();
             var t3dict =
                 t3attr.GetPrivate<ConcurrentDictionary<object, MethodTraceCallStatusAttribute.CallSession>>(
                     "_sessions");

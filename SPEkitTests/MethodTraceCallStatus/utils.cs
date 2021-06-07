@@ -21,7 +21,7 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [MethodTraceCallStatus]
-        private void _test1()
+        public void _test1()
         {
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
             var ra = new Random();
@@ -32,7 +32,7 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [MethodTraceCallStatus]
-        private void _test2()
+        public void _test2()
         {
 #pragma warning disable SecurityIntelliSenseCS // MS Security rules violation
             var ra = new Random();
@@ -56,31 +56,31 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [MethodTraceCallStatus]
-        private MethodInfo _test3()
+        public MethodInfo _test3()
         {
             return (MethodInfo) MethodBase.GetCurrentMethod();
         }
 
         [MethodTraceCallStatus]
-        internal MethodBase SuccessTestFunc()
+        public MethodBase SuccessTestFunc()
         {
             return MethodBase.GetCurrentMethod();
         }
 
         [MethodTraceCallStatus]
-        private async Task RunningTestFunc(CancellationToken token)
+        public async Task RunningTestFunc(CancellationToken token)
         {
             await Task.Delay(TimeSpan.FromSeconds(100), token);
         }
 
         [MethodTraceCallStatus]
-        private void ExceptionTestFunc()
+        public void ExceptionTestFunc()
         {
             throw new ArgumentException();
         }
 
         [MethodTraceCallStatus]
-        private IEnumerable<int> YieldTestFunc()
+        public IEnumerable<int> YieldTestFunc()
         {
             yield return 1;
             yield return 2;

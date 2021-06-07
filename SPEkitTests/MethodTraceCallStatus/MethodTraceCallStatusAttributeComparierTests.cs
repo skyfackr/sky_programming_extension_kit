@@ -16,7 +16,7 @@ namespace SPEkit.UnitTestExtension.Tests
             var a = _getInstance();
             var b = _getInstance();
             a.Equals(a).ShouldBeTrue();
-            a.Equals(b).ShouldBeTrue();
+            a.Equals(b).ShouldBeFalse();
             a.Equals(null).ShouldBeFalse();
             var t1 = _extractAttribute(_getMethod(_test1Name));
             a.Equals(t1).ShouldBeFalse();

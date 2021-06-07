@@ -1,0 +1,440 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>UnitTestExtension</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute">
+            <summary>
+                对函数运行情况进行跟踪记录并通过 <see cref="T:System.Diagnostics.Stopwatch" /> 计时
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.Equals(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.op_Equality(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute,SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.op_Inequality(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute,SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus">
+            <summary>
+                跟踪状态标识
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.NotStart">
+            <summary>
+                还没跑
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Running">
+            <summary>
+                跑着
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Success">
+            <summary>
+                跑成了
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Fail">
+            <summary>
+                跑路了
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Pause">
+            <summary>
+                饮茶先啦（resume状态）
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.Method">
+            <summary>
+                代表设定了这个属性的方法
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.GetSession(System.Object)">
+            <summary>
+                获取指定跟踪会话
+            </summary>
+            <param name="tag">会话标识符</param>
+            <returns>单个会话信息</returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.GetSessions">
+            <summary>
+                获取会话列表不可变字典<see cref="T:System.Collections.Immutable.ImmutableDictionary`2" />
+            </summary>
+            <returns>会话列表</returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.ToFixed">
+            <summary>
+                转化为<see cref="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.Remove(System.Object)">
+            <summary>
+                删除指定的某个会话
+            </summary>
+            <param name="tag"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.RemoveAll">
+            <summary>
+                删除全部现有会话
+            </summary>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession">
+            <summary>
+                会话列表定义
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Status">
+            <summary>
+                获取当前会话状态
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Arguments">
+            <summary>
+                获取当前会话所传入参数
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ReturnValue">
+            <summary>
+                获取当前会话返回值
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.exce">
+            <summary>
+                获取当前会话的异常
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ExcuteTime">
+            <summary>
+                获取当前调用时间
+            </summary>
+            <remarks>注意如果当前处于<see cref="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Running" />则当前运行期间时间不计入</remarks>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.StartTime">
+            <summary>
+                开始的utc时间
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.EndTime">
+            <summary>
+                结束的utc时间
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Stack">
+            <summary>
+                函数调用栈
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnExit(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnSuccess(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnException(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnYield(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnResume(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.RuntimeInitialize(System.Reflection.MethodBase)">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute">
+            <summary>
+                对<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute" />标记的Method进行以Class为单位的统计或者输出json格式字符
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.Equals(SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.op_Equality(SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute,SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.op_Inequality(SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute,SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.#ctor(System.Type[],System.Boolean)">
+            <summary>
+                构造函数
+            </summary>
+            <param name="includeExtraTypes">包含的其他的该方法可以分析的类</param>
+            <param name="ignoreThisType">表明此方法是否不能分析自己所在类</param>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTraceMsgInSpecifiedClass(System.Type)">
+            <summary>
+                获取指定类的跟踪会话集合
+            </summary>
+            <param name="type">查询的类</param>
+            <returns></returns>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotFoundException"></exception>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.IsRegistered(System.Reflection.MethodBase)">
+            <summary>
+                查询此函数是否标记了<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />
+            </summary>
+            <param name="method">查询的函数</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTraceMsg">
+            <summary>
+                获取调用函数所注册的类的跟踪会话列表
+            </summary>
+            <returns></returns>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotFoundException"></exception>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotRegisterException"></exception>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTraceMsgs">
+            <summary>
+                获取调用函数在属性中声明的可处理类的全部会话列表
+            </summary>
+            <returns></returns>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotFoundException"></exception>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotRegisterException"></exception>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.IsDefaultAttribute">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.RuntimeInitialize(System.Reflection.MethodBase)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetDeclaringMethod">
+            <summary>
+                获得注册此属性的方法实例
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizers">
+            <summary>
+                获取当前代码所有注册了<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />的方法实例
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Type)">
+            <summary>
+                返回一个数组，其中包含所有可以处理<paramref name="obj" />的方法实例
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Reflection.MethodBase)">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Type)" />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Reflection.PropertyInfo)">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Type)" />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTracees(System.Reflection.MethodBase)">
+            <summary>
+                返回方法中注册的<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />已声明的可处理类型
+            </summary>
+            <param name="summarizer"></param>
+            <returns></returns>
+            <remarks>如果传入方法未注册<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />则直接返回空数组</remarks>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.TestExSwitch">
+            <summary>
+                整个组件的开关，默认为开启，当关闭后，无论什么函数都会立刻返回null或default
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.TestExSwitch.Status">
+            <summary>
+                当前状态指示，注意关闭时无法阻止已启动的函数
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.TestExSwitch.On">
+            <summary>
+                打开
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.TestExSwitch.Off">
+            <summary>
+                关掉
+            </summary>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.AttributeNotRegisterException">
+            <summary>
+                相关Attribute未标识
+            </summary>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.AttributeNotFoundException">
+            <summary>
+                无法找到有相关attribute的Method
+            </summary>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.AttributeConfigurationNullException">
+            <summary>
+                统计方法attribute注册时未注册任何跟踪类，并排除了自身类
+            </summary>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus">
+            <summary>
+                由 <see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute" /> 转化的固定且可Json化的
+                <see
+                    cref="T:System.SerializableAttribute" />
+                类
+                <para>调用 <see cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson" /> 可转化为Json</para>
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.CompareTo(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.CompareTo(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Equals(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_LessThan(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_GreaterThan(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_LessThanOrEqual(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_GreaterThanOrEqual(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_Equality(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.op_Inequality(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.CustomAttributes">
+            <summary>
+                被定义的属性
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.MetaDataToken">
+            <summary>
+                元数据标识符
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Method">
+            <summary>
+                代表方法的<see cref="T:System.Reflection.MethodBase" />
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Name">
+            <summary>
+                方法名
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ParametersTypeName">
+            <summary>
+                一个数组，各自代表方法参数类型的string（如果存在）
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ParentTypeName">
+            <summary>
+                代表定义此方法的类的类型的string（如果存在）
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ReturnTypeName">
+            <summary>
+                返回类型的string
+            </summary>
+        </member>
+        <member name="F:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Sessions">
+            <summary>
+                所有的跟踪会话的保存信息，其元素在该类创建后将不变，但各个会话状态可能由于程序运行而改变
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.#ctor(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute)">
+            <summary>
+                构造函数
+            </summary>
+            <param name="origin"></param>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson">
+            <summary>
+                json化
+            </summary>
+            <returns>json格式字符串</returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson(Newtonsoft.Json.Formatting)">
+            <summary>
+                json化
+            </summary>
+            <param name="formatting">格式定义</param>
+            <returns>json格式字符串</returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToString">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
