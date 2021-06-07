@@ -43,16 +43,6 @@ namespace SPEkit.UnitTestExtension
             return ans;
         }
 
-        /// <summary>
-        ///     查询此函数是否标记了<see cref="MethodTraceCallStatusSummarizeAttribute" />
-        /// </summary>
-        /// <param name="method">查询的函数</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsRegistered(MethodBase method)
-        {
-            return method.IsDefined(typeof(MethodTraceCallStatusSummarizeAttribute));
-        }
 
         /// <summary>
         ///     获取调用函数所注册的类的跟踪会话列表
@@ -68,7 +58,7 @@ namespace SPEkit.UnitTestExtension
             if (callMethod == null || IsRegistered(callMethod))
                 throw new AttributeNotRegisterException(typeof(MethodTraceCallStatusSummarizeAttribute).ToString());
 
-            var attr = callMethod.GetCustomAttributes<MethodTraceCallStatusSummarizeAttribute>().First();
+            var attr = GetAttribute(callMethod);
             var callClass = callMethod.DeclaringType;
             if (callClass == null)
                 throw new AttributeNotFoundException(typeof(MethodTraceCallStatusAttribute).ToString(), typeof(object));
@@ -103,7 +93,7 @@ namespace SPEkit.UnitTestExtension
             if (callMethod == null || IsRegistered(callMethod))
                 throw new AttributeNotRegisterException(typeof(MethodTraceCallStatusSummarizeAttribute).ToString());
 
-            var attr = callMethod.GetCustomAttributes<MethodTraceCallStatusSummarizeAttribute>().First();
+            var attr = GetAttribute(callMethod);
             var callClass = callMethod.DeclaringType;
             if (callClass == null)
                 throw new AttributeNotFoundException(typeof(MethodTraceCallStatusAttribute).ToString(), typeof(object));

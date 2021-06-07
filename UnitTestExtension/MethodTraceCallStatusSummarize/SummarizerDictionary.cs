@@ -3,12 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace SPEkit.UnitTestExtension
 {
     public sealed partial class MethodTraceCallStatusSummarizeAttribute
     {
         private static readonly Dictionary<MethodBase, Type[]> _summarizers = new(); //<summarizer,tracees[]>
+        private static readonly Dictionary<MethodBase, MethodTraceCallStatusSummarizeAttribute> _attributes = new();
 
         /// <summary>
         ///     获取当前代码所有注册了<see cref="MethodTraceCallStatusSummarizeAttribute" />的方法实例
@@ -72,6 +75,30 @@ namespace SPEkit.UnitTestExtension
                 mytracees = mytracees.Append(_method.DeclaringType).ToArray();
             //var me = new KeyValuePair<MethodBase, Type[]>(this._method, mytracees);
             _summarizers.Add(_method, mytracees);
+            _attributes.Add(_method, this);
+        }
+
+        /// <summary>
+        ///     查询此函数是否标记了<see cref="MethodTraceCallStatusSummarizeAttribute" />
+        /// </summary>
+        /// <param name="method">查询的函数</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsRegistered(MethodBase method)
+        {
+            return _attributes.ContainsKey(method);
+        }
+
+        /// <summary>
+        ///     获取此方法所拥有的<see cref="MethodTraceCallStatusSummarizeAttribute" />，如果未注册则返回null
+        /// </summary>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [CanBeNull]
+        public static MethodTraceCallStatusSummarizeAttribute GetAttribute(MethodBase method)
+        {
+            return !_attributes.ContainsKey(method) ? null : _attributes[method];
         }
     }
 }

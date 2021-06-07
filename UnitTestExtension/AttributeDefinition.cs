@@ -12,7 +12,7 @@ namespace SPEkit.UnitTestExtension
     /// <summary>
     ///     对函数运行情况进行跟踪记录并通过 <see cref="Stopwatch" /> 计时
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false)]
     [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
     public sealed partial class MethodTraceCallStatusAttribute : OnMethodBoundaryAspect
     {
@@ -21,7 +21,7 @@ namespace SPEkit.UnitTestExtension
     /// <summary>
     ///     对<see cref="MethodTraceCallStatusAttribute" />标记的Method进行以Class为单位的统计或者输出json格式字符
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
     public sealed partial class MethodTraceCallStatusSummarizeAttribute : OnMethodBoundaryAspect
     {
