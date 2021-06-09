@@ -39,7 +39,7 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc cref="GetSummarizer(System.Type)" />
         public static MethodBase[] GetSummarizer(MethodBase obj)
         {
-            if (!obj.IsDefined(typeof(MethodTraceCallStatusAttribute))) return Array.Empty<MethodBase>();
+            if (!MethodTraceCallStatusAttribute.IsRegistered(obj)) return Array.Empty<MethodBase>();
             var objFather = obj.DeclaringType;
             while (objFather is {IsClass: false}) objFather = objFather.DeclaringType;
 
@@ -49,7 +49,8 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc cref="GetSummarizer(System.Type)" />
         public static MethodBase[] GetSummarizer(PropertyInfo obj)
         {
-            if (!obj.IsDefined(typeof(MethodTraceCallStatusAttribute))) return Array.Empty<MethodBase>();
+            if (!MethodTraceCallStatusAttribute.IsRegistered(obj)) return Array.Empty<MethodBase>();
+            
             var objFather = obj.DeclaringType;
             while (objFather is {IsClass: false}) objFather = objFather.DeclaringType;
 

@@ -13,6 +13,7 @@ namespace SPEkit.UnitTestExtension
     ///     对函数运行情况进行跟踪记录并通过 <see cref="Stopwatch" /> 计时
     /// </summary>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, Inherited = false)]
+    //删除对property的支持
     [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
     public sealed partial class MethodTraceCallStatusAttribute : OnMethodBoundaryAspect
     {

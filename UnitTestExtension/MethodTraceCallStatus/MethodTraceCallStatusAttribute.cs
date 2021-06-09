@@ -208,7 +208,8 @@ namespace SPEkit.UnitTestExtension
             }
         }
 
-        private static Dictionary<MethodBase, MethodTraceCallStatusAttribute> _attributes = new();
+        private static Dictionary<MethodBase, 
+            MethodTraceCallStatusAttribute> _attributes = new();
         /// <summary>
         /// 检查此函数是否注册了<see cref="MethodTraceCallStatusAttribute"/>
         /// </summary>

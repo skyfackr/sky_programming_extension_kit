@@ -39,7 +39,7 @@ namespace SPEkit.UnitTestExtension
             if (!methods.Any())
                 throw new AttributeNotFoundException(typeof(MethodTraceCallStatusAttribute).ToString(), type);
             var ans = methods.ToDictionary(method => method,
-                method => method.GetCustomAttributes<MethodTraceCallStatusAttribute>().First());
+                MethodTraceCallStatusAttribute.GetAttribute);
             return ans;
         }
 
@@ -66,14 +66,14 @@ namespace SPEkit.UnitTestExtension
             if (!methods.Any())
                 throw new AttributeNotFoundException(typeof(MethodTraceCallStatusAttribute).ToString(), callClass);
             return methods.ToDictionary(method => method,
-                method => method.GetCustomAttributes<MethodTraceCallStatusAttribute>().First());
+                MethodTraceCallStatusAttribute.GetAttribute);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static IOrderedEnumerable<MethodInfo> _getRegisteredMethods(Type type)
         {
             return from method in type.GetMethods()
-                where IsDefined(method, typeof(MethodTraceCallStatusAttribute))
+                where MethodTraceCallStatusAttribute.IsRegistered(method)
                 orderby method.Name
                 select method;
         }
