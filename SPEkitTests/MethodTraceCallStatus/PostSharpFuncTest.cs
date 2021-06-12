@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -25,18 +26,20 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [TestMethod]
-        [Timeout(5000)]
+        [Timeout(7000)]
         public void RunningTest()
         {
             var method = _getMethod(nameof(RunningTestFunc));
             var attr = _extractAttribute(method);
             var tks = new CancellationTokenSource();
-            for (var i = 1; i <= 5; i++) RunningTestFunc(tks.Token);
+            for (var i = 1; i <= 5; i++) Task.Run(() => RunningTestFunc(tks.Token), tks.Token);
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             var dict = attr.GetSessions();
             dict.Count.ShouldBeEqualTo(5);
             foreach (var callSession in dict.Values)
                 callSession.Status.ShouldBeEqualTo(MethodTraceCallStatusAttribute.TraceStatus.Running);
             tks.Cancel();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             foreach (var callSession in dict.Values)
                 callSession.Status.ShouldBeEqualTo(MethodTraceCallStatusAttribute.TraceStatus.Success);
             Trace.WriteLine(attr.ToFixed().ToJson(Formatting.Indented));
@@ -66,9 +69,11 @@ namespace SPEkit.UnitTestExtension.Tests
             attr.GetSessions().Count.ShouldBeEqualTo(0);
             foreach (var i in YieldTestFunc())
                 attr.GetSessions().First().Value.Status
-                    .ShouldBeEqualTo(i == 1
-                        ? MethodTraceCallStatusAttribute.TraceStatus.Pause
-                        : MethodTraceCallStatusAttribute.TraceStatus.Success);
+                    .ShouldBeEqualTo(MethodTraceCallStatusAttribute.TraceStatus.Pause
+                    );
+            attr.GetSessions().First().Value.Status
+                .ShouldBeEqualTo(MethodTraceCallStatusAttribute.TraceStatus.Success
+                );
 
             attr.GetSessions().Count.ShouldBeEqualTo(1);
             Trace.WriteLine(attr.ToFixed().ToJson(Formatting.Indented));

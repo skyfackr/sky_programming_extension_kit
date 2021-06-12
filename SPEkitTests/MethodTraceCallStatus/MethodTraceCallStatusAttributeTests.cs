@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -17,7 +16,7 @@ namespace SPEkit.UnitTestExtension.Tests
         public void GetSessionTest()
         {
             var t3 = _test3();
-            var t3attr = (MethodTraceCallStatusAttribute) t3.GetCustomAttribute(typeof(MethodTraceCallStatusAttribute));
+            var t3attr = MethodTraceCallStatusAttribute.GetAttribute(t3);
             var t3dict =
                 t3attr.GetPrivate<ConcurrentDictionary<object, MethodTraceCallStatusAttribute.CallSession>>(
                     "_sessions");
@@ -30,7 +29,7 @@ namespace SPEkit.UnitTestExtension.Tests
             TestExSwitch.On();
             t3attr.GetSession(t3dict.Keys.First()).ShouldNotBeNull();
 
-            Trace.WriteLine(JsonConvert.SerializeObject(t3dict, Formatting.Indented));
+            Trace.WriteLine(t3attr.ToFixed().ToJson(Formatting.Indented));
         }
 
         [TestMethod]
@@ -38,9 +37,9 @@ namespace SPEkit.UnitTestExtension.Tests
         public void GetSessionsTest()
         {
             var t3 = _test3();
-            Trace.WriteLine(TestExSwitch.Status);
-            var dbg1 = t3.GetCustomAttributes();
-            var t3attr = t3.GetCustomAttribute<MethodTraceCallStatusAttribute>();
+            //Trace.WriteLine(TestExSwitch.Status);
+            //var dbg1 = t3.GetCustomAttributes();
+            var t3attr = MethodTraceCallStatusAttribute.GetAttribute(t3);
             var t3dict =
                 t3attr.GetPrivate<ConcurrentDictionary<object, MethodTraceCallStatusAttribute.CallSession>>(
                     "_sessions");
@@ -50,7 +49,7 @@ namespace SPEkit.UnitTestExtension.Tests
                 .ShouldBeEqualTo(ImmutableDictionary<object, MethodTraceCallStatusAttribute.CallSession>.Empty);
             TestExSwitch.On();
             t3dict.ToImmutableDictionary().ShouldBeEqualTo(t3attr.GetSessions());
-            Trace.WriteLine(JsonConvert.SerializeObject(t3attr.GetSessions(), Formatting.Indented));
+            Trace.WriteLine(t3attr.ToFixed().ToJson(Formatting.Indented));
         }
 
         [TestMethod]

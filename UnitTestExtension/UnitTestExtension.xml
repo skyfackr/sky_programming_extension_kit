@@ -32,6 +32,75 @@
             <param name="right"></param>
             <returns></returns>
         </member>
+        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession">
+            <summary>
+                会话列表定义
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Equals(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.op_Equality(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession,SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.op_Inequality(SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession,SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Status">
+            <summary>
+                获取当前会话状态
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Arguments">
+            <summary>
+                获取当前会话所传入参数
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ReturnValue">
+            <summary>
+                获取当前会话返回值
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.exce">
+            <summary>
+                获取当前会话的异常
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ExcuteTime">
+            <summary>
+                获取当前调用时间
+            </summary>
+            <remarks>注意如果当前处于<see cref="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Running" />则当前运行期间时间不计入</remarks>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.StartTime">
+            <summary>
+                开始的utc时间
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.EndTime">
+            <summary>
+                结束的utc时间
+            </summary>
+        </member>
+        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Stack">
+            <summary>
+                函数调用栈
+            </summary>
+        </member>
         <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus">
             <summary>
                 跟踪状态标识
@@ -101,51 +170,21 @@
                 删除全部现有会话
             </summary>
         </member>
-        <member name="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession">
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.IsRegistered(System.Reflection.MethodBase)">
             <summary>
-                会话列表定义
+                检查此函数是否注册了<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute" />
             </summary>
+            <remarks>以反射方式添加此属性或者查询此属性均可能无效</remarks>
+            <param name="method"></param>
+            <returns></returns>
         </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Status">
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.GetAttribute(System.Reflection.MethodBase)">
             <summary>
-                获取当前会话状态
+                如果注册，则返回此函数拥有的<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute" />
             </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Arguments">
-            <summary>
-                获取当前会话所传入参数
-            </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ReturnValue">
-            <summary>
-                获取当前会话返回值
-            </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.exce">
-            <summary>
-                获取当前会话的异常
-            </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.ExcuteTime">
-            <summary>
-                获取当前调用时间
-            </summary>
-            <remarks>注意如果当前处于<see cref="F:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.TraceStatus.Running" />则当前运行期间时间不计入</remarks>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.StartTime">
-            <summary>
-                开始的utc时间
-            </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.EndTime">
-            <summary>
-                结束的utc时间
-            </summary>
-        </member>
-        <member name="P:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.CallSession.Stack">
-            <summary>
-                函数调用栈
-            </summary>
+            <param name="method"></param>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotRegisterException"></exception>
+            <returns></returns>
         </member>
         <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusAttribute.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
             <inheritdoc />
@@ -211,13 +250,6 @@
             <returns></returns>
             <exception cref="T:SPEkit.UnitTestExtension.AttributeNotFoundException"></exception>
         </member>
-        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.IsRegistered(System.Reflection.MethodBase)">
-            <summary>
-                查询此函数是否标记了<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />
-            </summary>
-            <param name="method">查询的函数</param>
-            <returns></returns>
-        </member>
         <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTraceMsg">
             <summary>
                 获取调用函数所注册的类的跟踪会话列表
@@ -262,9 +294,6 @@
         <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Reflection.MethodBase)">
             <inheritdoc cref="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Type)" />
         </member>
-        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Reflection.PropertyInfo)">
-            <inheritdoc cref="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetSummarizer(System.Type)" />
-        </member>
         <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetTracees(System.Reflection.MethodBase)">
             <summary>
                 返回方法中注册的<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />已声明的可处理类型
@@ -272,6 +301,21 @@
             <param name="summarizer"></param>
             <returns></returns>
             <remarks>如果传入方法未注册<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />则直接返回空数组</remarks>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.IsRegistered(System.Reflection.MethodBase)">
+            <summary>
+                查询此函数是否标记了<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />
+            </summary>
+            <param name="method">查询的函数</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute.GetAttribute(System.Reflection.MethodBase)">
+            <summary>
+                获取此方法所拥有的<see cref="T:SPEkit.UnitTestExtension.MethodTraceCallStatusSummarizeAttribute" />，如果未注册则返回null
+            </summary>
+            <param name="method"></param>
+            <exception cref="T:SPEkit.UnitTestExtension.AttributeNotRegisterException"></exception>
+            <returns></returns>
         </member>
         <member name="T:SPEkit.UnitTestExtension.TestExSwitch">
             <summary>

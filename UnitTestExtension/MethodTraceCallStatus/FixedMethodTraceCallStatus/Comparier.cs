@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace SPEkit.UnitTestExtension
 {
@@ -31,8 +33,23 @@ namespace SPEkit.UnitTestExtension
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return MetaDataToken == other.MetaDataToken && Method.Equals(other.Method) &&
-                   Sessions.Equals(other.Sessions);
+            return MetaDataToken == other.MetaDataToken && MethodEquals(Method, other.Method) &&
+                   SessionsEquals(other);
+        }
+
+        private static bool MethodEquals(MethodBase a, MethodBase b)
+        {
+            if (a == null && b == null) return true;
+            // ReSharper disable twice ConditionIsAlwaysTrueOrFalse
+            if (a == null && b != null || a != null && b == null) return false;
+            return a.Equals(b);
+        }
+
+        private bool SessionsEquals(FixedMethodTraceCallStatus others)
+        {
+            var otherSessions = others.Sessions;
+            return Sessions.Count == otherSessions.Count && Sessions.All(session =>
+                otherSessions.ContainsKey(session.Key) && session.Value.Equals(otherSessions[session.Key]));
         }
 
         /// <summary>

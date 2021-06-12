@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using FluentAssert;
 using JetBrains.Annotations;
 
@@ -45,8 +45,8 @@ namespace SPEkit.UnitTestExtension.Tests
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MethodTraceCallStatusAttribute _extractAttribute(MethodBase method)
         {
-            method.IsDefined(typeof(MethodTraceCallStatusAttribute)).ShouldBeTrue();
-            return method.GetCustomAttribute<MethodTraceCallStatusAttribute>();
+            MethodTraceCallStatusAttribute.IsRegistered(method).ShouldBeTrue();
+            return MethodTraceCallStatusAttribute.GetAttribute(method);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -68,9 +68,15 @@ namespace SPEkit.UnitTestExtension.Tests
         }
 
         [MethodTraceCallStatus]
-        public async Task RunningTestFunc(CancellationToken token)
+        public void RunningTestFunc(CancellationToken token)
         {
-            await Task.Delay(TimeSpan.FromSeconds(100), token);
+            var tms = new Stopwatch();
+            tms.Restart();
+            while (!token.IsCancellationRequested && tms.Elapsed < TimeSpan.FromSeconds(100))
+            {
+            }
+
+            tms.Stop();
         }
 
         [MethodTraceCallStatus]

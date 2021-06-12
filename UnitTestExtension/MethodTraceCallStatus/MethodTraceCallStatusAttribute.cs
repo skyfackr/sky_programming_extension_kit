@@ -43,6 +43,9 @@ namespace SPEkit.UnitTestExtension
             Pause
         }
 
+        private static readonly Dictionary<MethodBase,
+            MethodTraceCallStatusAttribute> _attributes = new();
+
         //private readonly object _sessionsAddLock = new();
 
         //public TraceStatus Status { get; private set; } = TraceStatus.NotStart;
@@ -111,10 +114,41 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <summary>
+        ///     检查此函数是否注册了<see cref="MethodTraceCallStatusAttribute" />
+        /// </summary>
+        /// <remarks>以反射方式添加此属性或者查询此属性均可能无效</remarks>
+        /// <param name="method"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsRegistered(MethodBase method)
+        {
+            return _attributes.ContainsKey(method);
+        }
+
+        /// <summary>
+        ///     如果注册，则返回此函数拥有的<see cref="MethodTraceCallStatusAttribute" />
+        /// </summary>
+        /// <param name="method"></param>
+        /// <exception cref="AttributeNotRegisterException"></exception>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [CanBeNull]
+        public static MethodTraceCallStatusAttribute GetAttribute(MethodBase method)
+        {
+            return (!_attributes.ContainsKey(method) ? null : _attributes[method]) ??
+                   throw new AttributeNotRegisterException(nameof(MethodTraceCallStatusAttribute));
+        }
+
+        private void _registerMe()
+        {
+            _attributes.Add(Method, this);
+        }
+
+        /// <summary>
         ///     会话列表定义
         /// </summary>
         [Serializable]
-        public sealed class CallSession
+        public sealed partial class CallSession
         {
             private volatile object[] _arguments = { };
             private DateTime? _endTime;
@@ -206,32 +240,6 @@ namespace SPEkit.UnitTestExtension
                 get => _stack;
                 internal set => _stack = value;
             }
-        }
-
-        private static Dictionary<MethodBase, 
-            MethodTraceCallStatusAttribute> _attributes = new();
-        /// <summary>
-        /// 检查此函数是否注册了<see cref="MethodTraceCallStatusAttribute"/>
-        /// </summary>
-        /// <remarks>以反射方式添加此属性或者查询此属性均可能无效</remarks>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsRegistered(MethodBase method)
-        {
-            return _attributes.ContainsKey(method);
-        }
-
-        /// <summary>
-        /// 如果注册，则返回此函数拥有的<see cref="MethodTraceCallStatusAttribute"/>
-        /// </summary>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        [CanBeNull]
-        public static MethodTraceCallStatusAttribute GetAttribute(MethodBase method)
-        {
-            return !IsRegistered(method) ? null : _attributes[method];
         }
     }
 }

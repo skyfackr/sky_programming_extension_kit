@@ -26,7 +26,7 @@ namespace SPEkit.UnitTestExtension
             session.StartTime = DateTime.UtcNow;
             session.Status = TraceStatus.Running;
             session.Arguments = args.Arguments.ToArray();
-            session.Stack = new StackTrace();
+            session.Stack = new StackTrace(1,true);
 
             session._stopwatch.Reset();
             session._stopwatch.Start();
@@ -98,6 +98,7 @@ namespace SPEkit.UnitTestExtension
         {
             base.RuntimeInitialize(method);
             Method = method;
+            _registerMe();
         }
     }
 }

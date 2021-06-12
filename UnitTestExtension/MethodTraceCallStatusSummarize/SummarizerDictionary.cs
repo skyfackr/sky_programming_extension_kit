@@ -46,16 +46,16 @@ namespace SPEkit.UnitTestExtension
             return objFather == null ? Array.Empty<MethodBase>() : GetSummarizer(objFather);
         }
 
-        /// <inheritdoc cref="GetSummarizer(System.Type)" />
-        public static MethodBase[] GetSummarizer(PropertyInfo obj)
-        {
-            if (!MethodTraceCallStatusAttribute.IsRegistered(obj)) return Array.Empty<MethodBase>();
-            
-            var objFather = obj.DeclaringType;
-            while (objFather is {IsClass: false}) objFather = objFather.DeclaringType;
+        ///// <inheritdoc cref="GetSummarizer(System.Type)" />
+        //public static MethodBase[] GetSummarizer(PropertyInfo obj)
+        //{
+        //    if (!MethodTraceCallStatusAttribute.IsRegistered(obj)) return Array.Empty<MethodBase>();
 
-            return objFather == null ? Array.Empty<MethodBase>() : GetSummarizer(objFather);
-        }
+        //    var objFather = obj.DeclaringType;
+        //    while (objFather is { IsClass: false }) objFather = objFather.DeclaringType;
+
+        //    return objFather == null ? Array.Empty<MethodBase>() : GetSummarizer(objFather);
+        //}
 
         /// <summary>
         ///     返回方法中注册的<see cref="MethodTraceCallStatusSummarizeAttribute" />已声明的可处理类型
@@ -94,12 +94,14 @@ namespace SPEkit.UnitTestExtension
         ///     获取此方法所拥有的<see cref="MethodTraceCallStatusSummarizeAttribute" />，如果未注册则返回null
         /// </summary>
         /// <param name="method"></param>
+        /// <exception cref="AttributeNotRegisterException"></exception>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         [CanBeNull]
         public static MethodTraceCallStatusSummarizeAttribute GetAttribute(MethodBase method)
         {
-            return !_attributes.ContainsKey(method) ? null : _attributes[method];
+            return (!_attributes.ContainsKey(method) ? null : _attributes[method]) ??
+                   throw new AttributeNotRegisterException(nameof(MethodTraceCallStatusSummarizeAttribute));
         }
     }
 }

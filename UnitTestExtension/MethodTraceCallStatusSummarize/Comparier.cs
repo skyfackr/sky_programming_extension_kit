@@ -23,7 +23,12 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return HashCode.Combine(base.GetHashCode(), _ignoreThisType, _includeExtraTypes, _method);
+            var baseHash = HashCode.Combine(base.GetHashCode(), _ignoreThisType, _method);
+            var hash = new HashCode();
+            hash.Add(baseHash);
+            foreach (var type in _includeExtraTypes) hash.Add(type);
+
+            return hash.ToHashCode();
         }
 
         /// <summary>

@@ -193,6 +193,9 @@
         <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Equals(System.Object)">
             <inheritdoc cref="M:System.Object.Equals(System.Object)" />
         </member>
+        <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetHashCode">
+            <inheritdoc />
+        </member>
         <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinListAsync">
             <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/>
         </member>

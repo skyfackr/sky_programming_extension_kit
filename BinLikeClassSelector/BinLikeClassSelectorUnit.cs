@@ -262,5 +262,11 @@ namespace SPEkit.BinLikeClassSelector
             if (obj is long unitLong) return GetBin().Equals(unitLong);
             return false;
         }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(base.GetHashCode(), _binObject);
+        }
     }
 }

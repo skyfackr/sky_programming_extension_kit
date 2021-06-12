@@ -122,9 +122,38 @@ namespace SPEkit.UnitTestExtension
 
                 writer.WritePropertyName(ResolveName("Stack", resolver));
                 if (session.Stack == null)
+                {
                     writer.WriteNull();
+                }
                 else
-                    writer.WriteValue(session.Stack.ToString());
+                    //writer.WriteValue(session.Stack.ToString());
+                {
+                    writer.WriteStartArray();
+                    //Trace.WriteLine(session.Stack.ToString());
+                    foreach (var frame in session.Stack.GetFrames())
+                    {
+                        writer.WriteStartObject();
+                        writer.WritePropertyName(ResolveName("MethodName", resolver));
+                        var method = frame.GetMethod();
+                        if (method == null)
+                            writer.WriteNull();
+                        else
+                            writer.WriteValue(method.ToString());
+                        writer.WritePropertyName(ResolveName("FileName", resolver));
+                        var file = frame.GetFileName();
+                        if (file == null)
+                            writer.WriteNull();
+                        else
+                            writer.WriteValue(file);
+                        writer.WritePropertyName(ResolveName("Line", resolver));
+                        writer.WriteValue(frame.GetFileLineNumber());
+                        writer.WritePropertyName(ResolveName("Column", resolver));
+                        writer.WriteValue(frame.GetFileColumnNumber());
+                        writer.WriteEndObject();
+                    }
+
+                    writer.WriteEndArray();
+                }
 
                 #endregion
 

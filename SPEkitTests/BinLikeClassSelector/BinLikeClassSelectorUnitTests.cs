@@ -28,7 +28,7 @@ namespace SPEkit.BinLikeClassSelector.Tests
         }
 
         [ClassInitialize]
-        public void Init()
+        public static void Init(TestContext unused)
         {
             Array.Sort(_testBinArray);
         }

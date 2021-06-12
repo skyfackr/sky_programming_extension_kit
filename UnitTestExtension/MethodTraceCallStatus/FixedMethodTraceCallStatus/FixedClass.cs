@@ -22,7 +22,7 @@ namespace SPEkit.UnitTestExtension
         /// <summary>
         ///     被定义的属性
         /// </summary>
-        [JsonProperty] public readonly Attribute[] CustomAttributes;
+        [JsonProperty] public readonly Attribute[]? CustomAttributes;
 
 
         /// <summary>
@@ -33,12 +33,12 @@ namespace SPEkit.UnitTestExtension
         /// <summary>
         ///     代表方法的<see cref="MethodBase" />
         /// </summary>
-        public readonly MethodBase Method;
+        public readonly MethodBase? Method;
 
         /// <summary>
         ///     方法名
         /// </summary>
-        [JsonProperty] public readonly string Name;
+        [JsonProperty] public readonly string? Name;
 
         /// <summary>
         ///     一个数组，各自代表方法参数类型的string（如果存在）
@@ -55,7 +55,7 @@ namespace SPEkit.UnitTestExtension
         /// <summary>
         ///     返回类型的string
         /// </summary>
-        [JsonProperty] public readonly string ReturnTypeName;
+        [JsonProperty] public readonly string? ReturnTypeName;
 
         /// <summary>
         ///     所有的跟踪会话的保存信息，其元素在该类创建后将不变，但各个会话状态可能由于程序运行而改变
@@ -71,6 +71,7 @@ namespace SPEkit.UnitTestExtension
         {
             Sessions = origin.GetSessions().ToDictionary(pair => pair.Key, pair => pair.Value);
             Method = origin.Method;
+            if (Method == null) return;
             Name = Method.Name;
             CustomAttributes = Method.GetCustomAttributes().ToArray();
             ParentTypeName = Method.DeclaringType?.Name;
