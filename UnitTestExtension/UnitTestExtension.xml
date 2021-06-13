@@ -480,5 +480,37 @@
         <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToString">
             <inheritdoc />
         </member>
+        <member name="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter">
+            <summary>
+                当前<see cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly" />使用的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实现
+            </summary>
+            <remarks>默认为<see cref="T:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter" /></remarks>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly">
+            <summary>
+                通过<see cref="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter" />进行字符串转换
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.IReadFriendlyConverter">
+            <summary>
+                实现了可以将<see cref="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus" />转换为自定义字符串的方法的接口
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.IReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <summary>
+                此方法可以实现将<see cref="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus" />转为字符串
+            </summary>
+            <param name="me"></param>
+            <returns></returns>
+        </member>
+        <member name="T:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter">
+            <summary>
+                默认的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实现
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+            <inheritdoc />
+        </member>
     </members>
 </doc>

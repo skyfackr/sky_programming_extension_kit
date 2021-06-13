@@ -22,7 +22,7 @@ namespace SPEkit.UnitTestExtension
         /// <summary>
         ///     被定义的属性
         /// </summary>
-        [JsonProperty] public readonly Attribute[]? CustomAttributes;
+        [JsonProperty] public readonly Attribute[] CustomAttributes = Array.Empty<Attribute>();
 
 
         /// <summary>
@@ -38,24 +38,24 @@ namespace SPEkit.UnitTestExtension
         /// <summary>
         ///     方法名
         /// </summary>
-        [JsonProperty] public readonly string? Name;
+        [JsonProperty] public readonly string Name = string.Empty;
 
         /// <summary>
         ///     一个数组，各自代表方法参数类型的string（如果存在）
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly string[]? ParametersTypeName;
+        public readonly string[] ParametersTypeName = Array.Empty<string>();
 
         /// <summary>
         ///     代表定义此方法的类的类型的string（如果存在）
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly string? ParentTypeName;
+        public readonly string ParentTypeName = string.Empty;
 
         /// <summary>
         ///     返回类型的string
         /// </summary>
-        [JsonProperty] public readonly string? ReturnTypeName;
+        [JsonProperty] public readonly string ReturnTypeName = string.Empty;
 
         /// <summary>
         ///     所有的跟踪会话的保存信息，其元素在该类创建后将不变，但各个会话状态可能由于程序运行而改变
@@ -74,7 +74,7 @@ namespace SPEkit.UnitTestExtension
             if (Method == null) return;
             Name = Method.Name;
             CustomAttributes = Method.GetCustomAttributes().ToArray();
-            ParentTypeName = Method.DeclaringType?.Name;
+            ParentTypeName = Method.DeclaringType?.Name ?? string.Empty;
             MetaDataToken = Method.MetadataToken;
             ReturnTypeName = ((MethodInfo) Method).ReturnType.ToString();
             ParametersTypeName = (from param in Method.GetParameters()

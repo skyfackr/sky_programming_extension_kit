@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
-
+//修复全部await没有configure的问题
 
 namespace SPEkit.BinLikeClassSelector
 {
