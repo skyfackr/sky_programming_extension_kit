@@ -197,13 +197,13 @@
             <inheritdoc />
         </member>
         <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinListAsync">
-            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList"/>
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinList" />
         </member>
         <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArrayAsync">
-            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArray"/>
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.GetValidBinArray" />
         </member>
         <member name="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.MatchAsync(System.Int64)">
-            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)"/>
+            <inheritdoc cref="M:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit.Match(System.Int64)" />
         </member>
     </members>
 </doc>

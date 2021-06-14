@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SPEkit.UnitTestExtension
@@ -10,18 +11,15 @@ namespace SPEkit.UnitTestExtension
     public sealed partial class FixedMethodTraceCallStatus
     {
         /// <summary>
-        ///     当前<see cref="ToReadFriendly()" />使用的<see cref="IReadFriendlyConverter" />实现
+        ///     当前<see cref="ToReadFriendly(int?)" />使用的<see cref="IReadFriendlyConverter" />实现
         /// </summary>
         /// <remarks>默认为<see cref="DefaultReadFriendlyConverter" /></remarks>
         public static IReadFriendlyConverter Converter { get; private set; } = new DefaultReadFriendlyConverter();
 
-        /// <summary>
-        ///     通过<see cref="Converter" />进行字符串转换
-        /// </summary>
-        /// <returns></returns>
-        public string ToReadFriendly()
+
+        public string ToReadFriendly(int? maxExceptionIndex = null)
         {
-            return Converter.Convert(this);
+            return Converter.Convert(this, maxExceptionIndex);
         }
 
         public void SetConverter(IReadFriendlyConverter converter)
@@ -43,17 +41,18 @@ namespace SPEkit.UnitTestExtension
             Converter = Activator.CreateInstance(converterType, false) as IReadFriendlyConverter;
         }
 
-        public string ToReadFriendly<TConverter>() where TConverter : IReadFriendlyConverter, new()
+        public string ToReadFriendly<TConverter>(int? maxExceptionIndex = null)
+            where TConverter : IReadFriendlyConverter, new()
         {
-            return new TConverter().Convert(this);
+            return new TConverter().Convert(this, maxExceptionIndex);
         }
 
-        public string ToReadFriendly(IReadFriendlyConverter converter)
+        public string ToReadFriendly(IReadFriendlyConverter converter, int? maxExceptionIndex = null)
         {
-            return converter.Convert(this);
+            return converter.Convert(this, maxExceptionIndex);
         }
 
-        public string ToReadFriendly(Type converterType)
+        public string ToReadFriendly(Type converterType, int? maxExceptionIndex = null)
         {
             if (!converterType.IsAssignableTo(typeof(IReadFriendlyConverter)))
                 throw new ArgumentException(
@@ -61,7 +60,7 @@ namespace SPEkit.UnitTestExtension
             if (Activator.CreateInstance(converterType, false) is not IReadFriendlyConverter converter)
                 throw new ArgumentException(
                     $"Cannot create {converterType} instance as {nameof(IReadFriendlyConverter)}");
-            return converter.Convert(this);
+            return converter.Convert(this, maxExceptionIndex);
         }
     }
 
@@ -83,14 +82,12 @@ namespace SPEkit.UnitTestExtension
         }
 
         /// <inheritdoc />
-        public string Convert(FixedMethodTraceCallStatus me)
+        public string Convert(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null)
         {
-            //throw new NotImplementedException();
-            //写默认实现
             //写单元测试
             var ans = new StringBuilder();
             ans.AppendLine("***************TRACE-START***************");
-            var sfTask = Task.Run(() => SessionsFormat(me));
+            var sfTask = Task.Run(() => SessionsFormat(me, maxExceptionIndex));
             ans.Append($"Method:{me.Name}(");
             if (me.ParametersTypeName.Any()) ans.AppendJoin(",", me.ParametersTypeName);
 
@@ -115,19 +112,38 @@ namespace SPEkit.UnitTestExtension
             return ans.ToString();
         }
 
-        private static async Task<string> SessionsFormat(FixedMethodTraceCallStatus me)
+        /// <inheritdoc />
+        public async Task<string> ConvertAsync(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null,
+            CancellationToken? token = null)
+        {
+            return await Task.Run(() => Convert(me, maxExceptionIndex), token ?? CancellationToken.None);
+        }
+
+        private static async Task<string> SessionsFormat(FixedMethodTraceCallStatus me, int? maxExceptionIndex)
         {
             if (!me.Sessions.Any()) return "There are 0 sessions.";
             var ans = new StringBuilder();
             ans.AppendLine($"There are {me.Sessions.Count} sessions.");
-            throw new NotImplementedException();
+
+            var sessions = (from session in me.Sessions orderby session.Value.StartTime select session).ToArray();
+            var tasks = new Task<string>[sessions.Length];
+            for (var i = 1; i <= sessions.Length; i++)
+            {
+                var i1 = i;
+                tasks[i - 1] = Task.Run(() => OneSessionFormat(sessions[i1 - 1], i1, maxExceptionIndex));
+            }
+
+            foreach (var s in await Task.WhenAll(tasks)) ans.AppendLine(s);
+
+            return ans.ToString();
         }
 
         private static string OneSessionFormat(KeyValuePair<object, MethodTraceCallStatusAttribute.CallSession> one,
-            int index)
+            int index, int? maxExceptionIndex)
         {
             var ans = new StringBuilder();
             ans.AppendLine($"┍Session #{index} KeyToken:{one.Key.GetHashCode()}");
+
             var data = one.Value;
             if (data.Arguments.Any()) ans.AppendLine($"|Arguments:[{string.Join(",", data.Arguments)}]");
             else
@@ -152,19 +168,64 @@ namespace SPEkit.UnitTestExtension
 
             if (data.exce == null) ans.AppendLine("|No Exception.");
             else
-                foreach (var s in ExceptionFormatter(data.exce, 0)
+                foreach (var s in StartExceptionFormatter(data.exce, maxExceptionIndex)
                     .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                 {
                     ans.Append('|');
                     ans.AppendLine(s);
                 }
 
-            throw new NotImplementedException();
+            var stackMaker = from frame in data.Stack.GetFrames().AsParallel().AsOrdered()
+                select
+                    $"|+at {frame.GetMethod()?.Name ?? "<UNKNOWN FUNC>"} in {frame.GetFileName() ?? "<UNKNOWN FILE>"} ({frame.GetFileLineNumber()},{frame.GetFileColumnNumber()})";
+            ans.AppendLine("|+Stack:");
+            foreach (var frame in stackMaker) ans.AppendLine(frame);
+            ans.AppendLine($"┕Session #{index} END");
+            return ans.ToString();
         }
 
-        private static string ExceptionFormatter(Exception exc, int index)
+        private static string ExceptionFormatter(Exception exc, int index, int maxExceptionIndex)
         {
-            throw new NotImplementedException();
+            var ans = new StringBuilder();
+            ans.AppendLine($"*Exception:{exc}");
+            ans.AppendLine($"*Message: {exc.Message}");
+            ans.AppendLine($"*Source: {exc.Source ?? "null"}");
+            var trace = exc.StackTrace?.Trim().Split(Environment.NewLine,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (trace == null || !trace.Any())
+            {
+                ans.AppendLine("*-No stack trace data.");
+            }
+            else
+            {
+                ans.AppendLine("*-=Trace start");
+                foreach (var s in trace) ans.AppendLine($"*-{s}");
+                ans.AppendLine("*-=Trace end");
+            }
+
+            if (exc.InnerException == null)
+            {
+                ans.AppendLine("*No inner exception");
+            }
+            else
+            {
+                if (index >= maxExceptionIndex)
+                    ans.AppendLine($"*Inner exception recursion limit reached:{maxExceptionIndex}");
+                else
+                    foreach (var inner in ExceptionFormatter(exc, index + 1, maxExceptionIndex)
+                        .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        ans.Append('*');
+                        ans.AppendLine(inner);
+                    }
+            }
+
+            return ans.ToString();
+        }
+
+        private static string StartExceptionFormatter(Exception exc, int? maxExceptionIndex)
+        {
+            return ExceptionFormatter(exc, 0, maxExceptionIndex ?? _MAX_EXCEPTION_WARP_INDEX);
         }
     }
 }
