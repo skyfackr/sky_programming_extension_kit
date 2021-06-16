@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 #nullable enable
@@ -90,6 +91,12 @@ namespace SPEkit.UnitTestExtension
             return JsonConvert.SerializeObject(this);
         }
 
+        /// <inheritdoc cref="ToJson()" />
+        public async Task<string> ToJsonAsync()
+        {
+            return await Task.Run(ToJson);
+        }
+
         /// <summary>
         ///     json化
         /// </summary>
@@ -98,6 +105,12 @@ namespace SPEkit.UnitTestExtension
         public string ToJson(Formatting formatting)
         {
             return JsonConvert.SerializeObject(this, formatting);
+        }
+
+        /// <inheritdoc cref="ToJson(Formatting)" />
+        public async Task<string> ToJsonAsync(Formatting formatting)
+        {
+            return await Task.Run(() => ToJson(formatting));
         }
 
         /// <inheritdoc />

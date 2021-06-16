@@ -22,6 +22,11 @@ namespace SPEkit.UnitTestExtension
             return Converter.Convert(this, maxExceptionIndex);
         }
 
+        public async Task<string> ToReadFriendlyAsync(int? maxExceptionIndex = null)
+        {
+            return await Converter.ConvertAsync(this, maxExceptionIndex);
+        }
+
         public void SetConverter(IReadFriendlyConverter converter)
         {
             Converter = converter;
@@ -34,11 +39,7 @@ namespace SPEkit.UnitTestExtension
 
         public void SetConverter(Type converterType)
         {
-            if (!converterType.IsAssignableTo(typeof(IReadFriendlyConverter)))
-                throw new ArgumentException(
-                    $"{nameof(converterType)} should be derived from ${nameof(IReadFriendlyConverter)} but got type {converterType}");
-
-            Converter = Activator.CreateInstance(converterType, false) as IReadFriendlyConverter;
+            Converter = _createConverter(converterType);
         }
 
         public string ToReadFriendly<TConverter>(int? maxExceptionIndex = null)
@@ -47,12 +48,34 @@ namespace SPEkit.UnitTestExtension
             return new TConverter().Convert(this, maxExceptionIndex);
         }
 
+        public async Task<string> ToReadFriendlyAsync<TConverter>(int? maxExceptionIndex = null)
+            where TConverter : IReadFriendlyConverter, new()
+        {
+            return await new TConverter().ConvertAsync(this, maxExceptionIndex);
+        }
+
         public string ToReadFriendly(IReadFriendlyConverter converter, int? maxExceptionIndex = null)
         {
             return converter.Convert(this, maxExceptionIndex);
         }
 
+        public async Task<string> ToReadFriendlyAsync(IReadFriendlyConverter converter, int? maxExceptionIndex = null)
+        {
+            return await converter.ConvertAsync(this, maxExceptionIndex);
+        }
+
         public string ToReadFriendly(Type converterType, int? maxExceptionIndex = null)
+        {
+            var converter = _createConverter(converterType);
+            return converter.Convert(this, maxExceptionIndex);
+        }
+
+        public async Task<string> ToReadFriendlyAsync(Type converterType, int? maxExceptionIndex = null)
+        {
+            return await _createConverter(converterType).ConvertAsync(this, maxExceptionIndex);
+        }
+
+        private IReadFriendlyConverter _createConverter(Type converterType)
         {
             if (!converterType.IsAssignableTo(typeof(IReadFriendlyConverter)))
                 throw new ArgumentException(
@@ -60,7 +83,7 @@ namespace SPEkit.UnitTestExtension
             if (Activator.CreateInstance(converterType, false) is not IReadFriendlyConverter converter)
                 throw new ArgumentException(
                     $"Cannot create {converterType} instance as {nameof(IReadFriendlyConverter)}");
-            return converter.Convert(this, maxExceptionIndex);
+            return converter;
         }
     }
 
@@ -69,15 +92,16 @@ namespace SPEkit.UnitTestExtension
     /// </summary>
     public sealed class DefaultReadFriendlyConverter : IReadFriendlyConverter
     {
-        private static int _MAX_EXCEPTION_WARP_INDEX = 3;
+        private static int _maxExceptionWarpIndex = 3;
 
-        public static int MAX_EXCEPTION_WARP_INDEX
+        /// <inheritdoc />
+        public int MAX_EXCEPTION_WARP_INDEX
         {
-            get => _MAX_EXCEPTION_WARP_INDEX;
+            get => _maxExceptionWarpIndex;
             set
             {
                 if (value < 1) throw new ArgumentException($"Must >=1 but got {value}");
-                _MAX_EXCEPTION_WARP_INDEX = value;
+                _maxExceptionWarpIndex = value;
             }
         }
 
@@ -119,21 +143,27 @@ namespace SPEkit.UnitTestExtension
             return await Task.Run(() => Convert(me, maxExceptionIndex), token ?? CancellationToken.None);
         }
 
-        private static async Task<string> SessionsFormat(FixedMethodTraceCallStatus me, int? maxExceptionIndex)
+        private static string SessionsFormat(FixedMethodTraceCallStatus me, int? maxExceptionIndex)
         {
             if (!me.Sessions.Any()) return "There are 0 sessions.";
             var ans = new StringBuilder();
             ans.AppendLine($"There are {me.Sessions.Count} sessions.");
 
             var sessions = (from session in me.Sessions orderby session.Value.StartTime select session).ToArray();
-            var tasks = new Task<string>[sessions.Length];
-            for (var i = 1; i <= sessions.Length; i++)
-            {
-                var i1 = i;
-                tasks[i - 1] = Task.Run(() => OneSessionFormat(sessions[i1 - 1], i1, maxExceptionIndex));
-            }
+            //var tasks = new Task<string>[sessions.Length];
+            //for (var i = 1; i <= sessions.Length; i++)
+            //{
+            //    var i1 = i;
+            //    tasks[i - 1] = Task.Run(() => OneSessionFormat(sessions[i1 - 1], i1, maxExceptionIndex));
+            //}
 
-            foreach (var s in await Task.WhenAll(tasks)) ans.AppendLine(s);
+
+            //foreach (var s in await Task.WhenAll(tasks)) ans.AppendLine(s);
+            var sessionsString = new string[sessions.Length];
+            Parallel.For(0, sessions.Length - 1,
+                index => { sessionsString[index] = OneSessionFormat(sessions[index], index + 1, maxExceptionIndex); });
+            foreach (var s in sessionsString) ans.AppendLine(s);
+
 
             return ans.ToString();
         }
@@ -225,7 +255,7 @@ namespace SPEkit.UnitTestExtension
 
         private static string StartExceptionFormatter(Exception exc, int? maxExceptionIndex)
         {
-            return ExceptionFormatter(exc, 0, maxExceptionIndex ?? _MAX_EXCEPTION_WARP_INDEX);
+            return ExceptionFormatter(exc, 0, maxExceptionIndex ?? _maxExceptionWarpIndex);
         }
     }
 }
