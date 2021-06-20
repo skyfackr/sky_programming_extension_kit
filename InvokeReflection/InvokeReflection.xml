@@ -74,6 +74,12 @@
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
         </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.InvokeAsync(System.Object,System.String)">
+            <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.Invoke(System.Object,System.String)" />
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.InvokeAsync(System.Object,System.String,System.Object[])">
+            <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.Invoke(System.Object,System.String,System.Object[])" />
+        </member>
         <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String)">
             <summary>
                 通过反射查找一个无参函数并创建其委托

@@ -470,6 +470,9 @@
             </summary>
             <returns>json格式字符串</returns>
         </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJsonAsync">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson" />
+        </member>
         <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson(Newtonsoft.Json.Formatting)">
             <summary>
                 json化
@@ -477,31 +480,108 @@
             <param name="formatting">格式定义</param>
             <returns>json格式字符串</returns>
         </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJsonAsync(Newtonsoft.Json.Formatting)">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToJson(Newtonsoft.Json.Formatting)" />
+        </member>
         <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToString">
             <inheritdoc />
         </member>
         <member name="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter">
             <summary>
-                当前<see cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly" />使用的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实现
+                当前<see cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(System.Nullable{System.Int32})" />使用的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实现
             </summary>
             <remarks>默认为<see cref="T:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter" /></remarks>
         </member>
-        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly">
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(System.Nullable{System.Int32})">
             <summary>
-                通过<see cref="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter" />进行字符串转换
+                转换为可读格式字符串
             </summary>
+            <param name="maxExceptionIndex">最大异常递归读取数</param>
             <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendlyAsync(System.Nullable{System.Int32})">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(System.Nullable{System.Int32})" />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.SetConverter(SPEkit.UnitTestExtension.IReadFriendlyConverter)">
+            <summary>
+                设置默认<see cref="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter" />
+            </summary>
+            <param name="converter">被设置的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实例</param>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.SetConverter``1">
+            <summary>
+                设置默认<see cref="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter" />
+            </summary>
+            <typeparam name="TConverter">被设置的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />类</typeparam>
+            <remarks>此重载建议在<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />类不变时使用</remarks>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.SetConverter(System.Type)">
+            <summary>
+                设置默认<see cref="P:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.Converter" />
+            </summary>
+            <param name="converterType">被设置的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />类</param>
+            <remarks>此重载仅建议在无法外部实例化类且不确定具体类的情况下使用</remarks>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly``1(System.Nullable{System.Int32})">
+            <summary>
+                转换为可读格式字符串
+            </summary>
+            <typeparam name="TConverter">转换器类</typeparam>
+            <param name="maxExceptionIndex">最大异常递归读取数</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendlyAsync``1(System.Nullable{System.Int32})">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly``1(System.Nullable{System.Int32})" />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(SPEkit.UnitTestExtension.IReadFriendlyConverter,System.Nullable{System.Int32})">
+            <summary>
+                转换为可读格式字符串
+            </summary>
+            <param name="converter">转换器类</param>
+            <param name="maxExceptionIndex">最大异常递归读取数</param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendlyAsync(SPEkit.UnitTestExtension.IReadFriendlyConverter,System.Nullable{System.Int32})">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(SPEkit.UnitTestExtension.IReadFriendlyConverter,System.Nullable{System.Int32})" />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(System.Type,System.Nullable{System.Int32})">
+            <summary>
+                转换为可读格式字符串
+            </summary>
+            <param name="converterType">转换器类</param>
+            <param name="maxExceptionIndex">最大异常递归读取数</param>
+            <exception cref="T:System.ArgumentException"></exception>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendlyAsync(System.Type,System.Nullable{System.Int32})">
+            <inheritdoc cref="M:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus.ToReadFriendly(System.Type,System.Nullable{System.Int32})" />
         </member>
         <member name="T:SPEkit.UnitTestExtension.IReadFriendlyConverter">
             <summary>
                 实现了可以将<see cref="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus" />转换为自定义字符串的方法的接口
             </summary>
         </member>
-        <member name="M:SPEkit.UnitTestExtension.IReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+        <member name="P:SPEkit.UnitTestExtension.IReadFriendlyConverter.MAX_EXCEPTION_WARP_INDEX">
+            <summary>
+                默认的最大<see cref="T:System.Exception" />递归数查询设置器，背后数据应当以静态存储
+            </summary>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.IReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,System.Nullable{System.Int32})">
             <summary>
                 此方法可以实现将<see cref="T:SPEkit.UnitTestExtension.FixedMethodTraceCallStatus" />转为字符串
             </summary>
             <param name="me"></param>
+            <param name="maxExceptionIndex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.IReadFriendlyConverter.ConvertAsync(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,System.Nullable{System.Int32},System.Nullable{System.Threading.CancellationToken})">
+            <summary>
+                <see cref="M:SPEkit.UnitTestExtension.IReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,System.Nullable{System.Int32})" />的异步重载
+            </summary>
+            <param name="me"></param>
+            <param name="maxExceptionIndex"></param>
+            <param name="token"></param>
             <returns></returns>
         </member>
         <member name="T:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter">
@@ -509,7 +589,13 @@
                 默认的<see cref="T:SPEkit.UnitTestExtension.IReadFriendlyConverter" />实现
             </summary>
         </member>
-        <member name="M:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus)">
+        <member name="P:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter.MAX_EXCEPTION_WARP_INDEX">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter.Convert(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,System.Nullable{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.UnitTestExtension.DefaultReadFriendlyConverter.ConvertAsync(SPEkit.UnitTestExtension.FixedMethodTraceCallStatus,System.Nullable{System.Int32},System.Nullable{System.Threading.CancellationToken})">
             <inheritdoc />
         </member>
     </members>

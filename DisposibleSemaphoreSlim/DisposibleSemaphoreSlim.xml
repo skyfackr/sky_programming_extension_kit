@@ -83,22 +83,22 @@
             <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release(System.Int32)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync(System.Threading.CancellationToken)">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Threading.CancellationToken)"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Threading.CancellationToken)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync(System.Int32)">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32)"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync(System.TimeSpan)">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan)"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
-            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)"/>
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)" />
         </member>
         <member name="M:SPEkit.DisposableSemaphoreSlim.DisposableSemaphoreSlim.Wait">
             <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait"/>

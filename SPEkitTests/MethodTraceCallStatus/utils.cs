@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssert;
 using JetBrains.Annotations;
 
@@ -91,6 +92,12 @@ namespace SPEkit.UnitTestExtension.Tests
             yield return 1;
             yield return 2;
         }
+
+        [MethodTraceCallStatus]
+        internal MethodBase ReadFriendlyTestFunc2()
+        {
+            return MethodBase.GetCurrentMethod();
+        }
     }
 
     public static class MethodTraceCallStatusUtils
@@ -102,5 +109,33 @@ namespace SPEkit.UnitTestExtension.Tests
             //$ var $VAR$=_extractAttribute(_getMethod($method$));
             //$ $END$
         }
+
+        [MethodTraceCallStatus]
+        internal static MethodBase ReadFriendlyTestFunc()
+        {
+            return MethodBase.GetCurrentMethod();
+        }
+    }
+
+    internal class ReadFriendlyConverterTestHelper : IReadFriendlyConverter
+    {
+        public int MAX_EXCEPTION_WARP_INDEX { get; set; } = 3;
+
+        //public readonly static string TestStr=
+        public string Convert(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null)
+        {
+            return $"{nameof(Convert)}{nameof(me)}{me}";
+        }
+
+        public Task<string> ConvertAsync(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null,
+            CancellationToken? token = null)
+        {
+            return Task.FromResult($"{nameof(ConvertAsync)}{nameof(me)}{me}");
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.All)]
+    internal class NothingAttribute : Attribute
+    {
     }
 }

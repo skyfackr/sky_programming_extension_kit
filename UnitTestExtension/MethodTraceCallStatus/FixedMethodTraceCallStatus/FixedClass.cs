@@ -94,7 +94,7 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc cref="ToJson()" />
         public async Task<string> ToJsonAsync()
         {
-            return await Task.Run(ToJson);
+            return await Task.Run(ToJson).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc cref="ToJson(Formatting)" />
         public async Task<string> ToJsonAsync(Formatting formatting)
         {
-            return await Task.Run(() => ToJson(formatting));
+            return await Task.Run(() => ToJson(formatting)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />

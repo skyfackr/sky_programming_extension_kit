@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SPEkit.InvokeReflection
 {
@@ -23,7 +24,7 @@ namespace SPEkit.InvokeReflection
             MethodInfo method;
             try
             {
-                method = t.GetMethod(methodName,Type.EmptyTypes);
+                method = t.GetMethod(methodName, Type.EmptyTypes);
             }
             catch (AmbiguousMatchException e)
             {
@@ -76,6 +77,19 @@ namespace SPEkit.InvokeReflection
             {
                 throw e.InnerException ?? e;
             }
+        }
+
+        /// <inheritdoc cref="Invoke(object,string)" />
+        public static async Task<object> InvokeAsync(object callObject, string methodName)
+        {
+            //单元测试
+            return await Task.Run(() => Invoke(callObject, methodName)).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="Invoke(object,string,object[])" />
+        public static async Task<object> InvokeAsync(object callObject, string methodName, params object[] args)
+        {
+            return await Task.Run(() => Invoke(callObject, methodName, args)).ConfigureAwait(false);
         }
     }
 }

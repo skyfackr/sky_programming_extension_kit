@@ -17,65 +17,109 @@ namespace SPEkit.UnitTestExtension
         public static IReadFriendlyConverter Converter { get; private set; } = new DefaultReadFriendlyConverter();
 
 
+        /// <summary>
+        ///     转换为可读格式字符串
+        /// </summary>
+        /// <param name="maxExceptionIndex">最大异常递归读取数</param>
+        /// <returns></returns>
         public string ToReadFriendly(int? maxExceptionIndex = null)
         {
             return Converter.Convert(this, maxExceptionIndex);
         }
 
+        /// <inheritdoc cref="ToReadFriendly(System.Nullable{int})" />
         public async Task<string> ToReadFriendlyAsync(int? maxExceptionIndex = null)
         {
-            return await Converter.ConvertAsync(this, maxExceptionIndex);
+            return await Converter.ConvertAsync(this, maxExceptionIndex).ConfigureAwait(false);
         }
 
-        public void SetConverter(IReadFriendlyConverter converter)
+        /// <summary>
+        ///     设置默认<see cref="Converter" />
+        /// </summary>
+        /// <param name="converter">被设置的<see cref="IReadFriendlyConverter" />实例</param>
+        public static void SetConverter(IReadFriendlyConverter converter)
         {
             Converter = converter;
         }
 
-        public void SetConverter<TConverter>() where TConverter : IReadFriendlyConverter, new()
+        /// <summary>
+        ///     设置默认<see cref="Converter" />
+        /// </summary>
+        /// <typeparam name="TConverter">被设置的<see cref="IReadFriendlyConverter" />类</typeparam>
+        /// <remarks>此重载建议在<see cref="IReadFriendlyConverter" />类不变时使用</remarks>
+        public static void SetConverter<TConverter>() where TConverter : IReadFriendlyConverter, new()
         {
             Converter = new TConverter();
         }
 
-        public void SetConverter(Type converterType)
+        /// <summary>
+        ///     设置默认<see cref="Converter" />
+        /// </summary>
+        /// <param name="converterType">被设置的<see cref="IReadFriendlyConverter" />类</param>
+        /// <remarks>此重载仅建议在无法外部实例化类且不确定具体类的情况下使用</remarks>
+        /// <exception cref="ArgumentException"></exception>
+        public static void SetConverter(Type converterType)
         {
-            Converter = _createConverter(converterType);
+            Converter = CreateConverter(converterType);
         }
 
+        /// <summary>
+        ///     转换为可读格式字符串
+        /// </summary>
+        /// <typeparam name="TConverter">转换器类</typeparam>
+        /// <param name="maxExceptionIndex">最大异常递归读取数</param>
+        /// <returns></returns>
         public string ToReadFriendly<TConverter>(int? maxExceptionIndex = null)
             where TConverter : IReadFriendlyConverter, new()
         {
             return new TConverter().Convert(this, maxExceptionIndex);
         }
 
+        /// <inheritdoc cref="ToReadFriendly{TConverter}(int?)" />
         public async Task<string> ToReadFriendlyAsync<TConverter>(int? maxExceptionIndex = null)
             where TConverter : IReadFriendlyConverter, new()
         {
-            return await new TConverter().ConvertAsync(this, maxExceptionIndex);
+            return await new TConverter().ConvertAsync(this, maxExceptionIndex).ConfigureAwait(false);
         }
 
+        /// <summary>
+        ///     转换为可读格式字符串
+        /// </summary>
+        /// <param name="converter">转换器类</param>
+        /// <param name="maxExceptionIndex">最大异常递归读取数</param>
+        /// <returns></returns>
         public string ToReadFriendly(IReadFriendlyConverter converter, int? maxExceptionIndex = null)
         {
             return converter.Convert(this, maxExceptionIndex);
         }
 
+        /// <inheritdoc cref="ToReadFriendly(IReadFriendlyConverter,System.Nullable{int})" />
         public async Task<string> ToReadFriendlyAsync(IReadFriendlyConverter converter, int? maxExceptionIndex = null)
         {
-            return await converter.ConvertAsync(this, maxExceptionIndex);
+            return await converter.ConvertAsync(this, maxExceptionIndex).ConfigureAwait(false);
         }
 
+        /// <summary>
+        ///     转换为可读格式字符串
+        /// </summary>
+        /// <param name="converterType">转换器类</param>
+        /// <param name="maxExceptionIndex">最大异常递归读取数</param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <returns></returns>
         public string ToReadFriendly(Type converterType, int? maxExceptionIndex = null)
         {
-            var converter = _createConverter(converterType);
+            var converter = CreateConverter(converterType);
             return converter.Convert(this, maxExceptionIndex);
         }
 
+        /// <inheritdoc cref="ToReadFriendly(Type,System.Nullable{int})" />
         public async Task<string> ToReadFriendlyAsync(Type converterType, int? maxExceptionIndex = null)
         {
-            return await _createConverter(converterType).ConvertAsync(this, maxExceptionIndex);
+            return await CreateConverter(converterType).ConvertAsync(this, maxExceptionIndex).ConfigureAwait(false);
         }
 
-        private IReadFriendlyConverter _createConverter(Type converterType)
+
+        private static IReadFriendlyConverter CreateConverter(Type converterType)
         {
             if (!converterType.IsAssignableTo(typeof(IReadFriendlyConverter)))
                 throw new ArgumentException(
@@ -108,7 +152,6 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc />
         public string Convert(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null)
         {
-            //写单元测试
             var ans = new StringBuilder();
             ans.AppendLine("***************TRACE-START***************");
             var sfTask = Task.Run(() => SessionsFormat(me, maxExceptionIndex));
@@ -121,17 +164,15 @@ namespace SPEkit.UnitTestExtension
             else
                 ans.AppendLine($"Function returns {me.ReturnTypeName}");
 
-            if (me.ParametersTypeName.Any()) ans.AppendLine($"Declared by {me.ParentTypeName}");
-            else
-                ans.AppendLine("This function have no parent. (Or cannot identify type.)");
+            ans.AppendLine(me.ParentTypeName.Any()
+                ? $"Declared by {me.ParentTypeName}"
+                : "This function have no parent. (Or cannot identify type.)");
 
-            if (me.CustomAttributes.Any())
-                ans.AppendLine(
-                    $"Custom Attributes:[{string.Join(",", from i in me.CustomAttributes select i.ToString())}]");
-            else
-                ans.AppendLine(
-                    "This function have no custom attribute. (Or cannot identify type such as PostSharp Attribute.)");
-            ans.AppendLine(sfTask.GetAwaiter().GetResult());
+            ans.AppendLine(
+                me.CustomAttributes.Any()
+                    ? $"Custom Attributes:[{string.Join(",", from i in me.CustomAttributes select i.ToString())}]"
+                    : "This function have no custom attribute. (Or cannot identify type such as PostSharp Attribute.)");
+            ans.Append(sfTask.GetAwaiter().GetResult());
             ans.AppendLine("****************TRACE-END****************");
             return ans.ToString();
         }
@@ -140,7 +181,8 @@ namespace SPEkit.UnitTestExtension
         public async Task<string> ConvertAsync(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null,
             CancellationToken? token = null)
         {
-            return await Task.Run(() => Convert(me, maxExceptionIndex), token ?? CancellationToken.None);
+            return await Task.Run(() => Convert(me, maxExceptionIndex), token ?? CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         private static string SessionsFormat(FixedMethodTraceCallStatus me, int? maxExceptionIndex)
@@ -160,9 +202,9 @@ namespace SPEkit.UnitTestExtension
 
             //foreach (var s in await Task.WhenAll(tasks)) ans.AppendLine(s);
             var sessionsString = new string[sessions.Length];
-            Parallel.For(0, sessions.Length - 1,
+            Parallel.For(0, sessions.Length,
                 index => { sessionsString[index] = OneSessionFormat(sessions[index], index + 1, maxExceptionIndex); });
-            foreach (var s in sessionsString) ans.AppendLine(s);
+            foreach (var s in sessionsString) ans.Append(s);
 
 
             return ans.ToString();
@@ -172,29 +214,22 @@ namespace SPEkit.UnitTestExtension
             int index, int? maxExceptionIndex)
         {
             var ans = new StringBuilder();
-            ans.AppendLine($"┍Session #{index} KeyToken:{one.Key.GetHashCode()}");
+            var (key, data) = one;
+            ans.AppendLine($"┍Session #{index} KeyToken:{key.GetHashCode()}");
 
-            var data = one.Value;
-            if (data.Arguments.Any()) ans.AppendLine($"|Arguments:[{string.Join(",", data.Arguments)}]");
-            else
-                ans.AppendLine("|No arguments.");
+            ans.AppendLine(data.Arguments.Any()
+                ? $"|Arguments:[{string.Join(",", data.Arguments)}]"
+                : "|No arguments.");
 
-            if (data.ReturnValue != null) ans.AppendLine($"|Return: {data.ReturnValue}");
-            else
-                ans.AppendLine("|No returns.");
+            ans.AppendLine(data.ReturnValue != null ? $"|Return: {data.ReturnValue}" : "|No returns.");
 
             ans.AppendLine($"|Session status:{Enum.GetName(data.Status)}");
             ans.Append("|┮");
-            if (data.StartTime == null) ans.AppendLine("Not start.");
-            else
-                ans.AppendLine($"Start at {data.StartTime.Value.ToLocalTime()}");
+            ans.AppendLine(data.StartTime == null ? "Not start." : $"Start at {data.StartTime.Value.ToLocalTime()}");
 
             ans.AppendLine($"||Current execution time: {data.ExcuteTime}");
             ans.Append("|┴");
-            if (data.EndTime == null)
-                ans.AppendLine("Not end.");
-            else
-                ans.AppendLine($"End at {data.EndTime.Value.ToLocalTime()}");
+            ans.AppendLine(data.EndTime == null ? "Not end." : $"End at {data.EndTime.Value.ToLocalTime()}");
 
             if (data.exce == null) ans.AppendLine("|No Exception.");
             else

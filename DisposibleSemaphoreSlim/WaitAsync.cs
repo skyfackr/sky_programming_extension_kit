@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +13,7 @@ namespace SPEkit.DisposableSemaphoreSlim
         {
             try
             {
-                await act();
+                await act().ConfigureAwait(false);
             }
             catch (TaskCanceledException e)
             {
@@ -27,72 +25,104 @@ namespace SPEkit.DisposableSemaphoreSlim
         {
             try
             {
-                return await act();
+                return await act().ConfigureAwait(false);
             }
             catch (TaskCanceledException e)
             {
                 throw new OperationCanceledException(e.ToString(), e);
             }
         }
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync()"/>
+
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync()" />
         public async Task<DisposableSemaphoreUnit> WaitAsync()
         {
-            using (await _disposeLock.ReaderLockAsync())
+            using (await _disposeLock.ReaderLockAsync().ConfigureAwait(false))
             {
                 _assertNotDisposed();
-                await _instance.WaitAsync();
+                await _instance.WaitAsync().ConfigureAwait(false);
                 return _createUnit(true);
             }
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(CancellationToken)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(CancellationToken)" />
         public async Task<DisposableSemaphoreUnit> WaitAsync(CancellationToken token)
         {
-            using (await _disposeLock.ReaderLockAsync())
+            using (await _disposeLock.ReaderLockAsync(token).ConfigureAwait(false))
             {
                 _assertNotDisposed();
-                await ConvertException((async () => await _instance.WaitAsync(token)));
+                await ConvertException(async () => await _instance.WaitAsync(token).ConfigureAwait(false))
+                    .ConfigureAwait(false);
                 return _createUnit(true);
             }
         }
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(int)"/>
+
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(int)" />
         public async Task<DisposableSemaphoreUnit> WaitAsync(int ms)
         {
-            using (await _disposeLock.ReaderLockAsync())
+            var time = new Stopwatch();
+            time.Restart();
+            //var token = new CancellationTokenSource(ms).Token;
+            using (await _disposeLock.ReaderLockAsync(new CancellationTokenSource(ms).Token).ConfigureAwait(false))
             {
                 _assertNotDisposed();
-
-                return _createUnit(await _instance.WaitAsync(ms));
+                time.Stop();
+                ms -= (int) time.ElapsedMilliseconds;
+                return ms <= 0 ? _createUnit(false) : _createUnit(await _instance.WaitAsync(ms).ConfigureAwait(false));
             }
         }
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(int,CancellationToken)"/>
+
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(int,CancellationToken)" />
         public async Task<DisposableSemaphoreUnit> WaitAsync(int ms, CancellationToken token)
         {
-            using (await _disposeLock.ReaderLockAsync())
+            var time = new Stopwatch();
+            time.Restart();
+            using (await _disposeLock
+                .ReaderLockAsync(CancellationTokenSource
+                    .CreateLinkedTokenSource(token, new CancellationTokenSource(ms).Token).Token).ConfigureAwait(false))
             {
                 _assertNotDisposed();
-
-                return _createUnit(await ConvertException(async () => await _instance.WaitAsync(ms, token)));
+                time.Stop();
+                ms -= (int) time.ElapsedMilliseconds;
+                if (ms <= 0) return _createUnit(false);
+                return _createUnit(
+                    await ConvertException(async () => await _instance.WaitAsync(ms, token).ConfigureAwait(false))
+                        .ConfigureAwait(false));
             }
         }
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan)"/>
+
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan)" />
         public async Task<DisposableSemaphoreUnit> WaitAsync(TimeSpan time)
         {
-            using (await _disposeLock.ReaderLockAsync())
+            var timer = new Stopwatch();
+            timer.Restart();
+            using (await _disposeLock.ReaderLockAsync(new CancellationTokenSource(time).Token).ConfigureAwait(false))
             {
                 _assertNotDisposed();
-
-                return _createUnit(await _instance.WaitAsync(time));
+                timer.Stop();
+                time -= TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
+                return time.Milliseconds <= 0
+                    ? _createUnit(false)
+                    : _createUnit(await _instance.WaitAsync(time).ConfigureAwait(false));
             }
         }
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan,CancellationToken)"/>
+
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan,CancellationToken)" />
         public async Task<DisposableSemaphoreUnit> WaitAsync(TimeSpan time, CancellationToken token)
         {
-            using (await _disposeLock.ReaderLockAsync())
+            var timer = new Stopwatch();
+            timer.Restart();
+            using (await _disposeLock
+                .ReaderLockAsync(CancellationTokenSource
+                    .CreateLinkedTokenSource(token, new CancellationTokenSource(time).Token).Token)
+                .ConfigureAwait(false))
             {
                 _assertNotDisposed();
-
-                return _createUnit(await ConvertException(async () => await _instance.WaitAsync(time, token)));
+                timer.Stop();
+                time -= TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
+                if (time.Milliseconds <= 0) return _createUnit(false);
+                return _createUnit(
+                    await ConvertException(async () => await _instance.WaitAsync(time, token).ConfigureAwait(false))
+                        .ConfigureAwait(false));
             }
         }
     }
