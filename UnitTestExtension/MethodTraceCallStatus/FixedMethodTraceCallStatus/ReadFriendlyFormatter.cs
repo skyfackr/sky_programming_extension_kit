@@ -152,6 +152,8 @@ namespace SPEkit.UnitTestExtension
         /// <inheritdoc />
         public string Convert(FixedMethodTraceCallStatus me, int? maxExceptionIndex = null)
         {
+            if (maxExceptionIndex is < 1)
+                throw new ArgumentException($"{nameof(maxExceptionIndex)} Must >=1 but got {maxExceptionIndex}");
             var ans = new StringBuilder();
             ans.AppendLine("***************TRACE-START***************");
             var sfTask = Task.Run(() => SessionsFormat(me, maxExceptionIndex));
@@ -187,7 +189,7 @@ namespace SPEkit.UnitTestExtension
 
         private static string SessionsFormat(FixedMethodTraceCallStatus me, int? maxExceptionIndex)
         {
-            if (!me.Sessions.Any()) return "There are 0 sessions.";
+            if (!me.Sessions.Any()) return "There are 0 sessions." + Environment.NewLine;
             var ans = new StringBuilder();
             ans.AppendLine($"There are {me.Sessions.Count} sessions.");
 
@@ -231,7 +233,7 @@ namespace SPEkit.UnitTestExtension
             ans.Append("|┴");
             ans.AppendLine(data.EndTime == null ? "Not end." : $"End at {data.EndTime.Value.ToLocalTime()}");
 
-            if (data.exce == null) ans.AppendLine("|No Exception.");
+            if (data.exce == null) ans.AppendLine("|*No Exception.");
             else
                 foreach (var s in StartExceptionFormatter(data.exce, maxExceptionIndex)
                     .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
@@ -252,32 +254,36 @@ namespace SPEkit.UnitTestExtension
         private static string ExceptionFormatter(Exception exc, int index, int maxExceptionIndex)
         {
             var ans = new StringBuilder();
-            ans.AppendLine($"*Exception:{exc}");
+            ans.AppendLine(index == 0 ? $"*Exception:{exc.GetType()}" : $"*InnerException:{exc.GetType()}");
             ans.AppendLine($"*Message: {exc.Message}");
             ans.AppendLine($"*Source: {exc.Source ?? "null"}");
             var trace = exc.StackTrace?.Trim().Split(Environment.NewLine,
                 StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             if (trace == null || !trace.Any())
             {
-                ans.AppendLine("*-No stack trace data.");
+                ans.AppendLine("*==No stack trace data.");
             }
             else
             {
-                ans.AppendLine("*-=Trace start");
-                foreach (var s in trace) ans.AppendLine($"*-{s}");
-                ans.AppendLine("*-=Trace end");
+                ans.AppendLine("*╔=Trace start");
+                foreach (var s in trace) ans.AppendLine($"*║{s}");
+                ans.AppendLine("*╚=Trace end");
             }
 
             if (exc.InnerException == null)
             {
                 ans.AppendLine("*No inner exception");
             }
+            else if (exc.InnerException.Equals(exc))
+            {
+                ans.AppendLine("*Unlimited recursion found. The InnerException is itself.");
+            }
             else
             {
                 if (index >= maxExceptionIndex)
                     ans.AppendLine($"*Inner exception recursion limit reached:{maxExceptionIndex}");
                 else
-                    foreach (var inner in ExceptionFormatter(exc, index + 1, maxExceptionIndex)
+                    foreach (var inner in ExceptionFormatter(exc.InnerException, index + 1, maxExceptionIndex)
                         .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                     {
                         ans.Append('*');

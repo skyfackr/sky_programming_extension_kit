@@ -22,6 +22,10 @@ namespace SPEkit.UnitTestExtension.Tests
             var b = MethodTraceCallStatusAttribute.GetAttribute(ReadFriendlyTestFunc2());
             Trace.WriteLine(b.ToFixed().ToJson(Formatting.Indented));
             Trace.WriteLine(b.ToFixed().ToReadFriendly());
+            Assert.ThrowsException<ArgumentException>(() =>
+                new DefaultReadFriendlyConverter().MAX_EXCEPTION_WARP_INDEX = -1);
+            new DefaultReadFriendlyConverter().MAX_EXCEPTION_WARP_INDEX.ShouldBeEqualTo(3);
+            Assert.ThrowsException<ArgumentException>(() => a.ToFixed().ToReadFriendly(-2));
         }
 
         [TestMethod]
@@ -135,7 +139,25 @@ namespace SPEkit.UnitTestExtension.Tests
         [Timeout(2000)]
         public void SpecialFuncToReadFriendlyTest()
         {
-            throw new NotImplementedException();
+            //var a = typeof(MethodTraceCallStatusAttributeTests);
+            //var b = a.GetMethod(nameof(SFTRFT_ReturnsAndParamsAndAttribute));
+            //var c = a.GetMethod(nameof(SFTRFT_ExceptionWithoutReturn));
+            //var d = a.GetMethod(nameof(RunningTestFunc));
+            SFTRFT_ReturnsAndParamsAndAttribute(1, 2).ShouldBeEqualTo(3);
+            SFTRFT_ReturnsAndParamsAndAttribute(3, 4).ShouldBeEqualTo(7);
+            Assert.ThrowsException<ArgumentException>(SFTRFT_ExceptionWithoutReturn);
+            Assert.ThrowsException<Exception>(() => SFTRFT_ExceptionWithReturn());
+            //Trace.WriteLine(0);
+            //Assert.ThrowsException<Exception>(SFTRFT_ExceptionLoop);
+            //SFTRFT_ExceptionLoop();
+            //我是呆逼
+            //Trace.WriteLine(1);
+            var m1 = _extractAttribute(_getMethod(nameof(SFTRFT_ReturnsAndParamsAndAttribute))).ToFixed();
+            var m2 = _extractAttribute(_getMethod(nameof(SFTRFT_ExceptionWithReturn))).ToFixed();
+            var m3 = _extractAttribute(_getMethod(nameof(SFTRFT_ExceptionWithoutReturn))).ToFixed();
+            var m4 = _extractAttribute(_getMethod(nameof(SFTRFT_ExceptionLoop))).ToFixed();
+            Trace.WriteLine(
+                $"{m1.ToReadFriendly()}{Environment.NewLine}{m2.ToReadFriendly()}{Environment.NewLine}{m3.ToReadFriendly()}{Environment.NewLine}{m4.ToReadFriendly()}{Environment.NewLine}{m3.ToReadFriendly(1)}");
         }
     }
 }

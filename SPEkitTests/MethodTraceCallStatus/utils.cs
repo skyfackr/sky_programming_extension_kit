@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssert;
 using JetBrains.Annotations;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace SPEkit.UnitTestExtension.Tests
 {
@@ -53,7 +54,11 @@ namespace SPEkit.UnitTestExtension.Tests
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private MethodInfo _getMethod(string name)
         {
-            return typeof(MethodTraceCallStatusAttributeTests).GetMethod(name) ?? throw new ArgumentException("无法找到函数");
+            return typeof(MethodTraceCallStatusAttributeTests).GetMethod(name) ??
+                   typeof(MethodTraceCallStatusAttributeTests).GetMethod(name, BindingFlags.Public) ??
+                   typeof(MethodTraceCallStatusAttributeTests).GetMethod(name, BindingFlags.NonPublic) ??
+                   typeof(MethodTraceCallStatusAttributeTests).GetMethod(name, BindingFlags.Static) ??
+                   throw new ArgumentException("无法找到函数");
         }
 
         [MethodTraceCallStatus]
@@ -97,6 +102,45 @@ namespace SPEkit.UnitTestExtension.Tests
         internal MethodBase ReadFriendlyTestFunc2()
         {
             return MethodBase.GetCurrentMethod();
+        }
+
+        [MethodTraceCallStatus]
+        [Timeout(1)]
+        public int SFTRFT_ReturnsAndParamsAndAttribute(int a, int b)
+        {
+            return a + b;
+        }
+
+        [MethodTraceCallStatus]
+        public int SFTRFT_ExceptionWithReturn()
+        {
+            throw new Exception("with");
+        }
+
+        [MethodTraceCallStatus]
+        public void SFTRFT_ExceptionWithoutReturn()
+        {
+            Exception a;
+            try
+            {
+                throw new Exception("without3");
+            }
+            catch (Exception e)
+            {
+                a = new Exception("without2", e);
+            }
+
+            throw new ArgumentException("without1", a);
+        }
+
+        [MethodTraceCallStatus]
+        public void SFTRFT_ExceptionLoop()
+        {
+            var a = new Exception();
+            //Trace.WriteLine(0);
+            a.SetPrivate("_innerException", a);
+            //Trace.WriteLine(1);
+            throw a;
         }
     }
 
