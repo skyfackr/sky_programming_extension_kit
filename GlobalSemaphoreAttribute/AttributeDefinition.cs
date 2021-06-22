@@ -1,17 +1,27 @@
 ﻿using System;
-using System.Data.SqlTypes;
 using PostSharp.Aspects;
+using PostSharp.Aspects.Configuration;
+using PostSharp.Aspects.Serialization;
 
 namespace SPEkit.SemaphoreSlimAttribute
 {
-    [AttributeUsage(AttributeTargets.Constructor|AttributeTargets.Delegate|AttributeTargets.Event|AttributeTargets.Field|AttributeTargets.Method|AttributeTargets.Module|AttributeTargets.Property,AllowMultiple = true,Inherited = false)]
-    public sealed partial class SlotWaitAttribute : OnMethodBoundaryAspect
+    [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
+    [AttributeUsage(
+        AttributeTargets.Constructor | AttributeTargets.Delegate | AttributeTargets.Event | AttributeTargets.Field |
+        AttributeTargets.Method | AttributeTargets.Module | AttributeTargets.Property, Inherited = false)]
+    public sealed class SlotWaitAttribute : AbstractSlot
     {
-
     }
-    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Delegate | AttributeTargets.Event | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Module | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-    public sealed partial class SlotWaitAsyncAttribute : OnMethodBoundaryAspect
-    {
 
+    [OnMethodBoundaryAspectConfiguration(SerializerType = typeof(MsilAspectSerializer))]
+    [AttributeUsage(
+        AttributeTargets.Constructor | AttributeTargets.Delegate | AttributeTargets.Event | AttributeTargets.Field |
+        AttributeTargets.Method | AttributeTargets.Module | AttributeTargets.Property, Inherited = false)]
+    public sealed class SlotWaitAsyncAttribute : AbstractSlot
+    {
+    }
+
+    public abstract partial class AbstractSlot : OnMethodBoundaryAspect
+    {
     }
 }

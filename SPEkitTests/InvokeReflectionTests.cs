@@ -1,6 +1,8 @@
 ﻿using System;
 using FluentAssert;
-using Microsoft.VisualStudio.TestTools.UnitTesting; //#define TRACETEST
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+//#define TRACETEST
 
 namespace SPEkit.InvokeReflection.Tests
 {
