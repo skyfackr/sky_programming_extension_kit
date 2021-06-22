@@ -1,9 +1,6 @@
-﻿//#define TRACETEST
-
-using System;
+﻿using System;
 using FluentAssert;
-using JetBrains.dotMemoryUnit;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting; //#define TRACETEST
 
 namespace SPEkit.InvokeReflection.Tests
 {
@@ -14,7 +11,6 @@ namespace SPEkit.InvokeReflection.Tests
 
         [TestMethod]
         [Timeout(500)]
-        
         public void MakeDelegateTestNotParam()
         {
             var m1 = InvokeReflection.MakeDelegate<Action>(_getInstance(), "Met1");
@@ -39,7 +35,7 @@ namespace SPEkit.InvokeReflection.Tests
             //i1.ShouldBeEqualTo(2);
             m2(i2).ShouldBeSameInstanceAs(ATMHuman.Met2HasParam);
             //i2.ShouldBeEqualTo(2);
-            InvokeReflection.MakeDelegate<Func<int, object>>(_getInstance(), "MetSt2",typeof(int))(1)
+            InvokeReflection.MakeDelegate<Func<int, object>>(_getInstance(), "MetSt2", typeof(int))(1)
                 .ShouldBeSameInstanceAs(ATMHuman.MetStatic2);
         }
 
@@ -49,8 +45,8 @@ namespace SPEkit.InvokeReflection.Tests
         {
             Assert.ThrowsException<ATMHuman.CallMet1NoParam>(() => InvokeReflection.Invoke(_getInstance(), "Met1"));
             InvokeReflection.Invoke(_getInstance(), "Met2").ShouldBeSameInstanceAs(ATMHuman.Met2NoParam);
-            Assert.ThrowsException<InvokeReflection.FuncNotExistsError>((() =>
-                InvokeReflection.Invoke(_getInstance(), "Met3")));
+            Assert.ThrowsException<InvokeReflection.FuncNotExistsError>(() =>
+                InvokeReflection.Invoke(_getInstance(), "Met3"));
         }
 
         [TestMethod]
@@ -64,8 +60,8 @@ namespace SPEkit.InvokeReflection.Tests
             //i1.ShouldBeEqualTo(2);
             InvokeReflection.Invoke(_getInstance(), "Met2", i2).ShouldBeSameInstanceAs(ATMHuman.Met2HasParam);
             //i2.ShouldBeEqualTo(2);
-            Assert.ThrowsException<InvokeReflection.FuncNotExistsError>((() =>
-                InvokeReflection.Invoke(_getInstance(), "Met3",1)));
+            Assert.ThrowsException<InvokeReflection.FuncNotExistsError>(() =>
+                InvokeReflection.Invoke(_getInstance(), "Met3", 1));
         }
 
         [TestMethod]
@@ -106,6 +102,34 @@ namespace SPEkit.InvokeReflection.Tests
             InvokeReflection.IsUnique(_getInstance(), "Met2", typeof(int)).ShouldBeTrue();
             InvokeReflection.IsUnique(_getInstance(), "Met3", typeof(int)).ShouldBeFalse();
             InvokeReflection.IsUnique(_getInstance(), "Met0", typeof(int)).ShouldBeTrue();
+        }
+
+        [TestMethod]
+        [Timeout(1000)]
+        public void InvokeAsyncTestNoParam()
+        {
+            Assert.ThrowsExceptionAsync<ATMHuman.CallMet1NoParam>(() =>
+                InvokeReflection.InvokeAsync(_getInstance(), "Met1"));
+            InvokeReflection.InvokeAsync(_getInstance(), "Met2").GetAwaiter().GetResult()
+                .ShouldBeSameInstanceAs(ATMHuman.Met2NoParam);
+            Assert.ThrowsExceptionAsync<InvokeReflection.FuncNotExistsError>(() =>
+                InvokeReflection.InvokeAsync(_getInstance(), "Met3"));
+        }
+
+        [TestMethod]
+        [Timeout(1000)]
+        public void InvokeAsyncTestHasParam()
+        {
+            var i1 = 1;
+            var i2 = 1;
+            Assert.ThrowsExceptionAsync<ATMHuman.CallMet1HasParam>(
+                () => InvokeReflection.InvokeAsync(_getInstance(), "Met1", i1));
+            //i1.ShouldBeEqualTo(2);
+            InvokeReflection.InvokeAsync(_getInstance(), "Met2", i2).GetAwaiter().GetResult()
+                .ShouldBeSameInstanceAs(ATMHuman.Met2HasParam);
+            //i2.ShouldBeEqualTo(2);
+            Assert.ThrowsExceptionAsync<InvokeReflection.FuncNotExistsError>(() =>
+                InvokeReflection.InvokeAsync(_getInstance(), "Met3", 1));
         }
 
         #endregion
@@ -149,14 +173,6 @@ namespace SPEkit.InvokeReflection.Tests
             {
             }
 
-            internal class CallMet1NoParam : Exception
-            {
-            }
-
-            internal class CallMet1HasParam : Exception
-            {
-            }
-
             public static object MetSt1()
             {
                 return MetStatic1;
@@ -165,6 +181,14 @@ namespace SPEkit.InvokeReflection.Tests
             public static object MetSt2(int i)
             {
                 return MetStatic2;
+            }
+
+            internal class CallMet1NoParam : Exception
+            {
+            }
+
+            internal class CallMet1HasParam : Exception
+            {
             }
         }
 

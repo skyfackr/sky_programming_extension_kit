@@ -82,7 +82,6 @@ namespace SPEkit.InvokeReflection
         /// <inheritdoc cref="Invoke(object,string)" />
         public static async Task<object> InvokeAsync(object callObject, string methodName)
         {
-            //单元测试
             return await Task.Run(() => Invoke(callObject, methodName)).ConfigureAwait(false);
         }
 
