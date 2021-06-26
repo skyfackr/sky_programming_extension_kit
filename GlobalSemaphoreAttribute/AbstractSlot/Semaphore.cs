@@ -7,9 +7,10 @@ namespace SPEkit.SemaphoreSlimAttribute
 {
     public abstract partial class AbstractSlot
     {
-        private SemaphoreSlim m_currentSemaphore;
         private readonly AsyncReaderWriterLock m_currentSemaphoreLock = new();
+        private SemaphoreSlim m_currentSemaphore;
         private volatile bool m_Initialized;
+
 
         private SemaphoreSlim CurrentSemaphore
         {
@@ -29,7 +30,6 @@ namespace SPEkit.SemaphoreSlimAttribute
             }
         }
 
-        public int CurrentCount => CurrentSemaphore.CurrentCount;
 
         protected void Initialize(SemaphoreSlim semaphore)
         {
@@ -37,9 +37,9 @@ namespace SPEkit.SemaphoreSlimAttribute
             m_Initialized = true;
         }
 
-        protected void CheckInitialized()
+        protected void AssertInitialized()
         {
-            if (!m_Initialized)
+            if (!IsInitialized())
                 throw new NotInitializedException(this);
         }
 
@@ -48,9 +48,14 @@ namespace SPEkit.SemaphoreSlimAttribute
             return CurrentSemaphore;
         }
 
+        public bool IsInitialized()
+        {
+            return m_Initialized && m_postSharpInit;
+        }
+
         protected virtual SemaphoreSlim CheckInitializedAndReturnSemaphore()
         {
-            CheckInitialized();
+            AssertInitialized();
             return GetSemaphore();
         }
 
@@ -64,6 +69,10 @@ namespace SPEkit.SemaphoreSlimAttribute
         {
             return GetSemaphore();
         }
+
+        #region Semaphore功能
+
+        public int CurrentCount => CurrentSemaphore.CurrentCount;
 
         public int Release()
         {
@@ -134,5 +143,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         {
             return CurrentSemaphore.WaitAsync(timeout, cancellationToken);
         }
+
+        #endregion
     }
 }

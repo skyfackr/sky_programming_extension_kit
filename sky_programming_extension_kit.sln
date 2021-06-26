@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormVarData", "WinFormVa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPEkitTests", "SPEkitTests\SPEkitTests.csproj", "{0E1D7BCC-1480-493D-855B-353BC78B7364}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestExtension", "UnitTestExtension\UnitTestExtension.csproj", "{C9BD60DD-04E3-4E03-8271-3CBD261133BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestExtension", "UnitTestExtension\UnitTestExtension.csproj", "{C9BD60DD-04E3-4E03-8271-3CBD261133BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CombinedSemaphore", "CombinedSemaphore\CombinedSemaphore.csproj", "{FE30ADCE-BD49-45AB-A9E2-3377916E4A3B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{C9BD60DD-04E3-4E03-8271-3CBD261133BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9BD60DD-04E3-4E03-8271-3CBD261133BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9BD60DD-04E3-4E03-8271-3CBD261133BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE30ADCE-BD49-45AB-A9E2-3377916E4A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE30ADCE-BD49-45AB-A9E2-3377916E4A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE30ADCE-BD49-45AB-A9E2-3377916E4A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE30ADCE-BD49-45AB-A9E2-3377916E4A3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

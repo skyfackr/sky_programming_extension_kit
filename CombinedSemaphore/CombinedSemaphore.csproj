@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+        <LanguageLevel>10.0</LanguageLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\code\sky_programming_extension_kit\CombinedSemaphore\CombinedSemaphore.xml</DocumentationFile>
+  </PropertyGroup>
+
+</Project>

@@ -4,8 +4,8 @@
     {
         public override string ToString()
         {
-            if (!m_Initialized) return base.ToString() + " Not Initialized.";
-            return $"{nameof(CurrentSemaphore)}: {CurrentSemaphore}";
+            if (!IsInitialized()) return base.ToString() + " Not Initialized.";
+            return $"{nameof(CurrentSemaphore)}: {CurrentSemaphore},{nameof(m_method)}:{m_method}";
         }
     }
 }
