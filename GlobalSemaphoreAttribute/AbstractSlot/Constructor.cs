@@ -18,7 +18,7 @@ namespace SPEkit.SemaphoreSlimAttribute
 
         private AbstractSlot(WaitingOption option)
         {
-            m_option = option ?? new WaitingOption();
+            Option = option ?? new WaitingOption();
         }
     }
 }

@@ -85,5 +85,10 @@ namespace SPEkit.SemaphoreSlimAttribute
         {
             return Create().SetTimeOut(time);
         }
+
+        internal WaitingOption Clone()
+        {
+            return new() {Token = Token, WaitingTimePerWait = WaitingTimePerWait};
+        }
     }
 }

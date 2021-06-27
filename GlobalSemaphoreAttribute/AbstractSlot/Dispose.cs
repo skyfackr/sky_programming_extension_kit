@@ -21,17 +21,22 @@ namespace SPEkit.SemaphoreSlimAttribute
             if (disposing) CurrentSemaphore?.Dispose();
         }
 
-        private bool CheckDisposed()
+        protected bool CheckDisposed()
         {
             try
             {
                 _ = CurrentSemaphore.AvailableWaitHandle;
-                return true;
+                return false;
             }
             catch (ObjectDisposedException)
             {
-                return false;
+                return true;
             }
+        }
+
+        public virtual bool IsDisposed()
+        {
+            return CheckDisposed();
         }
     }
 }

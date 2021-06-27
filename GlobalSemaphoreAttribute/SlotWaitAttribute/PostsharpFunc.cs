@@ -1,17 +1,25 @@
-﻿using PostSharp.Aspects;
-
-namespace SPEkit.SemaphoreSlimAttribute
+﻿namespace SPEkit.SemaphoreSlimAttribute
 {
     public sealed partial class SlotWaitAttribute
     {
-        public override void OnEntry(MethodExecutionArgs args)
+        protected override bool TryEntry()
         {
-            base.OnEntry(args);
-        }
+            var opt = Option.Clone();
+            if (opt.Token == null && opt.WaitingTimePerWait == null)
+            {
+                Wait();
+                return true;
+            }
 
-        public override void OnExit(MethodExecutionArgs args)
-        {
-            base.OnExit(args);
+            if (opt.Token != null && opt.WaitingTimePerWait == null)
+            {
+                Wait(opt.Token.Value);
+                return true;
+            }
+
+            if (opt.Token == null && opt.WaitingTimePerWait != null)
+                return Wait(opt.WaitingTimePerWait.Value);
+            return Wait(opt.WaitingTimePerWait.Value, opt.Token.Value);
         }
     }
 }

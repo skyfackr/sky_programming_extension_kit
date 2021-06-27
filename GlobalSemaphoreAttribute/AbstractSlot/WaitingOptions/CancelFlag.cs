@@ -8,6 +8,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         CancelledByToken,
         Timeout,
         Unknown,
-        MaxCountExceeded
+        MaxCountExceeded,
+        InternalError
     }
 }
