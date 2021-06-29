@@ -10,7 +10,7 @@ namespace SPEkit.BinLikeClassSelector
     ///     此模块可以用于借助二进制形式数值 <see cref="long" /> 以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
     ///     <para>该unit为最低单元，由 <see cref="BinLikeClassSelector.CreateBinLikeClassSelectorUnit" /> 创建，不得自行创建或者无参构造</para>
     /// </summary>
-    [DebuggerDisplay("{_binObject}")]
+    [DebuggerDisplay("{" + nameof(_binObject) + "}")]
     public partial class BinLikeClassSelectorUnit
     {
 #pragma warning disable CS0419 // cref 特性中有不明确的引用

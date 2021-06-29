@@ -1,7 +1,11 @@
-﻿namespace SPEkit.SemaphoreSlimAttribute
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SPEkit.SemaphoreSlimAttribute
 {
+    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     public sealed partial class SlotWaitAttribute
     {
+        /// <inheritdoc />
         protected override bool TryEntry()
         {
             var opt = Option.Clone();

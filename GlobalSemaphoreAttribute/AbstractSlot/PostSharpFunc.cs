@@ -6,6 +6,8 @@ namespace SPEkit.SemaphoreSlimAttribute
 {
     public abstract partial class AbstractSlot
     {
+        /// <exception cref="WaitCancelledOrFailedException"></exception>
+        /// <inheritdoc />
         public override void OnEntry(MethodExecutionArgs args)
         {
             base.OnEntry(args);
@@ -33,6 +35,8 @@ namespace SPEkit.SemaphoreSlimAttribute
             }
         }
 
+        /// <exception cref="WaitCancelledOrFailedException"></exception>
+        /// <inheritdoc />
         public override void OnExit(MethodExecutionArgs args)
         {
             base.OnExit(args);
@@ -60,6 +64,10 @@ namespace SPEkit.SemaphoreSlimAttribute
             }
         }
 
+        /// <summary>
+        ///     在默认<see cref="OnEntry" />代码中，通过此函数执行等待信号量逻辑
+        /// </summary>
+        /// <returns></returns>
         protected abstract bool TryEntry();
     }
 }

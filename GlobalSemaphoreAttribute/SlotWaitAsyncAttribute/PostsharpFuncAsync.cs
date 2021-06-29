@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using PostSharp.Aspects;
 
@@ -6,11 +7,14 @@ namespace SPEkit.SemaphoreSlimAttribute
 {
     public sealed partial class SlotWaitAsyncAttribute
     {
+        /// <inheritdoc />
         protected override bool TryEntry()
         {
             throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.InternalError);
         }
 
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+        [SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
         private async Task<bool> TryEntryAsync()
         {
             var opt = Option.Clone();
@@ -31,6 +35,7 @@ namespace SPEkit.SemaphoreSlimAttribute
             return await WaitAsync(opt.WaitingTimePerWait.Value, opt.Token.Value);
         }
 
+        /// <inheritdoc />
         public override async void OnEntry(MethodExecutionArgs args)
         {
             AssertInitialized();

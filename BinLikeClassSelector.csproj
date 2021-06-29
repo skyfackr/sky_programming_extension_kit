@@ -16,18 +16,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CombinedSemaphore\**" />
     <Compile Remove="DisposibleSemaphoreSlim\**" />
     <Compile Remove="GlobalSemaphoreAttribute\**" />
     <Compile Remove="InvokeReflection\**" />
     <Compile Remove="SPEkitTests\**" />
     <Compile Remove="UnitTestExtension\**" />
     <Compile Remove="WinFormVarData\**" />
+    <EmbeddedResource Remove="CombinedSemaphore\**" />
     <EmbeddedResource Remove="DisposibleSemaphoreSlim\**" />
     <EmbeddedResource Remove="GlobalSemaphoreAttribute\**" />
     <EmbeddedResource Remove="InvokeReflection\**" />
     <EmbeddedResource Remove="SPEkitTests\**" />
     <EmbeddedResource Remove="UnitTestExtension\**" />
     <EmbeddedResource Remove="WinFormVarData\**" />
+    <None Remove="CombinedSemaphore\**" />
     <None Remove="DisposibleSemaphoreSlim\**" />
     <None Remove="GlobalSemaphoreAttribute\**" />
     <None Remove="InvokeReflection\**" />

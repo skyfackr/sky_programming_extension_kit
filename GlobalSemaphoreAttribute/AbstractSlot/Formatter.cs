@@ -2,6 +2,7 @@
 {
     public abstract partial class AbstractSlot
     {
+        /// <inheritdoc />
         public override string ToString()
         {
             if (!IsInitialized()) return base.ToString() + " Not Initialized.";
