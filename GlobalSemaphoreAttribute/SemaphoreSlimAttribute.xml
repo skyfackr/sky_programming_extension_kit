@@ -1,0 +1,436 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SemaphoreSlimAttribute</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot">
+            <summary>
+                定义函数AOP式使用<see cref="T:System.Threading.SemaphoreSlim" />的基本代码
+            </summary>
+            <remarks>如继承此类实现自定义等待代码，可能需要<see cref="N:PostSharp" />库的许可证，更多问题、使用权请咨询相关公司</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryGetAbstractSlotAttribute(System.Reflection.MethodBase)">
+            <summary>
+                尝试查找<paramref name="method" />是否存在<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />衍生特性并返回，如无，返回null
+            </summary>
+            <param name="method"></param>
+            <returns></returns>
+            <remarks>以动态形式添加相关特性可能导致无法注册及生效</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.IsRegistered(System.Reflection.MethodBase)">
+            <summary>
+                检查<paramref name="method" />是否有注册<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />衍生特性
+                <para>默认检查特性是否定义的相关函数在此特性上将不可用</para>
+            </summary>
+            <param name="method"></param>
+            <returns></returns>
+            <remarks>以动态形式添加相关特性可能导致无法注册及生效</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetAbstractSlotAttribute(System.Reflection.MethodBase)">
+            <summary>
+                获取<paramref name="method" />所定义的<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />衍生特性
+            </summary>
+            <param name="method"></param>
+            <exception cref="T:SPEkit.SemaphoreSlimAttribute.MethodNotRegisteredException"></exception>
+            <returns></returns>
+            <remarks>以动态形式添加相关特性可能导致无法注册及生效</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Equals(SPEkit.SemaphoreSlimAttribute.AbstractSlot)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.op_Equality(SPEkit.SemaphoreSlimAttribute.AbstractSlot,SPEkit.SemaphoreSlimAttribute.AbstractSlot)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.op_Inequality(SPEkit.SemaphoreSlimAttribute.AbstractSlot,SPEkit.SemaphoreSlimAttribute.AbstractSlot)">
+            <summary>
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.SemaphoreEquals(SPEkit.SemaphoreSlimAttribute.AbstractSlot)">
+            <summary>
+                仅对<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />进行比较
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.MethodEquals(SPEkit.SemaphoreSlimAttribute.AbstractSlot)">
+            <summary>
+                仅对所注册的方法进行比较
+            </summary>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.#ctor">
+            <summary>
+                创建一个没有初始化的对象
+            </summary>
+            <remarks>
+                在未初始化状态下调用被注册函数将引发<see cref="T:SPEkit.SemaphoreSlimAttribute.NotInitializedException" />
+            </remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.#ctor(System.Int32,System.Int32)">
+            <summary>
+                直接新建<see cref="T:System.Threading.SemaphoreSlim" />对象进行初始化
+            </summary>
+            <param name="initialCount">初始信号量</param>
+            <param name="maxCount">最大信号量，如为负数则视为不存在</param>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.DisposeAsync">
+            <inheritdoc />
+            <remarks>
+                考虑到此类使用场景，其生命周期理应同等于应用，因此其dispose状态是可以重置的，此行为不符合规范，使用时应当注意。
+                在dispose状态下函数请求不会被<see cref="T:System.Threading.SemaphoreSlim" />等待，因此此类会处于无效状态。所有dispose请求也均为针对<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />的请求
+            </remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Dispose">
+            <inheritdoc />
+            <remarks>
+                考虑到此类使用场景，其生命周期理应同等于应用，因此其dispose状态是可以重置的，此行为不符合规范，使用时应当注意。
+                在dispose状态下函数请求不会被<see cref="T:System.Threading.SemaphoreSlim" />等待，因此此类会处于无效状态。所有dispose请求也均为针对<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />的请求
+            </remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Dispose(System.Boolean)">
+            <summary>
+                此函数将被<see cref="M:System.IDisposable.Dispose" />调用
+            </summary>
+            <param name="disposing">若为true则代表由<see cref="M:System.IDisposable.Dispose" />调用，否则是由垃圾回收器进行析构</param>
+            <remarks>由于本类并无非托管资源，因此未重写析构器，如有需要，请同时重写此函数及析构器</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CheckDisposed">
+            <summary>
+                检查<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />是否被dispose
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.IsDisposed">
+            <summary>
+                检查此特性是否处于dispose状态
+                <para>
+                    此类dispose状态由<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />的dispose状态决定，
+                    如果<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />被重设为一个未dispose的
+                    对象，此对象也将解除dispose。同理，设置被dispose的对象也会改此对象状态
+                </para>
+                <para>如果此对象处于dispose状态，所有对被注册函数的调用请求将无等待放行</para>
+            </summary>
+            <returns></returns>
+            <remarks>
+                考虑到此类使用场景，其生命周期理应同等于应用，因此其dispose状态是可以重置的，此行为不符合规范，使用时应当注意。
+                在dispose状态下函数请求不会被<see cref="T:System.Threading.SemaphoreSlim" />等待，因此此类会处于无效状态。所有dispose请求也均为针对<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />的请求
+            </remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetAssignedMethodInternal">
+            <summary>
+                内部方法，可以直接获取此对象所注册函数
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetAssignedMethod">
+            <summary>
+                获取此对象所注册函数
+            </summary>
+            <returns></returns>
+            <remarks>在派生类中，可以通过重写实现自定义功能</remarks>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CustomRuntimeInitialize(System.Reflection.MethodBase)">
+            <summary>
+                在派生类中，通过重写此函数以实现自定义初始化代码。此代码将在<see cref="T:PostSharp.Aspects.OnMethodBoundaryAspect" />的标准初始化过程中被<see cref="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.RuntimeInitialize(System.Reflection.MethodBase)" />执行
+            </summary>
+            <param name="method"></param>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.RuntimeInitialize(System.Reflection.MethodBase)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
+            <exception cref="T:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException"></exception>
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnExit(PostSharp.Aspects.MethodExecutionArgs)">
+            <exception cref="T:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException"></exception>
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryEntry">
+            <summary>
+                在默认<see cref="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnEntry(PostSharp.Aspects.MethodExecutionArgs)" />代码中，通过此函数执行等待信号量逻辑
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Initialize(System.Threading.SemaphoreSlim)">
+            <summary>
+                设置<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />同时初始化，任何修改<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />为非null值的行为均应当经过此函数
+            </summary>
+            <param name="semaphore"></param>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.AssertInitialized">
+            <summary>
+                检查是否初始化，没有的话丢异常
+            </summary>
+            <exception cref="T:SPEkit.SemaphoreSlimAttribute.NotInitializedException"></exception>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetSemaphore">
+            <summary>
+                内部方法，获取<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.IsInitialized">
+            <summary>
+                检查此对象是否处于已完成初始化状态
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CheckInitializedAndReturnSemaphore">
+            <summary>
+                内部方法，可快速实现检查是否初始化，没初始化丢异常，初始化了返回<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.SetSemaphore(System.Threading.SemaphoreSlim)">
+            <summary>
+                设置<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />
+            </summary>
+            <param name="semaphore">待设置对象</param>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.UnsafeGetCurrentSemaphore">
+            <summary>
+                直接获取当前设置的<see cref="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentSemaphore" />实例
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.CurrentCount">
+            <inheritdoc cref="P:System.Threading.SemaphoreSlim.CurrentCount" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Release">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Release(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release(System.Int32)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Wait(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)" />
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.AbstractSlot.Option">
+            <summary>
+                获取当前的等待时配置
+            </summary>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.AbstractSlotEx">
+            <summary>
+                用于向<see cref="T:System.Reflection.MethodBase" />注入扩展方法
+            </summary>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlotEx.GetAbstractSlotAttribute(System.Reflection.MethodBase)">
+            <inheritdoc cref="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.GetAbstractSlotAttribute(System.Reflection.MethodBase)" />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlotEx.TryGetAbstractSlotAttribute(System.Reflection.MethodBase)">
+            <inheritdoc cref="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryGetAbstractSlotAttribute(System.Reflection.MethodBase)" />
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.CancelFlag">
+            <summary>
+                标记取消或运行失败原因
+            </summary>
+        </member>
+        <member name="F:SPEkit.SemaphoreSlimAttribute.CancelFlag.CancelledByToken">
+            <summary>
+                被<see cref="T:System.Threading.CancellationToken" />取消等待
+            </summary>
+        </member>
+        <member name="F:SPEkit.SemaphoreSlimAttribute.CancelFlag.Timeout">
+            <summary>
+                超时导致等待终止
+            </summary>
+        </member>
+        <member name="F:SPEkit.SemaphoreSlimAttribute.CancelFlag.Unknown">
+            <summary>
+                出现未知错误
+            </summary>
+            <remarks>如遇此标记错误请上报issue</remarks>
+        </member>
+        <member name="F:SPEkit.SemaphoreSlimAttribute.CancelFlag.MaxCountExceeded">
+            <summary>
+                函数退出执行信号量释放时超出最大设置，出现此错误请检查是否在其他地方出现非预期的释放
+            </summary>
+        </member>
+        <member name="F:SPEkit.SemaphoreSlimAttribute.CancelFlag.InternalError">
+            <summary>
+                出现内部错误
+            </summary>
+            <remarks>如遇此标记错误请上报issue</remarks>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.WaitingOption">
+            <summary>
+                当<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />对象执行等待时的退出动作设定
+            </summary>
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.WaitingOption.Token">
+            <summary>
+                指定等待时传入的<see cref="T:System.Threading.CancellationToken" />，如为null则忽略
+            </summary>
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.WaitingOption.WaitingTimePerWait">
+            <summary>
+                指定等待的超时时间，如为null则为无限
+            </summary>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.SetCancellationToken(System.Nullable{System.Threading.CancellationToken})">
+            <summary>
+                设置<see cref="P:SPEkit.SemaphoreSlimAttribute.WaitingOption.Token" />
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.SetTimeOut(System.Nullable{System.TimeSpan})">
+            <summary>
+                设置<see cref="P:SPEkit.SemaphoreSlimAttribute.WaitingOption.WaitingTimePerWait" />
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.Create(System.Nullable{System.Threading.CancellationToken},System.Nullable{System.TimeSpan})">
+            <summary>
+                创建实例
+            </summary>
+            <param name="token"></param>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.SetTimeOut(System.Int32)">
+            <summary>
+                指定超时
+            </summary>
+            <param name="ms"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.FromCancellationToken(System.Threading.CancellationToken)">
+            <summary>
+                指定<see cref="T:System.Threading.CancellationToken" />并返回实例
+            </summary>
+            <param name="token"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.FromMS(System.Int32)">
+            <summary>
+                指定超时毫秒数并返回实例
+            </summary>
+            <param name="ms"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.FromTimeSpan(System.TimeSpan)">
+            <summary>
+                指定超时<see cref="T:System.TimeSpan" />并返回实例
+            </summary>
+            <param name="time"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.ClearOption">
+            <summary>
+            清除当前实例的全部设定
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.SlotWaitAttribute">
+            <summary>
+                使用此特性可以使函数进入时在指定<see cref="T:System.Threading.SemaphoreSlim" />上进行同步等待
+            </summary>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAttribute.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAttribute.#ctor(System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAttribute.TryEntry">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute">
+            <summary>
+                使用此特性可以使函数进入时在指定<see cref="T:System.Threading.SemaphoreSlim" />上进行异步等待
+            </summary>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.#ctor">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.#ctor(System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.TryEntry">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.NotInitializedException">
+            <summary>
+                表示<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />未初始化
+            </summary>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.AmbiguityAssignedException">
+            <summary>
+                表示<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />正在被尝试重复注册到一个函数上
+            </summary>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.MethodNotRegisteredException">
+            <summary>
+                表示一个方法并没有被注册<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />衍生特性
+            </summary>
+        </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException">
+            <summary>
+                若被注册函数等待及退出时出错或者等待因配置被取消，则抛出此异常
+            </summary>
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException.Reasons">
+            <summary>
+                表示异常抛出原因
+            </summary>
+        </member>
+    </members>
+</doc>

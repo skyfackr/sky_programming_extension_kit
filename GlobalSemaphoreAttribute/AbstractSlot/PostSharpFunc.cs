@@ -29,6 +29,10 @@ namespace SPEkit.SemaphoreSlimAttribute
             catch (ObjectDisposedException)
             {
             }
+            catch (WaitCancelledOrFailedException)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);

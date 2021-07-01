@@ -137,5 +137,16 @@ namespace SPEkit.SemaphoreSlimAttribute
         {
             return new() {Token = Token, WaitingTimePerWait = WaitingTimePerWait};
         }
+
+        /// <summary>
+        ///     清除当前实例的全部设定
+        /// </summary>
+        /// <returns></returns>
+        public WaitingOption ClearOption()
+        {
+            Token = null;
+            WaitingTimePerWait = null;
+            return this;
+        }
     }
 }

@@ -1,18 +1,14 @@
-﻿using System.Threading;
-
-namespace SPEkit.SemaphoreSlimAttribute
+﻿namespace SPEkit.SemaphoreSlimAttribute
 {
     public sealed partial class SlotWaitAsyncAttribute
     {
         /// <inheritdoc />
-        public SlotWaitAsyncAttribute(SemaphoreSlim semaphore = null, WaitingOption option = null) : base(semaphore,
-            option)
+        public SlotWaitAsyncAttribute()
         {
         }
 
         /// <inheritdoc />
-        public SlotWaitAsyncAttribute(int initialCount, int? maxCount = null, WaitingOption option = null) : base(
-            initialCount, maxCount, option)
+        public SlotWaitAsyncAttribute(int initialCount, int maxCount = -1) : base(initialCount, maxCount)
         {
         }
     }
