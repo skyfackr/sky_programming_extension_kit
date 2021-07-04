@@ -372,7 +372,7 @@
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.WaitingOption.ClearOption">
             <summary>
-            清除当前实例的全部设定
+                清除当前实例的全部设定
             </summary>
             <returns></returns>
         </member>
@@ -405,6 +405,9 @@
             <inheritdoc />
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.OnExit(PostSharp.Aspects.MethodExecutionArgs)">
             <inheritdoc />
         </member>
         <member name="T:SPEkit.SemaphoreSlimAttribute.NotInitializedException">

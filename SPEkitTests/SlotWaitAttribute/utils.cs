@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 
 // ReSharper disable InconsistentNaming
 
@@ -15,6 +16,12 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         private static void ExcSWLogic()
         {
             SWLogic(() => { });
+        }
+
+        [SlotWait(1, 1)]
+        public static void SWMakeReleaseMaxExceed()
+        {
+            MethodBase.GetCurrentMethod().GetAbstractSlotAttribute().Release();
         }
     }
 }
