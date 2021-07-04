@@ -8,7 +8,10 @@
             <summary>
                 定义函数AOP式使用<see cref="T:System.Threading.SemaphoreSlim" />的基本代码
             </summary>
-            <remarks>如继承此类实现自定义等待代码，可能需要<see cref="N:PostSharp" />库的许可证，更多问题、使用权请咨询相关公司</remarks>
+            <remarks>如继承此类实现自定义等待代码，可能需要<see cref="N:PostSharp" />库的许可证，更多问题、使用权请咨询相关公司
+            <para>继承此类并最终实际作为特性应用的类必须应用<see cref="T:PostSharp.Aspects.Configuration.MethodInterceptionAspectConfigurationAttribute"/>特性
+            并设置相关serializer以保证其生效</para></remarks>
+            
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryGetAbstractSlotAttribute(System.Reflection.MethodBase)">
             <summary>
@@ -156,17 +159,15 @@
         <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.RuntimeInitialize(System.Reflection.MethodBase)">
             <inheritdoc />
         </member>
-        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
-            <exception cref="T:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException"></exception>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnInvoke(PostSharp.Aspects.MethodInterceptionArgs)">
             <inheritdoc />
         </member>
-        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnExit(PostSharp.Aspects.MethodExecutionArgs)">
-            <exception cref="T:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException"></exception>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnInvokeAsync(PostSharp.Aspects.MethodInterceptionArgs)">
             <inheritdoc />
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryEntry">
             <summary>
-                在默认<see cref="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.OnEntry(PostSharp.Aspects.MethodExecutionArgs)" />代码中，通过此函数执行等待信号量逻辑
+            在默认代码中，通过此函数执行等待信号量逻辑
             </summary>
             <returns></returns>
         </member>
@@ -402,12 +403,6 @@
             <inheritdoc />
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.TryEntry">
-            <inheritdoc />
-        </member>
-        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.OnEntry(PostSharp.Aspects.MethodExecutionArgs)">
-            <inheritdoc />
-        </member>
-        <member name="M:SPEkit.SemaphoreSlimAttribute.SlotWaitAsyncAttribute.OnExit(PostSharp.Aspects.MethodExecutionArgs)">
             <inheritdoc />
         </member>
         <member name="T:SPEkit.SemaphoreSlimAttribute.NotInitializedException">

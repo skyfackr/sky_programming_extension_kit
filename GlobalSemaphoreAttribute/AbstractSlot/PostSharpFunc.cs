@@ -1,77 +1,146 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 using PostSharp.Aspects;
 
 namespace SPEkit.SemaphoreSlimAttribute
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public abstract partial class AbstractSlot
     {
-        /// <exception cref="WaitCancelledOrFailedException"></exception>
         /// <inheritdoc />
-        public override void OnEntry(MethodExecutionArgs args)
+        public override void OnInvoke(MethodInterceptionArgs args)
         {
-            base.OnEntry(args);
+            //base.OnInvoke(args);
             AssertInitialized();
-            args.MethodExecutionTag = new SessionsStatus(false);
-            if (CheckDisposed()) return;
-
+            var isEntered = false;
             try
             {
-                var tag = new SessionsStatus(TryEntry());
-                args.MethodExecutionTag = tag;
-                if (!tag.IsEntered)
-                    throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
+                //进入阶段
+                try
+                {
+                    isEntered = TryEntry().WaitAndUnwrapException();
+                    if (!isEntered)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
+                    }
+                }
+                catch (OperationCanceledException e)
+                {
+                    throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.CancelledByToken,
+                        e);
+                }
+                catch (WaitCancelledOrFailedException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+
+                }
+                catch (Exception e)
+                {
+                    throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                }
+                //执行阶段
+                args.Proceed();
             }
-            catch (OperationCanceledException e)
+            finally
             {
-                throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.CancelledByToken, e);
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (WaitCancelledOrFailedException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                //退出阶段
+                if (isEntered)
+                {
+                    try
+                    {
+                        Release();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    catch (SemaphoreFullException e)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.MaxCountExceeded,
+                            e);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                    }
+                }
             }
         }
 
-        /// <exception cref="WaitCancelledOrFailedException"></exception>
         /// <inheritdoc />
-        public override void OnExit(MethodExecutionArgs args)
+        public override async Task OnInvokeAsync(MethodInterceptionArgs args)
         {
-            base.OnExit(args);
-
-            if (args.MethodExecutionTag is not SessionsStatus session)
-                throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.InternalError);
-            if (CheckDisposed()) return;
-
-            if (!session.IsEntered) return;
+            //await base.OnInvokeAsync(args);
+            AssertInitialized();
+            var isEntered = false;
             try
             {
-                Release();
+                //进入阶段
+                try
+                {
+                    isEntered = await TryEntry();
+                    if (!isEntered)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
+                    }
+                }
+                catch (OperationCanceledException e)
+                {
+                    throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.CancelledByToken,
+                        e);
+                }
+                catch (WaitCancelledOrFailedException)
+                {
+                    throw;
+                }
+                catch (ObjectDisposedException)
+                {
+
+                }
+                catch (Exception e)
+                {
+                    throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                }
+                //执行阶段
+                await args.ProceedAsync();
             }
-            catch (ObjectDisposedException)
+            finally
             {
-            }
-            catch (SemaphoreFullException e)
-            {
-                throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.MaxCountExceeded,
-                    e);
-            }
-            catch (Exception e)
-            {
-                throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                //退出阶段
+                if (isEntered)
+                {
+                    try
+                    {
+                        Release();
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    catch (SemaphoreFullException e)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.MaxCountExceeded,
+                            e);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                    }
+                }
             }
         }
 
         /// <summary>
-        ///     在默认<see cref="OnEntry" />代码中，通过此函数执行等待信号量逻辑
+        /// 在默认代码中，通过此函数执行等待信号量逻辑
         /// </summary>
         /// <returns></returns>
-        protected abstract bool TryEntry();
+        protected abstract Task<bool> TryEntry();
     }
 }

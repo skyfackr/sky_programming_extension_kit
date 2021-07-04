@@ -19,9 +19,9 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         }
 
         [SlotWait(1, 1)]
-        public static void SWMakeReleaseMaxExceed()
+        public  void SWMakeReleaseMaxExceed()
         {
-            MethodBase.GetCurrentMethod().GetAbstractSlotAttribute().Release();
+            GetType().GetMethod(nameof(SWMakeReleaseMaxExceed)).GetAbstractSlotAttribute().Release();
         }
     }
 }

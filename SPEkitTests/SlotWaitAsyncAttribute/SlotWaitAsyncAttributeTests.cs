@@ -103,7 +103,15 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.CancelledByToken);
             }
-
+            //退出释放超出限制测试
+            try
+            {
+                await SWAReleaseMaxExceed();
+            }
+            catch (WaitCancelledOrFailedException e)
+            {
+                e.Reasons.ShouldBeEqualTo(CancelFlag.MaxCountExceeded);
+            }
         }
 #pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
     }

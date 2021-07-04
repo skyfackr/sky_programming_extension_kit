@@ -19,6 +19,9 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         {
             new SlotWaitAttribute().IsInitialized().ShouldBeFalse();
             new SlotWaitAttribute(1).CurrentCount.ShouldBeEqualTo(1);
+            AbstractSlot.GetAbstractSlotAttribute(GetType().GetMethod(nameof(SWMakeReleaseMaxExceed))).CurrentCount
+                .ShouldBeEqualTo(1);
+
         }
 
         [TestMethod]
