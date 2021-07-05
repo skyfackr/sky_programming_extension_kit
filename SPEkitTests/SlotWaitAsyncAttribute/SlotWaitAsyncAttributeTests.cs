@@ -33,16 +33,11 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             //无参数测试
             var a = 0;
 #pragma warning disable 4014
-            var t1=Task.Run((async () =>
+            var t1 = Task.Run(async () =>
 #pragma warning restore 4014
             {
-
-                await SWALogic(async () =>
-
-                {
-                      a = 1;
-                  });
-            }));
+                await SWALogic(async () => { a++; });
+            });
             a.ShouldBeEqualTo(0);
             var se = AbstractSlot.GetAbstractSlotAttribute(GetType().GetMethod(nameof(SWALogic)));
             se.CurrentCount.ShouldBeEqualTo(0);
@@ -64,12 +59,14 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             {
                 Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
+                e.IsExecuted.ShouldBeFalse();
             }
+
             //单token 未取消
             var tks = new CancellationTokenSource();
             se.Option.ClearOption().SetCancellationToken(tks.Token);
             se.Release();
-            await SWALogic(async () => { a = 3; });
+            await SWALogic(async () => { a += 2; });
             await Task.Delay(150);
             a.ShouldBeEqualTo(3);
             (await se.WaitAsync(100)).ShouldBeTrue();
@@ -85,6 +82,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 {
                     Trace.WriteLine(e);
                     e.Reasons.ShouldBeEqualTo(CancelFlag.CancelledByToken);
+                    e.IsExecuted.ShouldBeFalse();
                 }
             });
             await Task.Delay(100);
@@ -102,7 +100,9 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             {
                 Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.CancelledByToken);
+                e.IsExecuted.ShouldBeFalse();
             }
+
             //退出释放超出限制测试
             try
             {
@@ -111,6 +111,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             catch (WaitCancelledOrFailedException e)
             {
                 e.Reasons.ShouldBeEqualTo(CancelFlag.MaxCountExceeded);
+                e.IsExecuted.ShouldBeTrue();
             }
         }
 #pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行

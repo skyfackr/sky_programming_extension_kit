@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using SPEkit.BinLikeClassSelector;
 
 namespace SPEkit.SemaphoreSlimAttribute
 {
@@ -35,5 +36,21 @@ namespace SPEkit.SemaphoreSlimAttribute
         /// </summary>
         /// <remarks>如遇此标记错误请上报issue</remarks>
         InternalError = 1 << 4
+    }
+
+    /// <summary>
+    ///     <see cref="CancelFlag" />扩展方法集
+    /// </summary>
+    public static class CancelFlagEx
+    {
+        /// <summary>
+        ///     可以将一个<see cref="CancelFlag" />转换为<see cref="BinLikeClassSelectorUnit" />
+        /// </summary>
+        /// <param name="me"></param>
+        /// <returns></returns>
+        public static BinLikeClassSelectorUnit GetSelector(this CancelFlag me)
+        {
+            return BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(Convert.ToInt64(me));
+        }
     }
 }

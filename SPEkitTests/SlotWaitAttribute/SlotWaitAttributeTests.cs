@@ -21,16 +21,15 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             new SlotWaitAttribute(1).CurrentCount.ShouldBeEqualTo(1);
             AbstractSlot.GetAbstractSlotAttribute(GetType().GetMethod(nameof(SWMakeReleaseMaxExceed))).CurrentCount
                 .ShouldBeEqualTo(1);
-
         }
 
         [TestMethod]
-        [Timeout(1210 + 100 + 100 + 1500 + 200 * 3 + 250+100)]
+        [Timeout(1210 + 100 + 100 + 1500 + 200 * 3 + 250 + 100)]
         public void SyncWaitingLogicTest()
         {
             //无参数
             var a = 0;
-            Task.Run(() => { SWLogic(() => { a = 1; }); });
+            Task.Run(() => { SWLogic(() => { a++; }); });
             a.ShouldBeEqualTo(0);
             var se = AbstractSlot.GetAbstractSlotAttribute(GetType().GetMethod(nameof(SWLogic)));
             se.CurrentCount.ShouldBeEqualTo(0);
@@ -52,14 +51,16 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             {
                 Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
+                e.IsExecuted.ShouldBeFalse();
             }
 
             //单token 未取消
             var tks = new CancellationTokenSource();
             se.Option.ClearOption().SetCancellationToken(tks.Token);
             se.Release();
-            ExcSWLogic();
+            SWLogic(() => { a += 2; });
             Thread.Sleep(200);
+            a.ShouldBeEqualTo(3);
             se.Wait();
             //单token 过程中取消
             var task = Task.Run(() =>
@@ -76,6 +77,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 {
                     Trace.WriteLine(e);
                     e.Reasons.ShouldBeEqualTo(CancelFlag.CancelledByToken);
+                    e.IsExecuted.ShouldBeFalse();
                 }
             });
             Thread.Sleep(100);
@@ -107,7 +109,9 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             {
                 Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.CancelledByToken);
+                e.IsExecuted.ShouldBeFalse();
             }
+
             //退出释放超出限制测试
             try
             {
@@ -116,6 +120,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             catch (WaitCancelledOrFailedException e)
             {
                 e.Reasons.ShouldBeEqualTo(CancelFlag.MaxCountExceeded);
+                e.IsExecuted.ShouldBeTrue();
             }
         }
     }

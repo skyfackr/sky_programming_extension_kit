@@ -44,15 +44,22 @@ namespace SPEkit.SemaphoreSlimAttribute
     [SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]
     public sealed class WaitCancelledOrFailedException : Exception
     {
-        internal WaitCancelledOrFailedException(MethodBase method, CancelFlag reason, Exception inner = null)
+        internal WaitCancelledOrFailedException(MethodBase method, CancelFlag reason, Exception inner = null,
+            bool isExecuted = false)
             : base($"Semaphore waiting of method {method} interrupted because:{Enum.GetName(reason)}", inner)
         {
             Reasons = reason;
+            IsExecuted = isExecuted;
         }
 
         /// <summary>
         ///     表示异常抛出原因
         /// </summary>
         public CancelFlag Reasons { get; }
+
+        /// <summary>
+        ///     表示函数是否有被调用
+        /// </summary>
+        public bool IsExecuted { get; }
     }
 }

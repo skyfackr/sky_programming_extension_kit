@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx.Synchronous;
@@ -26,9 +23,7 @@ namespace SPEkit.SemaphoreSlimAttribute
                 {
                     isEntered = TryEntry().WaitAndUnwrapException();
                     if (!isEntered)
-                    {
                         throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
-                    }
                 }
                 catch (OperationCanceledException e)
                 {
@@ -41,12 +36,12 @@ namespace SPEkit.SemaphoreSlimAttribute
                 }
                 catch (ObjectDisposedException)
                 {
-
                 }
                 catch (Exception e)
                 {
                     throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
                 }
+
                 //执行阶段
                 args.Proceed();
             }
@@ -54,7 +49,6 @@ namespace SPEkit.SemaphoreSlimAttribute
             {
                 //退出阶段
                 if (isEntered)
-                {
                     try
                     {
                         Release();
@@ -64,14 +58,15 @@ namespace SPEkit.SemaphoreSlimAttribute
                     }
                     catch (SemaphoreFullException e)
                     {
-                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.MaxCountExceeded,
-                            e);
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(),
+                            CancelFlag.MaxCountExceeded,
+                            e, true);
                     }
                     catch (Exception e)
                     {
-                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e,
+                            true);
                     }
-                }
             }
         }
 
@@ -88,9 +83,7 @@ namespace SPEkit.SemaphoreSlimAttribute
                 {
                     isEntered = await TryEntry();
                     if (!isEntered)
-                    {
                         throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
-                    }
                 }
                 catch (OperationCanceledException e)
                 {
@@ -103,12 +96,12 @@ namespace SPEkit.SemaphoreSlimAttribute
                 }
                 catch (ObjectDisposedException)
                 {
-
                 }
                 catch (Exception e)
                 {
                     throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
                 }
+
                 //执行阶段
                 await args.ProceedAsync();
             }
@@ -116,7 +109,6 @@ namespace SPEkit.SemaphoreSlimAttribute
             {
                 //退出阶段
                 if (isEntered)
-                {
                     try
                     {
                         Release();
@@ -126,19 +118,20 @@ namespace SPEkit.SemaphoreSlimAttribute
                     }
                     catch (SemaphoreFullException e)
                     {
-                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.MaxCountExceeded,
-                            e);
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(),
+                            CancelFlag.MaxCountExceeded,
+                            e, true);
                     }
                     catch (Exception e)
                     {
-                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e);
+                        throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Unknown, e,
+                            true);
                     }
-                }
             }
         }
 
         /// <summary>
-        /// 在默认代码中，通过此函数执行等待信号量逻辑
+        ///     在默认代码中，通过此函数执行等待信号量逻辑
         /// </summary>
         /// <returns></returns>
         protected abstract Task<bool> TryEntry();

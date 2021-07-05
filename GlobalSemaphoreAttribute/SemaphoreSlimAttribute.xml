@@ -306,6 +306,18 @@
             </summary>
             <remarks>如遇此标记错误请上报issue</remarks>
         </member>
+        <member name="T:SPEkit.SemaphoreSlimAttribute.CancelFlagEx">
+            <summary>
+            <see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag"/>扩展方法集
+            </summary>
+        </member>
+        <member name="M:SPEkit.SemaphoreSlimAttribute.CancelFlagEx.GetSelector(SPEkit.SemaphoreSlimAttribute.CancelFlag)">
+            <summary>
+            可以将一个<see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag"/>转换为<see cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/>
+            </summary>
+            <param name="me"></param>
+            <returns></returns>
+        </member>
         <member name="T:SPEkit.SemaphoreSlimAttribute.WaitingOption">
             <summary>
                 当<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />对象执行等待时的退出动作设定
@@ -428,6 +440,11 @@
         <member name="P:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException.Reasons">
             <summary>
                 表示异常抛出原因
+            </summary>
+        </member>
+        <member name="P:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException.IsExecuted">
+            <summary>
+            表示函数是否有被调用
             </summary>
         </member>
     </members>
