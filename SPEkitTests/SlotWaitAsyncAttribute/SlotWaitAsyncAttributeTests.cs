@@ -129,10 +129,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             tks.Cancel();
             Thread.Sleep(100);
             se.CurrentCount.ShouldBeEqualTo(1);
-            Assert.ThrowsExceptionAsync<NotSupportedException>(async () =>
-            {
-                await task;
-            });
+            Assert.ThrowsExceptionAsync<NotSupportedException>(async () => { await task; });
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -32,6 +31,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         {
             throw new AssertFailedException();
         }
+
         [SlotWaitAsync(0)]
         public static Task ASDisposedAsync()
         {

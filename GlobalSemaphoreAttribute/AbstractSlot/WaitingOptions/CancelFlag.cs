@@ -50,7 +50,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         /// <returns></returns>
         public static BinLikeClassSelectorUnit GetSelector(this CancelFlag me)
         {
-            return BinLikeClassSelectors.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(Convert.ToInt64(me));
+            return BinLikeClassSelector.CreateBinLikeClassSelectorUnit(Convert.ToInt64(me));
         }
     }
 }

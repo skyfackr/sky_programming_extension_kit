@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SPEkit.BinLikeClassSelectors
 {
     public partial class BinLikeClassSelectorUnit : IEquatable<BinLikeClassSelectorUnit>
     {
+        /// <inheritdoc />
+        public bool Equals(BinLikeClassSelectorUnit other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _binObject == other._binObject;
+        }
+
         /// <summary>
         ///     转为<see cref="string" />
         /// </summary>
@@ -35,24 +39,15 @@ namespace SPEkit.BinLikeClassSelectors
         }
 
         /// <inheritdoc />
-        public bool Equals(BinLikeClassSelectorUnit other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return _binObject == other._binObject;
-        }
-
-        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj is long unitLong) return _binObject == unitLong;
-            return obj.GetType() == this.GetType() && Equals((BinLikeClassSelectorUnit) obj);
+            return obj.GetType() == GetType() && Equals((BinLikeClassSelectorUnit) obj);
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -63,7 +58,6 @@ namespace SPEkit.BinLikeClassSelectors
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>

@@ -244,7 +244,5 @@ namespace SPEkit.BinLikeClassSelectors
 
             return false;
         }
-
-        
     }
 }

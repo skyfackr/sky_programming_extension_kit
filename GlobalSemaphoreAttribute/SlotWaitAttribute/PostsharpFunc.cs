@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace SPEkit.SemaphoreSlimAttribute
@@ -13,7 +9,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         private static readonly Task<bool> s_trueTask = Task.FromResult(true);
 
         /// <inheritdoc />
-        protected override  Task<bool> TryEntry()
+        protected override Task<bool> TryEntry()
 
         {
             var opt = Option.Clone();

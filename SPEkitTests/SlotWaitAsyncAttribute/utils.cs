@@ -33,8 +33,6 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         {
             await Task.Delay(-1, token);
             throw new NotSupportedException(nameof(SWAErrorExec));
-
-
         }
     }
 }

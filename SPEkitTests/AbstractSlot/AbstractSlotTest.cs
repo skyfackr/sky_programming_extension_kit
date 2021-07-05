@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +8,6 @@ using SPEkit.BinLikeClassSelectors;
 
 namespace SPEkit.SemaphoreSlimAttribute.Tests
 {
-    
     public partial class AbstractSlotTests
     {
         [TestMethod]
@@ -44,9 +39,9 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         [SuppressMessage("ReSharper", "IdentifierTypo")]
         public void ExecuteWithDisposedTest()
         {
-            var se= GetType().GetMethod(nameof(ASDisposed)).GetAbstractSlotAttribute();
+            var se = GetType().GetMethod(nameof(ASDisposed)).GetAbstractSlotAttribute();
             se.Option.SetTimeOut(100);
-            var task = Task.Run((() =>
+            var task = Task.Run(() =>
             {
                 try
                 {
@@ -56,9 +51,8 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 {
                     e.IsExecuted.ShouldBeFalse();
                     e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
-
                 }
-            }));
+            });
             task.WaitAndUnwrapException();
             se.IsDisposed().ShouldBeFalse();
             se.Dispose();
@@ -67,7 +61,7 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
 
             var sea = GetType().GetMethod(nameof(ASDisposedAsync)).GetAbstractSlotAttribute();
             sea.Option.SetTimeOut(100);
-            var taska = Task.Run((() =>
+            var taska = Task.Run(() =>
             {
                 try
                 {
@@ -77,9 +71,8 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 {
                     e.IsExecuted.ShouldBeFalse();
                     e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
-
                 }
-            }));
+            });
             taska.WaitAndUnwrapException();
             sea.IsDisposed().ShouldBeFalse();
             sea.Dispose();
@@ -94,7 +87,6 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             var me = GetType().GetMethod(nameof(ASMakeTimeout));
             var se = me.GetAbstractSlotAttribute();
             se.GetAssignedMethod().ShouldBeEqualTo(me);
-
         }
     }
 }

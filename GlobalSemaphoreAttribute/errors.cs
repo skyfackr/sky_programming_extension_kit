@@ -46,7 +46,9 @@ namespace SPEkit.SemaphoreSlimAttribute
     {
         internal WaitCancelledOrFailedException(MethodBase method, CancelFlag reason, Exception inner = null,
             bool isExecuted = false)
-            : base($"Semaphore waiting of method {method} interrupted because:{Enum.GetName(reason)}{(isExecuted?", This session is executed.":"")}", inner)
+            : base(
+                $"Semaphore waiting of method {method} interrupted because:{Enum.GetName(reason)}{(isExecuted ? ", This session is executed." : "")}",
+                inner)
         {
             Reasons = reason;
             IsExecuted = isExecuted;
