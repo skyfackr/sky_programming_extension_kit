@@ -8,10 +8,13 @@
             <summary>
                 定义函数AOP式使用<see cref="T:System.Threading.SemaphoreSlim" />的基本代码
             </summary>
-            <remarks>如继承此类实现自定义等待代码，可能需要<see cref="N:PostSharp" />库的许可证，更多问题、使用权请咨询相关公司
-            <para>继承此类并最终实际作为特性应用的类必须应用<see cref="T:PostSharp.Aspects.Configuration.MethodInterceptionAspectConfigurationAttribute"/>特性
-            并设置相关serializer以保证其生效</para></remarks>
-            
+            <remarks>
+                如继承此类实现自定义等待代码，可能需要<see cref="N:PostSharp" />库的许可证，更多问题、使用权请咨询相关公司
+                <para>
+                    继承此类并最终实际作为特性应用的类必须应用<see cref="T:PostSharp.Aspects.Configuration.MethodInterceptionAspectConfigurationAttribute" />特性
+                    并设置相关serializer以保证其生效
+                </para>
+            </remarks>
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryGetAbstractSlotAttribute(System.Reflection.MethodBase)">
             <summary>
@@ -167,7 +170,7 @@
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.AbstractSlot.TryEntry">
             <summary>
-            在默认代码中，通过此函数执行等待信号量逻辑
+                在默认代码中，通过此函数执行等待信号量逻辑
             </summary>
             <returns></returns>
         </member>
@@ -308,12 +311,12 @@
         </member>
         <member name="T:SPEkit.SemaphoreSlimAttribute.CancelFlagEx">
             <summary>
-            <see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag"/>扩展方法集
+                <see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag" />扩展方法集
             </summary>
         </member>
         <member name="M:SPEkit.SemaphoreSlimAttribute.CancelFlagEx.GetSelector(SPEkit.SemaphoreSlimAttribute.CancelFlag)">
             <summary>
-            可以将一个<see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag"/>转换为<see cref="T:SPEkit.BinLikeClassSelector.BinLikeClassSelectorUnit"/>
+                可以将一个<see cref="T:SPEkit.SemaphoreSlimAttribute.CancelFlag" />转换为<see cref="T:SPEkit.BinLikeClassSelectors.BinLikeClassSelectorUnit" />
             </summary>
             <param name="me"></param>
             <returns></returns>
@@ -422,7 +425,7 @@
                 表示<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />未初始化
             </summary>
         </member>
-        <member name="T:SPEkit.SemaphoreSlimAttribute.AmbiguityAssignedException">
+        <member name="T:SPEkit.SemaphoreSlimAttribute.AmbiguousAssignedException">
             <summary>
                 表示<see cref="T:SPEkit.SemaphoreSlimAttribute.AbstractSlot" />正在被尝试重复注册到一个函数上
             </summary>
@@ -444,7 +447,7 @@
         </member>
         <member name="P:SPEkit.SemaphoreSlimAttribute.WaitCancelledOrFailedException.IsExecuted">
             <summary>
-            表示函数是否有被调用
+                表示函数是否有被调用
             </summary>
         </member>
     </members>

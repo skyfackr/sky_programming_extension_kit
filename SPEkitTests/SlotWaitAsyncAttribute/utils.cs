@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 
 // ReSharper disable InconsistentNaming
@@ -25,6 +26,15 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                 GetType().GetMethod(nameof(SWAReleaseMaxExceed)).GetAbstractSlotAttribute().Release();
                 //AbstractSlot.GetAbstractSlotAttribute(me).Release();
             });
+        }
+
+        [SlotWaitAsync(1)]
+        public async Task SWAErrorExec(CancellationToken token)
+        {
+            await Task.Delay(-1, token);
+            throw new NotSupportedException(nameof(SWAErrorExec));
+
+
         }
     }
 }

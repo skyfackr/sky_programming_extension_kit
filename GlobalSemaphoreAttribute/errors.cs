@@ -17,9 +17,9 @@ namespace SPEkit.SemaphoreSlimAttribute
     /// <summary>
     ///     表示<see cref="AbstractSlot" />正在被尝试重复注册到一个函数上
     /// </summary>
-    public sealed class AmbiguityAssignedException : Exception
+    public sealed class AmbiguousAssignedException : Exception
     {
-        internal AmbiguityAssignedException(MethodBase method) : base(
+        internal AmbiguousAssignedException(MethodBase method) : base(
             $"method {method} is already assigned one attribute inherited from {nameof(AbstractSlot)}")
         {
         }
@@ -46,7 +46,7 @@ namespace SPEkit.SemaphoreSlimAttribute
     {
         internal WaitCancelledOrFailedException(MethodBase method, CancelFlag reason, Exception inner = null,
             bool isExecuted = false)
-            : base($"Semaphore waiting of method {method} interrupted because:{Enum.GetName(reason)}", inner)
+            : base($"Semaphore waiting of method {method} interrupted because:{Enum.GetName(reason)}{(isExecuted?", This session is executed.":"")}", inner)
         {
             Reasons = reason;
             IsExecuted = isExecuted;

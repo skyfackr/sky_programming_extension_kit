@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SPEkit.BinLikeClassSelector;
+using SPEkit.BinLikeClassSelectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SPEkit.BinLikeClassSelector.Tests
+namespace SPEkit.BinLikeClassSelectors.Tests
 {
     [TestClass()]
     public class BinLikeClassSelectorTests

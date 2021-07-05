@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
-namespace SPEkit.BinLikeClassSelector
+namespace SPEkit.BinLikeClassSelectors
 {
+    [SuppressMessage("ReSharper", "ClassWithVirtualMembersNeverInherited.Global")]
     public partial class BinLikeClassSelectorUnit
     {
         /// <inheritdoc cref="GetValidBinList" />

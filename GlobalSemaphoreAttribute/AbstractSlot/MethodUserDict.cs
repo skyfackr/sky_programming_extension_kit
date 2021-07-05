@@ -44,7 +44,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         private void RegisterMe(MethodBase method)
         {
             if (!s_assignedMethod.TryAdd(method, this))
-                throw new AmbiguityAssignedException(method);
+                throw new AmbiguousAssignedException(method);
             m_method = method;
         }
 

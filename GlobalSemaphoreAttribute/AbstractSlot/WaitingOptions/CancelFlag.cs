@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using SPEkit.BinLikeClassSelector;
+using SPEkit.BinLikeClassSelectors;
 
 namespace SPEkit.SemaphoreSlimAttribute
 {
@@ -50,7 +50,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         /// <returns></returns>
         public static BinLikeClassSelectorUnit GetSelector(this CancelFlag me)
         {
-            return BinLikeClassSelector.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(Convert.ToInt64(me));
+            return BinLikeClassSelectors.BinLikeClassSelector.CreateBinLikeClassSelectorUnit(Convert.ToInt64(me));
         }
     }
 }

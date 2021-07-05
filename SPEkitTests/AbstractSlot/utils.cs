@@ -1,13 +1,26 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 // ReSharper disable InconsistentNaming
 
 namespace SPEkit.SemaphoreSlimAttribute.Tests
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public partial class AbstractSlotTests
     {
         [SlotWait]
-        private static void ASNotInitializedFunc()
+        public static void ASNotInitializedFunc()
+        {
+            throw new AssertFailedException();
+        }
+
+        public static void ASNotRegister()
+        {
+
+        }
+
+        [SlotWait(0)]
+        public static void ASMakeTimeout()
         {
             throw new AssertFailedException();
         }

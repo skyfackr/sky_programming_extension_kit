@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 #nullable enable
 
-namespace SPEkit.BinLikeClassSelector
+namespace SPEkit.BinLikeClassSelectors
 {
     /// <summary>
     ///     此模块可以用于借助二进制形式数值 <see cref="long" /> 以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
@@ -245,28 +245,6 @@ namespace SPEkit.BinLikeClassSelector
             return false;
         }
 
-        /// <summary>
-        ///     转为<see cref="string" />
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return GetBin().ToString();
-        }
-
-        /// <inheritdoc cref="Object.Equals(object?)" />
-        public override bool Equals(object? obj)
-        {
-            if (obj == null) return false;
-            if (obj is BinLikeClassSelectorUnit unit) return GetBin().Equals(unit.GetBin());
-            if (obj is long unitLong) return GetBin().Equals(unitLong);
-            return false;
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(base.GetHashCode(), _binObject);
-        }
+        
     }
 }

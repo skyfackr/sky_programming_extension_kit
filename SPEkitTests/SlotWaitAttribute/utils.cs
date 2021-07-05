@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 // ReSharper disable InconsistentNaming
 
@@ -21,6 +22,13 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
         public void SWMakeReleaseMaxExceed()
         {
             GetType().GetMethod(nameof(SWMakeReleaseMaxExceed)).GetAbstractSlotAttribute().Release();
+        }
+
+        [SlotWait(1)]
+        public void SWErrorExec(CancellationToken token)
+        {
+            token.WaitHandle.WaitOne();
+            throw new NotSupportedException(nameof(SWErrorExec));
         }
     }
 }

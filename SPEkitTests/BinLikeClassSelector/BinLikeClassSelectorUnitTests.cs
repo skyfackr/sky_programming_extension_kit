@@ -5,7 +5,7 @@ using System.Linq;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace SPEkit.BinLikeClassSelector.Tests
+namespace SPEkit.BinLikeClassSelectors.Tests
 {
     [TestClass]
     public class BinLikeClassSelectorUnitTests

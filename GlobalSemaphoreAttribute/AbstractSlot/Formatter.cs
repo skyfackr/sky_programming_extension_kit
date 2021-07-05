@@ -5,8 +5,8 @@
         /// <inheritdoc />
         public override string ToString()
         {
-            if (!IsInitialized()) return base.ToString() + " Not Initialized.";
-            return $"{nameof(CurrentSemaphore)}: {CurrentSemaphore},{nameof(m_method)}:{m_method}";
+            if (!IsInitialized()) return  $"{base.ToString()}(hashcode:{GetHashCode()}) Not Initialized.";
+            return $"{nameof(CurrentCount)}:{CurrentCount},CurrentMethod:{m_method}";
         }
     }
 }

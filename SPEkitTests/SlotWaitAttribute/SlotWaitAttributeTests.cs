@@ -119,9 +119,33 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
             }
             catch (WaitCancelledOrFailedException e)
             {
+                Trace.WriteLine(e);
                 e.Reasons.ShouldBeEqualTo(CancelFlag.MaxCountExceeded);
                 e.IsExecuted.ShouldBeTrue();
             }
+        }
+
+        [TestMethod]
+        [Timeout(600)]
+        public void ErrorExecuteTest()
+        {
+            var tks = new CancellationTokenSource();
+            var se = GetType().GetMethod(nameof(SWErrorExec)).GetAbstractSlotAttribute();
+            se.CurrentCount.ShouldBeEqualTo(1);
+            var task = Task.Run((() =>
+            {
+                SWErrorExec(tks.Token);
+                //Trace.WriteLine(1);
+            }));
+            while (task.Status is TaskStatus.WaitingToRun or TaskStatus.Created) Thread.Sleep(100);
+            se.CurrentCount.ShouldBeEqualTo(0);
+            tks.Cancel();
+            Thread.Sleep(100);
+            se.CurrentCount.ShouldBeEqualTo(1);
+            Assert.ThrowsExceptionAsync<NotSupportedException>(async () =>
+            {
+                await task;
+            });
         }
     }
 }
