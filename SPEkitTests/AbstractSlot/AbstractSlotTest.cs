@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Nito.AsyncEx.Synchronous;
 using SPEkit.BinLikeClassSelectors;
 
 namespace SPEkit.SemaphoreSlimAttribute.Tests
@@ -34,6 +37,64 @@ namespace SPEkit.SemaphoreSlimAttribute.Tests
                     Convert.ToInt64(e.Reasons)
                 });
             }
+        }
+
+        [TestMethod]
+        [Timeout(1500)]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        public void ExecuteWithDisposedTest()
+        {
+            var se= GetType().GetMethod(nameof(ASDisposed)).GetAbstractSlotAttribute();
+            se.Option.SetTimeOut(100);
+            var task = Task.Run((() =>
+            {
+                try
+                {
+                    ASDisposed();
+                }
+                catch (WaitCancelledOrFailedException e)
+                {
+                    e.IsExecuted.ShouldBeFalse();
+                    e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
+
+                }
+            }));
+            task.WaitAndUnwrapException();
+            se.IsDisposed().ShouldBeFalse();
+            se.Dispose();
+            se.IsDisposed().ShouldBeTrue();
+            Assert.ThrowsException<AssertFailedException>(ASDisposed);
+
+            var sea = GetType().GetMethod(nameof(ASDisposedAsync)).GetAbstractSlotAttribute();
+            sea.Option.SetTimeOut(100);
+            var taska = Task.Run((() =>
+            {
+                try
+                {
+                    ASDisposedAsync();
+                }
+                catch (WaitCancelledOrFailedException e)
+                {
+                    e.IsExecuted.ShouldBeFalse();
+                    e.Reasons.ShouldBeEqualTo(CancelFlag.Timeout);
+
+                }
+            }));
+            taska.WaitAndUnwrapException();
+            sea.IsDisposed().ShouldBeFalse();
+            sea.Dispose();
+            sea.IsDisposed().ShouldBeTrue();
+            Assert.ThrowsExceptionAsync<AssertFailedException>(ASDisposedAsync);
+        }
+
+        [TestMethod]
+        [Timeout(150)]
+        public void MethodEqualsTest()
+        {
+            var me = GetType().GetMethod(nameof(ASMakeTimeout));
+            var se = me.GetAbstractSlotAttribute();
+            se.GetAssignedMethod().ShouldBeEqualTo(me);
+
         }
     }
 }
