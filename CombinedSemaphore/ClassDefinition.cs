@@ -1,6 +1,6 @@
-﻿namespace SPEkit.CombinedSemaphore
+﻿namespace SPEkit.CombinedSemaphore.MainClass
 {
-    public sealed class CombinedSemaphore
+    public sealed partial class CombinedSemaphore
     {
     }
 }

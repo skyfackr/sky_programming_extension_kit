@@ -9,4 +9,12 @@ namespace SPEkit.CombinedSemaphore.error
         {
         }
     }
+
+    public sealed class TypeNotSupportedException : Exception
+    {
+        internal TypeNotSupportedException(Type type)
+            : base($"Type {type} is not supported.")
+        {
+        }
+    }
 }

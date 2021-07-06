@@ -4,7 +4,8 @@ namespace SPEkit.BinLikeClassSelectors
 {
     /// <summary>
     ///     此模块可以用于借助二进制形式数值<see cref="long" />以及位运算达到极快速判断输入选项是否被选中（仅限或运算）
-    ///     <para>具体功能详见<seealso cref="BinLikeClassSelectorUnit" />
+    ///     <para>
+    ///         具体功能详见<seealso cref="BinLikeClassSelectorUnit" />
     ///         <para>此类不得直接创建或者无参构造，可使用<see cref="CreateBinLikeClassSelectorUnit" />创建或对其派生新类</para>
     ///     </para>
     /// </summary>
