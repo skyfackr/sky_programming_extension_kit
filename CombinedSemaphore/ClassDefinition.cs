@@ -1,6 +1,10 @@
-﻿namespace SPEkit.CombinedSemaphore.MainClass
+﻿using System;
+using System.Collections.Generic;
+using SPEkit.CombinedSemaphore.Unit;
+
+namespace SPEkit.CombinedSemaphore.MainClass
 {
-    public sealed partial class CombinedSemaphore
+    public sealed partial class CombinedSemaphore : IList<SemaphoreUnit>, IDisposable
     {
     }
 }

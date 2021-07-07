@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SPEkit.BinLikeClassSelectors
 {
@@ -33,6 +34,16 @@ namespace SPEkit.BinLikeClassSelectors
             }
 
             return ans;
+        }
+
+        /// <summary>
+        ///     在<paramref name="binObj" /> 上直接创建<see cref="BinLikeClassSelectorUnit" />
+        /// </summary>
+        /// <param name="binObj"></param>
+        /// <returns>一个实例化的<see cref="BinLikeClassSelectorUnit" />，同样的输入将导致输出同一个实例引用</returns>
+        public static BinLikeClassSelectorUnit CreateBinLikeClassSelectorUnit(this Enum binObj)
+        {
+            return CreateBinLikeClassSelectorUnit(Convert.ToInt64(binObj));
         }
     }
 }

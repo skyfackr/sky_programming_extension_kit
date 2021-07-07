@@ -81,7 +81,7 @@ namespace SPEkit.SemaphoreSlimAttribute
                 //进入阶段
                 try
                 {
-                    isEntered = await TryEntry();
+                    isEntered = await TryEntry().ConfigureAwait(false);
                     if (!isEntered)
                         throw new WaitCancelledOrFailedException(GetAssignedMethodInternal(), CancelFlag.Timeout);
                 }
@@ -103,7 +103,7 @@ namespace SPEkit.SemaphoreSlimAttribute
                 }
 
                 //执行阶段
-                await args.ProceedAsync();
+                await args.ProceedAsync().GetTask().ConfigureAwait(false);
             }
             finally
             {

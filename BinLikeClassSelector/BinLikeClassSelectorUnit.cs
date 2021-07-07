@@ -213,6 +213,13 @@ namespace SPEkit.BinLikeClassSelectors
             return this;
         }
 
+        /// <inheritdoc
+        ///     cref="M:SPEkit.BinLikeClassSelectors.BinLikeClassSelectorUnit.MatchDo(System.Int64,System.Action{SPEkit.BinLikeClassSelectors.BinLikeClassSelectorUnit}" />
+        public virtual BinLikeClassSelectorUnit MatchDo(Enum matchRuleCode, Action<BinLikeClassSelectorUnit> executor)
+        {
+            return MatchDo(Convert.ToInt64(matchRuleCode), executor);
+        }
+
         /// <summary>
         ///     如果 <paramref name="matchRuleCode" /> 中的二进制选中位在被选中位中均有对应（or关系），则返回 <see cerf="true" />
         ///     <para>
@@ -243,6 +250,16 @@ namespace SPEkit.BinLikeClassSelectors
             if ((matchRuleCode | _binObject) == _binObject) return true;
 
             return false;
+        }
+
+        /// <summary>
+        ///     将当前数据转为一个<typeparamref name="T" />
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public T GetEnum<T>() where T : Enum
+        {
+            return (T) Enum.ToObject(typeof(T), _binObject);
         }
     }
 }

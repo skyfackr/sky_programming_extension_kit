@@ -9,4 +9,8 @@
     <DocumentationFile>D:\code\sky_programming_extension_kit\CombinedSemaphore\CombinedSemaphore.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BinLikeClassSelector.csproj" />
+  </ItemGroup>
+
 </Project>

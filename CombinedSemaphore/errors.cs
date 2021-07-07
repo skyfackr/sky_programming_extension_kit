@@ -17,4 +17,8 @@ namespace SPEkit.CombinedSemaphore.error
         {
         }
     }
+
+    public sealed class UnitAlreadyExistsException : Exception
+    {
+    }
 }
