@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SPEkit.CombinedSemaphore.Unit;
 
 namespace SPEkit.CombinedSemaphore.Utils
@@ -12,10 +8,22 @@ namespace SPEkit.CombinedSemaphore.Utils
         internal readonly bool IsEntered;
         internal readonly SemaphoreUnit Unit;
 
-        internal WaitingSessions(SemaphoreUnit unit,bool isEntered = false)
+        internal WaitingSessions(SemaphoreUnit unit, bool isEntered)
         {
             IsEntered = isEntered;
             Unit = unit;
+        }
+
+        internal void Recovery()
+        {
+            if (!IsEntered) return;
+            try
+            {
+                Unit.Release();
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
     }
 }

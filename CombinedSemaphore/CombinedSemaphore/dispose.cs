@@ -17,7 +17,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
         private void Dispose(bool disposing)
         {
             if (!disposing) return;
-            foreach (var unit in m_units) unit?.Dispose();
+            foreach (var unit in m_units)
+                unit?.Dispose();
+            //m_units.Remove(unit);
         }
 
         private void AssertNotDisposed()
