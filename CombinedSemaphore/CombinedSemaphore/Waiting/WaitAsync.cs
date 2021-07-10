@@ -7,6 +7,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
     public sealed partial class CombinedSemaphore
     {
         //private SemaphoreUnit a;
+        //TODO 所有await加上configureawait
         public async Task WaitAsync()
         {
             await Task.Run(() => WaitingProcess(async unit =>
