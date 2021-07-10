@@ -6,6 +6,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
     {
         private volatile WaitActionFlag m_option;
 
+        /// <summary>
+        /// 当前等待设定
+        /// </summary>
         public WaitActionFlag Option
         {
             get => m_option;

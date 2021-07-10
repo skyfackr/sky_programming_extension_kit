@@ -43,9 +43,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
                     catch (ObjectDisposedException)
                     {
-                        state.Stop();
+                        
                         if (option.CreateBinLikeClassSelectorUnit()
-                            .Match((long) WaitActionFlag.ThrowWhenDisposed)) throw;
+                            .Match((long) WaitActionFlag.ThrowWhenDisposed))
+                        {
+                            state.Stop();
+                            throw;
+                        }
                     }
                     catch (OperationCanceledException)
                     {

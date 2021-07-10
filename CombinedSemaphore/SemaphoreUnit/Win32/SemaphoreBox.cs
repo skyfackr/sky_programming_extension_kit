@@ -6,16 +6,19 @@ namespace SPEkit.CombinedSemaphore.Unit
     {
         private readonly Semaphore m_semaphore;
 
+        /// <inheritdoc />
         public override object GetCurrentSemaphore()
         {
             return m_semaphore;
         }
 
+        /// <inheritdoc />
         public override Semaphore GetCurrentSemaphoreAsWin32()
         {
             return m_semaphore;
         }
 
+        /// <inheritdoc />
         public override WaitHandle GetWaitHandle()
         {
             return GetCurrentSemaphoreAsWin32();

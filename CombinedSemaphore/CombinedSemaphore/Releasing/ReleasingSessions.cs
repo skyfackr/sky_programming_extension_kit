@@ -8,11 +8,11 @@ namespace SPEkit.CombinedSemaphore.Utils
 {
     internal class ReleasingSessions
     {
-        internal readonly SemaphoreUnit m_unit;
+        internal readonly SemaphoreUnit Unit;
 
         internal ReleasingSessions(SemaphoreUnit unit)
         {
-            m_unit = unit;
+            Unit = unit;
         }
 
         internal bool IsReleased { get; private set; }
@@ -27,7 +27,7 @@ namespace SPEkit.CombinedSemaphore.Utils
             if (!IsReleased) return;
             try
             {
-                m_unit.Wait(token);
+                Unit.Wait(token);
             }
             catch (OperationCanceledException)
             {
@@ -38,9 +38,15 @@ namespace SPEkit.CombinedSemaphore.Utils
         }
     }
 
+    /// <summary>
+    /// 如果释放时出现未被忽略的错误则会启动全部还原操作，此类的实例可以用于一次还原会话的查询与取消
+    /// </summary>
     public class ReleaseRecoverySession
     {
         private readonly CancellationTokenSource m_tks;
+        /// <summary>
+        /// 本次会话操作的全部<see cref="SemaphoreUnit"/>对象
+        /// </summary>
         public readonly SemaphoreUnit[] Units;
 
         internal ReleaseRecoverySession(IEnumerable<SemaphoreUnit> units, CancellationTokenSource tks)
@@ -49,13 +55,24 @@ namespace SPEkit.CombinedSemaphore.Utils
             m_tks = tks;
         }
 
+        /// <summary>
+        /// 表明是否还原完毕
+        /// </summary>
         public bool IsRecoveryCompleted { get; internal set; } = false;
-        public bool IsRecoveryCancelled { get; private set; }
 
+        /// <summary>
+        /// 表明还原是否被取消
+        /// </summary>
+        public bool IsRecoveryCancelled => m_tks.IsCancellationRequested;
+
+        /// <summary>
+        /// 取消本次还原会话
+        /// </summary>
+        /// <remarks>注意，此函数会对所有还原操作的等待信号方法发送取消通知，无法预知哪些被取消哪些运行成功，使用后可能导致不可预知的状态
+        /// 取消完成后<see cref="MainClass.CombinedSemaphore.AllRecoveryCompleteEvent"/>将被立刻执行</remarks>
         public void Cancel()
         {
             m_tks.Cancel();
-            IsRecoveryCancelled = true;
         }
     }
 }

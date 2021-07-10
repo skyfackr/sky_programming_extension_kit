@@ -13,6 +13,10 @@ namespace SPEkit.CombinedSemaphore.MainClass
 {
     public sealed partial class CombinedSemaphore
     {
+        /// <summary>
+        /// 当一个<see cref="ReleaseRecoverySession"/>全部执行完成时启动事件，传入一个<see cref="ReleaseRecoverySession"/>和一个<see cref="Exception"/>
+        /// 仅当还原时出错，<see cref="Exception"/>才不为null
+        /// </summary>
         public event Action<ReleaseRecoverySession, Exception> AllRecoveryCompleteEvent;
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
@@ -20,7 +24,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             var tks = new CancellationTokenSource();
             var units = from session in sessions
-                select session.m_unit;
+                select session.Unit;
             var recoverySession = new ReleaseRecoverySession(units, tks);
             Task.Run(() =>
             {
@@ -33,8 +37,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 {
                     ex = e;
                 }
+                finally
+                {
+                    recoverySession.IsRecoveryCompleted = true;
+                    AllRecoveryCompleteEvent?.Invoke(recoverySession, ex);
+                }
 
-                AllRecoveryCompleteEvent?.Invoke(recoverySession, ex);
+                
             }, CancellationToken.None);
             return recoverySession;
         }
@@ -55,14 +64,17 @@ namespace SPEkit.CombinedSemaphore.MainClass
             sessions = from session in sessions
                 where session != null
                 select session;
+            //if (!sessions.Any()) return;
             throw new ReleaseFailedException(ex, RecoveryAll(sessions));
         }
 
+        [SuppressMessage("ReSharper", "NotAccessedVariable")]
         private int[] ReleaseProcess(Func<SemaphoreUnit, int> act)
         {
             var units = m_units.ToList();
             var sessions = new ReleasingSessions[units.Count];
             var returns = new int[units.Count];
+            var options = m_option.IgnoreConflictFlag().CreateBinLikeClassSelectorUnit();
             ParallelLoopResult? result = null;
             try
             {
@@ -74,6 +86,22 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     {
                         returns[index] = act(unit);
                         session.Released(true);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        if (options.Match((long) WaitActionFlag.ThrowWhenDisposed))
+                        {
+                            state.Stop();
+                            throw;
+                        }
+                    }
+                    catch (SemaphoreFullException)
+                    {
+                        if (options.Match((long)WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded))
+                        {
+                            state.Stop();
+                            throw;
+                        }
                     }
                     catch (Exception)
                     {

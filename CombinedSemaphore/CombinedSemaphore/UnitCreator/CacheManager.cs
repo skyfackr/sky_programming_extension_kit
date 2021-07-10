@@ -16,6 +16,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
         private static readonly AsyncReaderWriterLock s_slimDisposeCheckLock = new();
 
         private static CleanerCirculation s_interval;
+        /// <summary>
+        /// 是否设置了自动循环缓存清理
+        /// </summary>
         public static bool IsCleanIntervalSet => s_interval != null;
 
         public static int CleanCreateUnitCache()

@@ -2,12 +2,12 @@
 {
     public sealed partial class SemaphoreWin32Unit
     {
+        /// <inheritdoc />
         public override bool Equals(SemaphoreUnit other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
-            if (other.GetType() != GetType()) return false;
-            return m_semaphore.Equals(other.GetCurrentSemaphoreAsWin32());
+            return other.GetType() == GetType() && m_semaphore.Equals(other.GetCurrentSemaphoreAsWin32());
         }
     }
 }
