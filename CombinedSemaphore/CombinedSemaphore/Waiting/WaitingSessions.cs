@@ -5,12 +5,12 @@ namespace SPEkit.CombinedSemaphore.Utils
 {
     internal class WaitingSessions
     {
-        internal readonly bool IsEntered;
         internal readonly SemaphoreUnit Unit;
+        internal bool IsEntered;
 
-        internal WaitingSessions(SemaphoreUnit unit, bool isEntered)
+        internal WaitingSessions(SemaphoreUnit unit)
         {
-            IsEntered = isEntered;
+            //IsEntered = isEntered;
             Unit = unit;
         }
 
@@ -21,9 +21,14 @@ namespace SPEkit.CombinedSemaphore.Utils
             {
                 Unit.Release();
             }
-            catch (OperationCanceledException)
+            catch (ObjectDisposedException)
             {
             }
+        }
+
+        internal void Entered(bool isEntered)
+        {
+            IsEntered = isEntered;
         }
     }
 }

@@ -8,7 +8,12 @@ namespace SPEkit.CombinedSemaphore.Utils
     {
         IgnoreDisposed = 1 << 0, //Dispose second
         ThrowWhenDisposed = 1 << 1, //Dispose first
-        All = IgnoreDisposed | ThrowWhenDisposed,
+        RecoveryAndThrowWhenReleaseExceeded = 1 << 2, //RecoveryRelease first
+        ContinueAndIgnoreWhenReleaseExceeded = 1 << 3, //RecoveryRelease second
+
+        //ThrowWhenReleaseExceeded=1<<4,//ThrowRelease first
+        All = IgnoreDisposed | ThrowWhenDisposed | RecoveryAndThrowWhenReleaseExceeded |
+              ContinueAndIgnoreWhenReleaseExceeded,
         None = 0
     }
 
@@ -22,7 +27,15 @@ namespace SPEkit.CombinedSemaphore.Utils
             {
                 sel = (sel.GetEnum<WaitActionFlag>() & (WaitActionFlag.All ^ WaitActionFlag.IgnoreDisposed))
                     .CreateBinLikeClassSelectorUnit();
-            });
+            }).MatchDo(
+                WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded |
+                WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded,
+                _ =>
+                {
+                    sel = (sel.GetEnum<WaitActionFlag>() &
+                           (WaitActionFlag.All ^ WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded))
+                        .CreateBinLikeClassSelectorUnit();
+                });
             return sel.GetEnum<WaitActionFlag>();
         }
     }

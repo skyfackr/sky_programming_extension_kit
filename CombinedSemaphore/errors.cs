@@ -1,4 +1,5 @@
 ﻿using System;
+using SPEkit.CombinedSemaphore.Utils;
 
 namespace SPEkit.CombinedSemaphore.error
 {
@@ -18,7 +19,15 @@ namespace SPEkit.CombinedSemaphore.error
         }
     }
 
-    public sealed class UnitAlreadyExistsException : Exception
+    public sealed class ReleaseFailedException : AggregateException
     {
+        public readonly ReleaseRecoverySession RecoverySession;
+
+
+        internal ReleaseFailedException(AggregateException ex, ReleaseRecoverySession session) : base(ex.Message,
+            ex.InnerExceptions)
+        {
+            RecoverySession = session;
+        }
     }
 }
