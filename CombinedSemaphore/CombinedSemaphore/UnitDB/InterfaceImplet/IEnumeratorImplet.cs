@@ -6,6 +6,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
 {
     public sealed partial class CombinedSemaphore
     {
+        /// <inheritdoc />
         public IEnumerator<SemaphoreUnit> GetEnumerator()
         {
             AssertNotDisposed();
@@ -15,7 +16,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            AssertNotDisposed();
+            //AssertNotDisposed();
             return GetEnumerator();
         }
     }

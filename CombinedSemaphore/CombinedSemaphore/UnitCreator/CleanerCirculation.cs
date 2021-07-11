@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 
 namespace SPEkit.CombinedSemaphore.Utils
 {
@@ -17,21 +18,23 @@ namespace SPEkit.CombinedSemaphore.Utils
                 while (true)
                 {
                     cleaner();
-                    await Task.Delay(waitTime, token);
+                    await Task.Delay(waitTime, token).ConfigureAwait(false);
                     if (token.IsCancellationRequested) return;
                 }
-            });
+            },m_tks.Token);
         }
 
-        internal void Stop()
+        internal void Stop(bool wait=true)
         {
             if (m_tks.IsCancellationRequested) return;
             m_tks.Cancel();
+            if (wait) m_task.WaitAndUnwrapException();
+            //m_task.Wait()
         }
 
         ~CleanerCirculation()
         {
-            Stop();
+            Stop(false);
         }
     }
 }

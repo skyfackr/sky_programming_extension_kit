@@ -13,7 +13,7 @@ namespace SPEkit.SemaphoreSlimAttribute
         /// </remarks>
         public async ValueTask DisposeAsync()
         {
-            await Task.Run(Dispose);
+            await Task.Run(Dispose).ConfigureAwait(false);
         }
 
         /// <inheritdoc />

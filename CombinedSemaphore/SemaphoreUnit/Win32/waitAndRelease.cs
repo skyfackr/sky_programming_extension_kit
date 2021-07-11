@@ -73,37 +73,37 @@ namespace SPEkit.CombinedSemaphore.Unit
         /// <inheritdoc />
         public override async Task WaitAsync()
         {
-            await Task.Run(Wait);
+            await Task.Run(Wait).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public override async Task<bool> WaitAsync(int millisecondsTimeout)
         {
-            return await Task.Run(() => Wait(millisecondsTimeout));
+            return await Task.Run(() => Wait(millisecondsTimeout)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public override async Task<bool> WaitAsync(int millisecondsTimeout, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => Wait(millisecondsTimeout, cancellationToken), CancellationToken.None);
+            return await Task.Run(() => Wait(millisecondsTimeout, cancellationToken), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public override async Task WaitAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => Wait(cancellationToken), CancellationToken.None);
+            await Task.Run(() => Wait(cancellationToken), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public override async Task<bool> WaitAsync(TimeSpan timeout)
         {
-            return await Task.Run(() => Wait(timeout));
+            return await Task.Run(() => Wait(timeout)).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
         public override async Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => Wait(timeout, cancellationToken), CancellationToken.None);
+            return await Task.Run(() => Wait(timeout, cancellationToken), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

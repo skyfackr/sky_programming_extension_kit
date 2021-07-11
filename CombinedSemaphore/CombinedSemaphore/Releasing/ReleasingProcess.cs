@@ -17,6 +17,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// 当一个<see cref="ReleaseRecoverySession"/>全部执行完成时启动事件，传入一个<see cref="ReleaseRecoverySession"/>和一个<see cref="Exception"/>
         /// 仅当还原时出错，<see cref="Exception"/>才不为null
         /// </summary>
+        [SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
         public event Action<ReleaseRecoverySession, Exception> AllRecoveryCompleteEvent;
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]

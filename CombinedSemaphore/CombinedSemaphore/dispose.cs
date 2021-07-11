@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace SPEkit.CombinedSemaphore.MainClass
 {
@@ -20,8 +21,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
             foreach (var unit in m_units)
                 unit?.Dispose();
             //m_units.Remove(unit);
+            
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AssertNotDisposed()
         {
             if (m_isDisposed)

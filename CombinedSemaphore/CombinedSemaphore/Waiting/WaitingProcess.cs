@@ -24,6 +24,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             }
         }
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [SuppressMessage("ReSharper", "MethodHasAsyncOverload")]
         private bool WaitingProcess(Func<SemaphoreUnit,Task<bool>> act)
         {
             var option = m_option.IgnoreConflictFlag();
@@ -39,7 +40,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     sessions[index] = session;
                     try
                     {
-                        session.Entered(await act(unit));
+                        session.Entered(await act(unit).ConfigureAwait(false));
                     }
                     catch (ObjectDisposedException)
                     {
@@ -69,6 +70,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             {
                 var countMaker = from ex in e.InnerExceptions
                     group ex by ex.GetType();
+                //var a=e.InnerExceptions.Distinct()
                 var count = countMaker as IGrouping<Type, Exception>[] ?? countMaker.ToArray();
                 if (count.Length > 1) throw;
                 var onlyEx = count.First().Key;

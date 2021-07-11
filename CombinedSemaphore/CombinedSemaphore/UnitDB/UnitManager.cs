@@ -29,13 +29,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
 
         public bool TryAdd(SemaphoreSlim semaphore)
         {
-            AssertNotDisposed();
+            //AssertNotDisposed();
             return TryAdd(CreateUnit(semaphore));
         }
 
         public bool TryAdd(Semaphore semaphore)
         {
-            AssertNotDisposed();
+            //AssertNotDisposed();
             return TryAdd(CreateUnit(semaphore));
         }
 
