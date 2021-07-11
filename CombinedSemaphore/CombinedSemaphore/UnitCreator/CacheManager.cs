@@ -17,6 +17,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         private static readonly AsyncReaderWriterLock s_slimDisposeCheckLock = new();
 
         private static CleanerCirculation s_interval;
+        private static object s_intervalLock;
         /// <summary>
         /// 是否设置了自动循环缓存清理
         /// </summary>
@@ -76,7 +77,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <param name="waitPerExecute">间歇时间</param>
         public static void SetCleanInterval(TimeSpan waitPerExecute)
         {
-            lock (s_interval)
+            lock (s_intervalLock)
             {
                 if (IsCleanIntervalSet) s_interval.Stop();
                 s_interval = new CleanerCirculation(() =>
@@ -92,7 +93,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// </summary>
         public static void StopCleanInterval()
         {
-            lock (s_interval)
+            lock (s_intervalLock)
             {
                 s_interval?.Stop();
                 s_interval = null;
