@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using SPEkit.CombinedSemaphore.error;
@@ -18,6 +19,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             using (s_win32DisposeCheckLock.ReaderLock())
             {
+                //TODO semaphore Lock
                 SemaphoreWin32Unit ans;
                 if (s_win32Cache.Keys.Contains(semaphore))
                 {
