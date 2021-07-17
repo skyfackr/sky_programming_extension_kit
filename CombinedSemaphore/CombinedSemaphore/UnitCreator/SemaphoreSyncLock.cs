@@ -19,21 +19,29 @@ namespace SPEkit.CombinedSemaphore.Utils
         {
             var (waiting, handle) = Win32SemaphoresEvent[semaphore];
             handle.Set();
-            lock (Win32SemaphoresEvent)
+            if (Interlocked.Decrement(ref waiting.Value) <= 0)
             {
-                if (Interlocked.Read(ref waiting.Value) <= 0)
+                lock (Win32SemaphoresEvent)
                 {
-                    Win32SemaphoresEvent.TryRemove(semaphore, out _);
+                    if (Interlocked.Read(ref waiting.Value) <= 0)
+                    {
+                        Win32SemaphoresEvent.TryRemove(semaphore, out _);
+                    }
                 }
             }
         }
         internal static void ReleaseAndSetAnother(SemaphoreSlim semaphore)
         {
-            lock (SlimSemaphoresEvent)
+            var (waiting, handle) = SlimSemaphoresEvent[semaphore];
+            handle.Set();
+            if (Interlocked.Decrement(ref waiting.Value)<=0)
             {
-                if (Interlocked.Read(ref waiting.Value) <= 0)
+                lock (SlimSemaphoresEvent)
                 {
-                    SlimSemaphoresEvent.TryRemove(semaphore, out _);
+                    if (Interlocked.Read(ref waiting.Value) <= 0)
+                    {
+                        SlimSemaphoresEvent.TryRemove(semaphore, out _);
+                    }
                 }
             }
         }
@@ -45,11 +53,11 @@ namespace SPEkit.CombinedSemaphore.Utils
             lock (Win32SemaphoresEvent)
             {
                 (waiting, handle) = Win32SemaphoresEvent.GetOrAdd(semaphore, se => (new StrongBox<long>(0), new AutoResetEvent(true)));
-                waiting.Value++;
+                Interlocked.Increment(ref waiting.Value);
             }
 
             handle.WaitOne();
-            Interlocked.Decrement(ref waiting.Value);
+            
             
             return new SemaphoreSyncLockWin32Unit(semaphore);
         }
@@ -60,11 +68,11 @@ namespace SPEkit.CombinedSemaphore.Utils
             lock (SlimSemaphoresEvent)
             {
                 (waiting, handle) = SlimSemaphoresEvent.GetOrAdd(semaphore, se => (new StrongBox<long>(0), new AutoResetEvent(true)));
-                waiting.Value++;
+                Interlocked.Increment(ref waiting.Value);
             }
 
             handle.WaitOne();
-            Interlocked.Decrement(ref waiting.Value);
+            
             
             return new SemaphoreSyncLockSlimUnit(semaphore);
         }
@@ -79,12 +87,17 @@ namespace SPEkit.CombinedSemaphore.Utils
             m_semaphore = semaphore;
         }
 
-        private bool m_disposed = false;
+        private volatile bool m_disposed = false;
+        private readonly object m_disposeLock = new();
 
         public void Dispose()
         {
-            if (m_disposed) return;
-            throw new NotImplementedException();
+            lock (m_disposeLock)
+            {
+                if (m_disposed) return; 
+                SemaphoreSyncLock.ReleaseAndSetAnother(m_semaphore);
+                m_disposed = true;
+            }
         }
     }
     internal class SemaphoreSyncLockSlimUnit : IDisposable
@@ -96,10 +109,16 @@ namespace SPEkit.CombinedSemaphore.Utils
             m_semaphore = semaphore;
         }
 
-        private bool m_disposed = false;
+        private volatile bool m_disposed = false;
+        private readonly object m_disposeLock = new();
         public void Dispose()
         {
-            throw new NotImplementedException();
+            lock (m_disposeLock)
+            {
+                if (m_disposed) return;
+                SemaphoreSyncLock.ReleaseAndSetAnother(m_semaphore);
+                m_disposed = true;
+            }
         }
     }
 }
