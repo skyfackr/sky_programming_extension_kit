@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using SPEkit.CombinedSemaphore.Unit;
 
 namespace SPEkit.CombinedSemaphore.MainClass
 {
@@ -7,6 +9,12 @@ namespace SPEkit.CombinedSemaphore.MainClass
     {
         private volatile bool m_isDisposed;
 
+        /// <inheritdoc />
+        /// <remarks>
+        ///     警告：执行dispose会对当前此实例中存储的所有<see cref="SemaphoreUnit" />执行<see cref="IDisposable.Dispose()" />，这会使全部绑定的
+        ///     <see cref="Semaphore" />或者<see cref="SemaphoreSlim" />被dispose，在部分信号量实例被外部使用的场景下，此操作可能导致意外的
+        ///     <see cref="ObjectDisposedException" />，如需避免进行dispose，请先执行<see cref="RemoveAll" />
+        /// </remarks>
         public void Dispose()
         {
             Dispose(true);
@@ -21,8 +29,8 @@ namespace SPEkit.CombinedSemaphore.MainClass
             foreach (var unit in m_units)
                 unit?.Dispose();
             //m_units.Remove(unit);
-            
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void AssertNotDisposed()
         {

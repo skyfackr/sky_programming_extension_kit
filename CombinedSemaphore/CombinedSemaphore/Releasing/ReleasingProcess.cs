@@ -14,8 +14,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
     public sealed partial class CombinedSemaphore
     {
         /// <summary>
-        /// 当一个<see cref="ReleaseRecoverySession"/>全部执行完成时启动事件，传入一个<see cref="ReleaseRecoverySession"/>和一个<see cref="Exception"/>
-        /// 仅当还原时出错，<see cref="Exception"/>才不为null
+        ///     当一个<see cref="ReleaseRecoverySession" />全部执行完成时启动事件，传入一个<see cref="ReleaseRecoverySession" />和一个
+        ///     <see cref="Exception" />
+        ///     仅当还原时出错，<see cref="Exception" />才不为null
         /// </summary>
         [SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
         public event Action<ReleaseRecoverySession, Exception> AllRecoveryCompleteEvent;
@@ -43,8 +44,6 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     recoverySession.IsRecoveryCompleted = true;
                     AllRecoveryCompleteEvent?.Invoke(recoverySession, ex);
                 }
-
-                
             }, CancellationToken.None);
             return recoverySession;
         }
@@ -72,6 +71,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         [SuppressMessage("ReSharper", "NotAccessedVariable")]
         private int[] ReleaseProcess(Func<SemaphoreUnit, int> act)
         {
+            AssertNotDisposed();
             var units = m_units.ToList();
             var sessions = new ReleasingSessions[units.Count];
             var returns = new int[units.Count];
@@ -98,7 +98,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
                     catch (SemaphoreFullException)
                     {
-                        if (options.Match((long)WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded))
+                        if (options.Match((long) WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded))
                         {
                             state.Stop();
                             throw;

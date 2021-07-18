@@ -18,17 +18,21 @@ namespace SPEkit.CombinedSemaphore.MainClass
 
         private static CleanerCirculation s_interval;
         private static object s_intervalLock;
+
         /// <summary>
-        /// 是否设置了自动循环缓存清理
+        ///     是否设置了自动循环缓存清理
         /// </summary>
         public static bool IsCleanIntervalSet => s_interval != null;
 
         /// <summary>
-        /// 清理一次<see cref="CreateUnit(System.Threading.Semaphore)"/>的缓存，使缓存中（包括重载）的所有已经被dispose的对象删除
+        ///     清理一次<see cref="CreateUnit(System.Threading.Semaphore)" />的缓存，使缓存中（包括重载）的所有已经被dispose的对象删除
         /// </summary>
         /// <returns>被清除的缓存数量</returns>
-        /// <remarks>此代码将分开执行<see cref="SemaphoreWin32Unit"/>和<see cref="SemaphoreSlimUnit"/>的缓存清理并受到读写锁管理，对应缓存清理期间
-        /// 相对的<see cref="CreateUnit(System.Threading.Semaphore)"/>或<see cref="CreateUnit(System.Threading.SemaphoreSlim)"/>将被阻塞</remarks>
+        /// <remarks>
+        ///     此代码将分开执行<see cref="SemaphoreWin32Unit" />和<see cref="SemaphoreSlimUnit" />的缓存清理并受到读写锁管理，对应缓存清理期间
+        ///     相对的<see cref="CreateUnit(System.Threading.Semaphore)" />或<see cref="CreateUnit(System.Threading.SemaphoreSlim)" />
+        ///     将被阻塞
+        /// </remarks>
         public static int CleanCreateUnitCache()
         {
             var ans = 0;
@@ -72,7 +76,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         }
 
         /// <summary>
-        /// 设置一个自动清理缓存循环，每隔指定时间调用一次<see cref="CleanCreateUnitCache"/>
+        ///     设置一个自动清理缓存循环，每隔指定时间调用一次<see cref="CleanCreateUnitCache" />
         /// </summary>
         /// <param name="waitPerExecute">间歇时间</param>
         public static void SetCleanInterval(TimeSpan waitPerExecute)
@@ -89,7 +93,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         }
 
         /// <summary>
-        /// 终止<see cref="SetCleanInterval"/>的循环
+        ///     终止<see cref="SetCleanInterval" />的循环
         /// </summary>
         public static void StopCleanInterval()
         {
@@ -101,7 +105,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         }
 
         /// <summary>
-        /// 当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="int"/>参数作为<see cref="CleanCreateUnitCache"/>的返回值
+        ///     当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="int" />参数作为<see cref="CleanCreateUnitCache" />的返回值
         /// </summary>
         [SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
         public static event Action<int> CompleteCleanOnceInInterval;

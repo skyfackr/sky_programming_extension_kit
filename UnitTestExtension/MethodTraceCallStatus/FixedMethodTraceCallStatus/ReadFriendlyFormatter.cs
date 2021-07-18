@@ -242,7 +242,7 @@ namespace SPEkit.UnitTestExtension
                     ans.AppendLine(s);
                 }
 
-            var stackMaker = from frame in data.Stack.GetFrames().AsParallel().AsOrdered()
+            var stackMaker = from frame in data.Stack.GetFrames()
                 select
                     $"|+at {frame.GetMethod()?.Name ?? "<UNKNOWN FUNC>"} in {frame.GetFileName() ?? "<UNKNOWN FILE>"} ({frame.GetFileLineNumber()},{frame.GetFileColumnNumber()})";
             ans.AppendLine("|+Stack:");

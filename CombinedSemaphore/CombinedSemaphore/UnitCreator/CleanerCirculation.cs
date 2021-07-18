@@ -21,10 +21,10 @@ namespace SPEkit.CombinedSemaphore.Utils
                     await Task.Delay(waitTime, token).ConfigureAwait(false);
                     if (token.IsCancellationRequested) return;
                 }
-            },m_tks.Token);
+            }, m_tks.Token);
         }
 
-        internal void Stop(bool wait=true)
+        internal void Stop(bool wait = true)
         {
             if (m_tks.IsCancellationRequested) return;
             m_tks.Cancel();

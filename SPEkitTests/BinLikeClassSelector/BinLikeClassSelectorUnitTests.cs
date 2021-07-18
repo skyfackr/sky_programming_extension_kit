@@ -14,7 +14,7 @@ namespace SPEkit.BinLikeClassSelectors.Tests
         private static readonly long[] _testBinArrayMaker = {1000000000, 100000, 10000, 1000, 1};
 
         private static readonly long[]
-            _testBinArray = (from i in _testBinArrayMaker select _byteLike2Long(i)).ToArray();
+            _testBinArray = (from i in _testBinArrayMaker  select _byteLike2Long(i)).ToArray();
 
         private static long _byteLike2Long(long byteLike)
         {

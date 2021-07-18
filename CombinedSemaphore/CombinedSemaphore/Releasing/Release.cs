@@ -1,10 +1,11 @@
 ﻿using SPEkit.CombinedSemaphore.error;
+
 namespace SPEkit.CombinedSemaphore.MainClass
 {
     public sealed partial class CombinedSemaphore
     {
         /// <summary>
-        /// 对所有信号量释放一次
+        ///     对所有信号量释放一次
         /// </summary>
         /// <returns>返回数组，各自代表每个信号量的剩余信号</returns>
         /// <exception cref="ReleaseFailedException"></exception>
@@ -14,7 +15,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         }
 
         /// <summary>
-        /// 对所有信号量释放<paramref name="releaseCount"/>次
+        ///     对所有信号量释放<paramref name="releaseCount" />次
         /// </summary>
         /// <returns>返回数组，各自代表每个信号量的剩余信号</returns>
         /// <exception cref="ReleaseFailedException"></exception>

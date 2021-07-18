@@ -6,7 +6,7 @@ namespace SPEkit.CombinedSemaphore.Unit
     {
         private readonly SemaphoreSlim m_semaphoreSlim;
 
-        ///<inheritdoc cref="SemaphoreSlim.CurrentCount"/>
+        /// <inheritdoc cref="SemaphoreSlim.CurrentCount" />
         public int CurrentCount => m_semaphoreSlim.CurrentCount;
 
         /// <inheritdoc />

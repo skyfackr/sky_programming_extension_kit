@@ -8,7 +8,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
     {
         //private SemaphoreUnit a;
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync()"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync()" />
         public async Task WaitAsync()
         {
             await Task.Run(() => WaitingProcess(async unit =>
@@ -18,32 +18,38 @@ namespace SPEkit.CombinedSemaphore.MainClass
             })).ConfigureAwait(false);
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(int)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(int)" />
         public async Task<bool> WaitAsync(int millisecondsTimeout)
         {
-            return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(millisecondsTimeout))).ConfigureAwait(false);
+            return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(millisecondsTimeout)))
+                .ConfigureAwait(false);
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(int,CancellationToken)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(int,CancellationToken)" />
         public async Task<bool> WaitAsync(int millisecondsTimeout, CancellationToken cancellationToken)
         {
             return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(millisecondsTimeout, cancellationToken)),
                 CancellationToken.None).ConfigureAwait(false);
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(CancellationToken)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(CancellationToken)" />
         public async Task WaitAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => WaitingProcess(async unit => { await unit.WaitAsync(cancellationToken).ConfigureAwait(false); return true; }), CancellationToken.None).ConfigureAwait(false);
+            await Task.Run(() => WaitingProcess(async unit =>
+            {
+                await unit.WaitAsync(cancellationToken).ConfigureAwait(false);
+                return true;
+            }), CancellationToken.None).ConfigureAwait(false);
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan)" />
         public async Task<bool> WaitAsync(TimeSpan timeout)
         {
-            return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(timeout)), CancellationToken.None).ConfigureAwait(false);
+            return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(timeout)), CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
-        ///<inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan,CancellationToken)"/>
+        /// <inheritdoc cref="SemaphoreSlim.WaitAsync(TimeSpan,CancellationToken)" />
         public async Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken)
         {
             return await Task.Run(() => WaitingProcess(unit => unit.WaitAsync(timeout, cancellationToken)),

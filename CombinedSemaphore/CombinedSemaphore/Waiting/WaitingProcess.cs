@@ -18,15 +18,14 @@ namespace SPEkit.CombinedSemaphore.MainClass
             sessions = from session in sessions
                 where session != null
                 select session;
-            foreach (var session in sessions)
-            {
-                session.Recovery();
-            }
+            foreach (var session in sessions) session.Recovery();
         }
+
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         [SuppressMessage("ReSharper", "MethodHasAsyncOverload")]
-        private bool WaitingProcess(Func<SemaphoreUnit,Task<bool>> act)
+        private bool WaitingProcess(Func<SemaphoreUnit, Task<bool>> act)
         {
+            AssertNotDisposed();
             var option = m_option.IgnoreConflictFlag();
             var units = m_units.ToList();
             var sessions = new WaitingSessions[units.Count];
@@ -34,7 +33,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             IEnumerable<bool> sessionResults;
             try
             {
-                result = Parallel.ForEach(units, (async (unit, state, index) =>
+                result = Parallel.ForEach(units, async (unit, state, index) =>
                 {
                     var session = new WaitingSessions(unit);
                     sessions[index] = session;
@@ -44,7 +43,6 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
                     catch (ObjectDisposedException)
                     {
-                        
                         if (option.CreateBinLikeClassSelectorUnit()
                             .Match((long) WaitActionFlag.ThrowWhenDisposed))
                         {
@@ -64,7 +62,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
 
                     if (!session.IsEntered) state.Stop();
-                }));
+                });
             }
             catch (AggregateException e)
             {
@@ -75,14 +73,10 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 if (count.Length > 1) throw;
                 var onlyEx = count.First().Key;
                 if (onlyEx == typeof(ObjectDisposedException))
-                {
                     throw new ObjectDisposedException("Some semaphore disposed.");
-                }
 
                 if (onlyEx == typeof(OperationCanceledException))
-                {
                     throw new OperationCanceledException("Some waiting cancelled");
-                }
 
                 throw;
             }
@@ -93,22 +87,14 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 if (result == null)
                 {
                     RecoveryAll(sessions);
-                    
                 }
                 else
                 {
-                    
-                    if ((!result.Value.IsCompleted) || sessionResults.Contains(false))
-                    {
-                        RecoveryAll(sessions);
-                    }
+                    if (!result.Value.IsCompleted || sessionResults.Contains(false)) RecoveryAll(sessions);
                 }
             }
 
-            return result.Value.IsCompleted && (!sessionResults.Contains(false));
+            return result.Value.IsCompleted && !sessionResults.Contains(false);
         }
-
-        
     }
-
 }
