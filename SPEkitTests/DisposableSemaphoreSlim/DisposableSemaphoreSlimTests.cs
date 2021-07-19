@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -59,8 +58,8 @@ namespace SPEkit.DisposableSemaphoreSlim.Tests
             }
 
             a.CurrentCount.ShouldBeEqualTo(1);
-            
-            Assert.AreEqual(a.Release(),a.Release()-1);
+
+            Assert.AreEqual(a.Release(), a.Release() - 1);
         }
 
         [TestMethod]
@@ -75,7 +74,7 @@ namespace SPEkit.DisposableSemaphoreSlim.Tests
             }
 
             a.CurrentCount.ShouldBeEqualTo(5);
-            Assert.AreEqual(a.Release(), a.Release()-1);
+            Assert.AreEqual(a.Release(), a.Release() - 1);
         }
 
         [TestMethod]
@@ -166,7 +165,7 @@ namespace SPEkit.DisposableSemaphoreSlim.Tests
             tokenSource.Cancel();
             token.IsCancellationRequested.ShouldBeTrue();
             Assert.ThrowsException<OperationCanceledException>(() => a.WaitAsync(token).GetAwaiter().GetResult());
-            
+
             a.Dispose();
             AssertDisposedException(a);
         }
@@ -231,8 +230,8 @@ namespace SPEkit.DisposableSemaphoreSlim.Tests
             var time = new TimeSpan(0, 0, 1);
             using (b = a.WaitAsync(time).GetAwaiter().GetResult())
             {
-                b.IsReleased.ShouldBeFalse();
                 b.IsEntered.ShouldBeTrue();
+                b.IsReleased.ShouldBeFalse();
                 a.CurrentCount.ShouldBeEqualTo(0);
                 using var c = a.WaitAsync(time).GetAwaiter().GetResult();
                 c.IsReleased.ShouldBeTrue();
@@ -270,6 +269,7 @@ namespace SPEkit.DisposableSemaphoreSlim.Tests
             token.IsCancellationRequested.ShouldBeTrue();
             Assert.ThrowsException<OperationCanceledException>(
                 () => a.WaitAsync(time, token).GetAwaiter().GetResult());
+            Thread.Sleep(200);
             a.Dispose();
             AssertDisposedException(a);
         }

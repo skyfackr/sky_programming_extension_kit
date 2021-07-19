@@ -85,7 +85,7 @@ namespace SPEkit.DisposableSemaphoreSlim
                 ms -= (int) time.ElapsedMilliseconds;
                 if (ms <= 0) return _createUnit(false);
                 return _createUnit(
-                    await ConvertException(async () => await _instance.WaitAsync(ms, token).ConfigureAwait(false))
+                    await ConvertException(() => _instance.WaitAsync(ms, token))
                         .ConfigureAwait(false));
             }
         }
@@ -100,7 +100,7 @@ namespace SPEkit.DisposableSemaphoreSlim
                 _assertNotDisposed();
                 timer.Stop();
                 time -= TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
-                return time.Milliseconds <= 0
+                return time.Ticks <= 0
                     ? _createUnit(false)
                     : _createUnit(await _instance.WaitAsync(time).ConfigureAwait(false));
             }
@@ -119,9 +119,9 @@ namespace SPEkit.DisposableSemaphoreSlim
                 _assertNotDisposed();
                 timer.Stop();
                 time -= TimeSpan.FromMilliseconds(timer.ElapsedMilliseconds);
-                if (time.Milliseconds <= 0) return _createUnit(false);
+                if (time.Ticks <= 0) return _createUnit(false);
                 return _createUnit(
-                    await ConvertException(async () => await _instance.WaitAsync(time, token).ConfigureAwait(false))
+                    await ConvertException(() => _instance.WaitAsync(time, token))
                         .ConfigureAwait(false));
             }
         }

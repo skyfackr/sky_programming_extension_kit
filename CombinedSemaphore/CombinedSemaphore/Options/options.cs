@@ -14,5 +14,11 @@ namespace SPEkit.CombinedSemaphore.MainClass
             get => m_option;
             set => m_option = value;
         }
+
+        /// <summary>
+        ///     <see cref="Option" />默认值
+        /// </summary>
+        public static WaitActionFlag DefaultFlag { get; } =
+            WaitActionFlag.ThrowWhenDisposed | WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded;
     }
 }

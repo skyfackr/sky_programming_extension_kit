@@ -134,12 +134,12 @@ namespace SPEkit.CombinedSemaphore.MainClass
             return ans;
         }
 
-        /// <summary>
-        ///     清空内置列表
-        /// </summary>
-        public void RemoveAll()
-        {
-            foreach (var unit in m_units) m_units.Remove(unit);
-        }
+        ///// <summary>
+        /////     清空内置列表
+        ///// </summary>
+        //public void RemoveAll()
+        //{
+        //    foreach (var unit in m_units) m_units.Remove(unit);
+        //}
     }
 }

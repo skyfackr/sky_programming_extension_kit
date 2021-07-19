@@ -130,7 +130,8 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IEnumerable<Semaphore> semaphores)
         {
-            foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -141,7 +142,8 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IEnumerable<SemaphoreSlim> semaphores)
         {
-            foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -153,25 +155,29 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IEnumerable<object> semaphores)
         {
-            foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<Semaphore> semaphores)
         {
-            await foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            await foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{SemaphoreSlim})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<SemaphoreSlim> semaphores)
         {
-            await foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            await foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{object})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<object> semaphores)
         {
-            await foreach (var semaphore in semaphores) yield return await Task.Run(() => CreateUnit(semaphore));
+            await foreach (var semaphore in semaphores)
+                yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
     }
 }

@@ -90,7 +90,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
                     catch (ObjectDisposedException)
                     {
-                        if (options.Match((long) WaitActionFlag.ThrowWhenDisposed))
+                        if (!options.Match((long) WaitActionFlag.IgnoreDisposed))
                         {
                             state.Stop();
                             throw;
@@ -98,7 +98,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     }
                     catch (SemaphoreFullException)
                     {
-                        if (options.Match((long) WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded))
+                        if (!options.Match((long) WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded))
                         {
                             state.Stop();
                             throw;

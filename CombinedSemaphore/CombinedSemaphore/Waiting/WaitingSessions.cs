@@ -7,6 +7,7 @@ namespace SPEkit.CombinedSemaphore.Utils
     {
         internal readonly SemaphoreUnit Unit;
         internal bool IsEntered;
+        private bool m_isRecoveryFinished;
 
         internal WaitingSessions(SemaphoreUnit unit)
         {
@@ -17,6 +18,7 @@ namespace SPEkit.CombinedSemaphore.Utils
         internal void Recovery()
         {
             if (!IsEntered) return;
+            if (m_isRecoveryFinished) return;
             try
             {
                 Unit.Release();
@@ -24,6 +26,8 @@ namespace SPEkit.CombinedSemaphore.Utils
             catch (ObjectDisposedException)
             {
             }
+
+            m_isRecoveryFinished = true;
         }
 
         internal void Entered(bool isEntered)
