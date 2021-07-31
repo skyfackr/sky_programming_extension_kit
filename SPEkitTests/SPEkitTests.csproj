@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BinLikeClassSelector.csproj" />
+    <ProjectReference Include="..\CombinedSemaphore\CombinedSemaphore.csproj" />
     <ProjectReference Include="..\DisposibleSemaphoreSlim\DisposableSemaphoreSlim.csproj" />
     <ProjectReference Include="..\GlobalSemaphoreAttribute\SemaphoreSlimAttribute.csproj" />
     <ProjectReference Include="..\InvokeReflection\InvokeReflection.csproj" />

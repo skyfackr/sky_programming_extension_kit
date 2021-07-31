@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using SPEkit.CombinedSemaphore.Unit;
 
-//todo code review
 namespace SPEkit.CombinedSemaphore.MainClass
 {
     /// <summary>
@@ -21,7 +20,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             var temp = semaphores.ToArray();
             var ans = new Semaphore[temp.Length + 1];
-            temp.CopyTo(ans,0);
+            temp.CopyTo(ans, 0);
             ans[^1] = se;
             return new CombinedSemaphore(ans);
         }
@@ -122,10 +121,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <param name="orig">被吸收对象</param>
         public static void Absorb(this CombinedSemaphore dest, CombinedSemaphore orig)
         {
-            var temp = orig.ToList();
-            
-            foreach (var unit in temp) dest.Add(unit);
-            orig.Clear();
+            //var temp = orig.ToList();
+
+            foreach (var unit in orig)
+            {
+                dest.Add(unit);
+                orig.Remove(unit);
+            }
         }
 
         /// <inheritdoc cref="CombinedSemaphore.CreateUnit(Semaphore)" />

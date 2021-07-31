@@ -17,7 +17,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         private static readonly AsyncReaderWriterLock s_slimDisposeCheckLock = new();
 
         private static CleanerCirculation s_interval;
-        private static object s_intervalLock;
+        private static readonly object s_intervalLock = new();
 
         /// <summary>
         ///     是否设置了自动循环缓存清理
@@ -35,44 +35,47 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// </remarks>
         public static int CleanCreateUnitCache()
         {
-            var ans = 0;
-            using (s_win32DisposeCheckLock.WriterLock())
+            lock (s_intervalLock)
             {
-                var result1 = Parallel.ForEach(s_win32Cache, pair =>
+                var ans = 0;
+                using (s_win32DisposeCheckLock.WriterLock())
                 {
-                    var (key, value) = pair;
-                    try
+                    var result1 = Parallel.ForEach(s_win32Cache, pair =>
                     {
-                        var handle = value.GetWaitHandle().SafeWaitHandle;
-                        if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        s_win32Cache.Remove(key);
-                        Interlocked.Increment(ref ans);
-                    }
-                });
-            }
+                        var (key, value) = pair;
+                        try
+                        {
+                            var handle = value.GetWaitHandle().SafeWaitHandle;
+                            if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            s_win32Cache.Remove(key);
+                            Interlocked.Increment(ref ans);
+                        }
+                    });
+                }
 
-            using (s_slimDisposeCheckLock.WriterLock())
-            {
-                var result2 = Parallel.ForEach(s_slimCache, pair =>
+                using (s_slimDisposeCheckLock.WriterLock())
                 {
-                    var (key, value) = pair;
-                    try
+                    var result2 = Parallel.ForEach(s_slimCache, pair =>
                     {
-                        var handle = value.GetWaitHandle().SafeWaitHandle;
-                        if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        s_slimCache.Remove(key);
-                        Interlocked.Increment(ref ans);
-                    }
-                });
-            }
+                        var (key, value) = pair;
+                        try
+                        {
+                            var handle = value.GetWaitHandle().SafeWaitHandle;
+                            if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                            s_slimCache.Remove(key);
+                            Interlocked.Increment(ref ans);
+                        }
+                    });
+                }
 
-            return ans;
+                return ans;
+            }
         }
 
         /// <summary>
