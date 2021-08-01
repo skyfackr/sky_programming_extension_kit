@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using FluentAssert;
@@ -116,6 +117,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
+        [Timeout(200)]
         public void CreateUnitTestWin32()
         {
             var a = new Semaphore(1, 2);
@@ -125,6 +127,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
+        [Timeout(200)]
         public void CreateUnitTestSlim()
         {
             var a = new SemaphoreSlim(1, 2);
@@ -134,6 +137,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
+        [Timeout(200)]
         public void CreateUnitTestObj()
         {
             var a = new SemaphoreSlim(1, 2) as object;
@@ -147,21 +151,71 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(350)]
         public void CreateUnitsTestWin32()
         {
-            throw new NotImplementedException();
+            var sa = new Semaphore(1, 2);
+            var sb = new Semaphore(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<Semaphore>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var lists = CombinedSemaphore.CreateUnits(ses).AsParallel().ToList();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsWin32() != sa && unit.GetCurrentSemaphoreAsWin32() != sb)
+                .ShouldBeFalse();
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(350)]
         public void CreateUnitsTestSlim()
         {
-            throw new NotImplementedException();
+            var sa = new SemaphoreSlim(1, 2);
+            var sb = new SemaphoreSlim(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<SemaphoreSlim>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var lists = CombinedSemaphore.CreateUnits(ses).AsParallel().ToList();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsSlim() != sa && unit.GetCurrentSemaphoreAsSlim() != sb)
+                .ShouldBeFalse();
         }
 
         [TestMethod]
         public void CreateUnitsTestObj()
         {
-            throw new NotImplementedException();
+            var a = new Semaphore(1, 2) as object;
+            var b = new SemaphoreSlim(1, 2) as object;
+            var c = 1 as object;
+            var d = new[]
+            {
+                a, b
+            };
+            CombinedSemaphore.CreateUnits(d).ShouldContainAllInOrder(new[]
+                {CombinedSemaphore.CreateUnit(a), CombinedSemaphore.CreateUnit(b)});
+            d = d.Append(c).ToArray();
+            Assert.ThrowsException<TypeNotSupportedException>(() => CombinedSemaphore.CreateUnits(d));
         }
 
         [TestMethod]
