@@ -34,8 +34,8 @@ namespace SPEkit.CombinedSemaphore.MainClass
         public IEnumerable<WaitHandle> GetWaitHandles()
         {
             AssertNotDisposed();
-            return from unit in m_units
-                select unit.GetWaitHandle();
+            return (from unit in m_units
+                select unit.GetWaitHandle()).ToArray() as IEnumerable<WaitHandle>;
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         public IList<SemaphoreUnit> GetUnitList()
         {
             AssertNotDisposed();
-            return m_units.ToImmutableList();
+            return new List<SemaphoreUnit>(m_units);
         }
 
         /// <summary>
@@ -88,9 +88,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
         public IEnumerable<Semaphore> GetAllSemaphoreWin32()
         {
             AssertNotDisposed();
-            return from unit in m_units
+            return (from unit in m_units
                 where unit.GetCurrentSemaphore() is Semaphore
-                select unit.GetCurrentSemaphoreAsWin32();
+                select unit.GetCurrentSemaphoreAsWin32()).ToArray() as IEnumerable<Semaphore>;
         }
 
         /// <summary>
@@ -100,9 +100,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
         public IEnumerable<SemaphoreSlim> GetAllSemaphoreSlim()
         {
             AssertNotDisposed();
-            return from unit in m_units
+            return (from unit in m_units
                 where unit.GetCurrentSemaphore() is SemaphoreSlim
-                select unit.GetCurrentSemaphoreAsSlim();
+                select unit.GetCurrentSemaphoreAsSlim()).ToArray() as IEnumerable<SemaphoreSlim>;
         }
 
         /// <summary>

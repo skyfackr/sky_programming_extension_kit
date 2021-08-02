@@ -1,10 +1,13 @@
-﻿using System;
+﻿using SPEkit.CombinedSemaphore.MainClass;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Nito.AsyncEx.Synchronous;
 using SPEkit.CombinedSemaphore.error;
 using SPEkit.CombinedSemaphore.Unit;
 using SPEkit.CombinedSemaphore.Utils;
@@ -28,10 +31,10 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         {
             var a1 = new Semaphore(1, 2).ToSemaphoreUnit();
             var a2 = new SemaphoreSlim(2, 3).ToSemaphoreUnit();
-            var a = new CombinedSemaphore(new[] {a1, a2});
+            var a = new CombinedSemaphore(new[] { a1, a2 });
             a2.GetCurrentSemaphoreAsSlim().CurrentCount.ShouldBeEqualTo(2);
             Assert.ThrowsException<TypeCannotConvertException>(a1.GetCurrentSemaphoreAsSlim);
-            a.Release().ShouldBeEqualTo(new[] {2, 3});
+            a.Release().ShouldBeEqualTo(new[] { 2, 3 });
             var rec = new Dictionary<ReleaseRecoverySession, Exception>();
             a.AllRecoveryCompleteEvent += (r, e) => { rec.Add(r, e); };
             try
@@ -66,7 +69,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a1 = new SemaphoreSlim(1);
             var a2 = new SemaphoreSlim(2);
             var a = a1.Combine(a2);
-            a.Release(2).ShouldBeEqualTo(new[] {3, 4});
+            a.Release(2).ShouldBeEqualTo(new[] { 3, 4 });
             a1.CurrentCount.ShouldBeEqualTo(3);
             a2.CurrentCount.ShouldBeEqualTo(4);
         }
@@ -101,8 +104,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             ans.First().ShouldBeEqualTo(1);
             ans.Remove(1);
             (from i in ans
-                where i != 0
-                select i).Any().ShouldBeFalse();
+             where i != 0
+             select i).Any().ShouldBeFalse();
         }
 
         [TestMethod]
@@ -143,7 +146,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a = new SemaphoreSlim(1, 2) as object;
             var b = new Semaphore(1, 2) as object;
             var c = new SemaphoreSlim(1, 2).ToSemaphoreUnit() as object;
-            var d = (object) 1;
+            var d = (object)1;
             CombinedSemaphore.CreateUnit(a).ShouldBeOfType<SemaphoreSlimUnit>();
             CombinedSemaphore.CreateUnit(b).ShouldBeOfType<SemaphoreWin32Unit>();
             CombinedSemaphore.CreateUnit(c).ShouldBeSameInstanceAs(c);
@@ -203,6 +206,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
+        [Timeout(200)]
         public void CreateUnitsTestObj()
         {
             var a = new Semaphore(1, 2) as object;
@@ -215,41 +219,301 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             CombinedSemaphore.CreateUnits(d).ShouldContainAllInOrder(new[]
                 {CombinedSemaphore.CreateUnit(a), CombinedSemaphore.CreateUnit(b)});
             d = d.Append(c).ToArray();
-            Assert.ThrowsException<TypeNotSupportedException>(() => CombinedSemaphore.CreateUnits(d));
+            Assert.ThrowsException<TypeNotSupportedException>(() => CombinedSemaphore.CreateUnits(d).ToList());
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(450)]
         public void CreateUnitsAsyncTestWin32()
         {
-            throw new NotImplementedException();
+            var sa = new Semaphore(1, 2);
+            var sb = new Semaphore(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<Semaphore>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var listsMaker = CombinedSemaphore.CreateUnitsAsync(ses);
+            var lists = MakeList(listsMaker).WaitAndUnwrapException();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsWin32() != sa && unit.GetCurrentSemaphoreAsWin32() != sb)
+                .ShouldBeFalse();
         }
 
+        [SuppressMessage("ReSharper", "AsyncConverter.AsyncMethodNamingHighlighting")]
+        private static async Task<List<SemaphoreUnit>> MakeList(IAsyncEnumerable<SemaphoreUnit> m)
+        {
+            var ans = new List<SemaphoreUnit>();
+            await foreach (var unit in m.ConfigureAwait(false))
+            {
+                ans.Add(unit);
+            }
+
+            return ans;
+        }
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(450)]
         public void CreateUnitsAsyncTestSlim()
         {
-            throw new NotImplementedException();
+            var sa = new SemaphoreSlim(1, 2);
+            var sb = new SemaphoreSlim(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<SemaphoreSlim>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var listsMaker = CombinedSemaphore.CreateUnitsAsync(ses);
+            var lists = MakeList(listsMaker).WaitAndUnwrapException();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsSlim() != sa && unit.GetCurrentSemaphoreAsSlim() != sb)
+                .ShouldBeFalse();
         }
 
         [TestMethod]
+        [Timeout(300)]
         public void CreateUnitsAsyncTestObj()
         {
-            throw new NotImplementedException();
+            var a = new Semaphore(1, 2) as object;
+            var b = new SemaphoreSlim(1, 2) as object;
+            var c = 1 as object;
+            var d = new[]
+            {
+                a, b
+            };
+            MakeList(CombinedSemaphore.CreateUnitsAsync(d)).WaitAndUnwrapException().ShouldContainAllInOrder(new[]
+                {CombinedSemaphore.CreateUnit(a), CombinedSemaphore.CreateUnit(b)});
+            d = d.Append(c).ToArray();
+            Assert.ThrowsException<TypeNotSupportedException>(() => MakeList(CombinedSemaphore.CreateUnitsAsync(d)).WaitAndUnwrapException());
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(500)]
         public void CreateUnitsAsyncTestWin32Async()
         {
-            throw new NotImplementedException();
+            var sa = new Semaphore(1, 2);
+            var sb = new Semaphore(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<Semaphore>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var sesa = MakeAsyncEnumerable(ses);
+            var listsMaker = CombinedSemaphore.CreateUnitsAsync(sesa);
+            var lists = MakeList(listsMaker).WaitAndUnwrapException();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsWin32() != sa && unit.GetCurrentSemaphoreAsWin32() != sb)
+                .ShouldBeFalse();
         }
 
         [TestMethod]
+        [SuppressMessage("ReSharper", "IdentifierTypo")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [Timeout(500)]
         public void CreateUnitsAsyncTestSlimAsync()
+        {
+            var sa = new SemaphoreSlim(1, 2);
+            var sb = new SemaphoreSlim(1, 2);
+            var rad = new Random();
+            var sac = rad.Next(1, 100);
+            var sbc = rad.Next(1, 100);
+            var ses = new List<SemaphoreSlim>();
+            for (var i = 1; i <= sac; i++) ses.Add(sa);
+
+            for (var i = 1; i <= sbc; i++) ses.Add(sb);
+
+            ses.Count.ShouldBeEqualTo(sac + sbc);
+            var sesa = MakeAsyncEnumerable(ses);
+            var listsMaker = CombinedSemaphore.CreateUnitsAsync(sesa);
+            var lists = MakeList(listsMaker).WaitAndUnwrapException();
+            lists.Count.ShouldBeEqualTo(sac + sbc);
+            var dis = lists.Distinct().ToList();
+            dis.Count().ShouldBeEqualTo(2);
+            dis.Any(unit => unit.GetCurrentSemaphoreAsSlim() != sa && unit.GetCurrentSemaphoreAsSlim() != sb)
+                .ShouldBeFalse();
+        }
+
+        [TestMethod]
+        [Timeout(350)]
+        public void CreateUnitsAsyncTestObjAsync()
+        {
+            var a = new Semaphore(1, 2) as object;
+            var b = new SemaphoreSlim(1, 2) as object;
+            var c = 1 as object;
+            var darr = new[]
+            {
+                a, b
+            };
+            var d = MakeAsyncEnumerable(darr);
+            MakeList(CombinedSemaphore.CreateUnitsAsync(d)).WaitAndUnwrapException().ShouldContainAllInOrder(new[]
+                {CombinedSemaphore.CreateUnit(a), CombinedSemaphore.CreateUnit(b)});
+            d = MakeAsyncEnumerable(darr.Append(c));
+            Assert.ThrowsException<TypeNotSupportedException>(() => MakeList(CombinedSemaphore.CreateUnitsAsync(d)).WaitAndUnwrapException());
+        }
+
+#pragma warning disable CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
+        private static async IAsyncEnumerable<T> MakeAsyncEnumerable<T>(IEnumerable<T> m)
+#pragma warning restore CS1998 // 异步方法缺少 "await" 运算符，将以同步方式运行
+        {
+            foreach (var t in m)
+            {
+                yield return t;
+            }
+        }
+
+        [TestMethod()][Timeout(200)]
+        public void TryAddTestUnit()
+        {
+            var a = new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+            var b = new SemaphoreSlim(2, 3).ToSemaphoreUnit();
+            var c = a.Combine(b);
+            var d = new SemaphoreSlim(3, 4).ToSemaphoreUnit();
+            c.Contains(d).ShouldBeFalse();
+            c.Contains(a).ShouldBeTrue();
+            c.TryAdd(b).ShouldBeFalse();
+            c.TryAdd(d).ShouldBeTrue();
+            c.Contains(d).ShouldBeTrue();
+        }
+
+        [TestMethod()]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [Timeout(500)]
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        public void GetWaitHandlesTest()
+        {
+            
+            var rnd = new Random();
+            var count = rnd.Next(10,100);
+            var origType = new int[count];//1 win32 2 slim
+            var orig = new SemaphoreUnit[count];
+            for (var i = 1; i <= count; i++)
+            {
+                var index = new Index(i - 1);
+                origType[index] = rnd.Next(1, 3);
+                orig[index] = origType[index] == 1
+                    ? new Semaphore(1, 2).ToSemaphoreUnit()
+                    : new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+            }
+
+            var handles = orig.Combine().GetWaitHandles();
+            handles.Count().ShouldBeEqualTo(count);
+            var dest = handles.ToArray();
+            for (var i = 1; i <= count; i++)
+            {
+                var index = new Index(i - 1);
+                if (origType[index] == 1)
+                {
+                    dest[index].ShouldBeOfType<Semaphore>();
+                }
+                else
+                {
+                    dest[index].ShouldBeOfType<ManualResetEvent>();
+                }
+            }
+        }
+
+        [TestMethod()][Timeout(200)]
+        public void TryAddTestSlim()
+        {
+            var a = new SemaphoreSlim(1, 2);
+            var b = new SemaphoreSlim(2, 3);
+            var c = a.Combine(b);
+            var d = new SemaphoreSlim(3, 4);
+            c.Contains(d).ShouldBeFalse();
+            c.Contains(a).ShouldBeTrue();
+            c.TryAdd(b).ShouldBeFalse();
+            c.TryAdd(d).ShouldBeTrue();
+            c.Contains(d).ShouldBeTrue();
+        }
+
+        [TestMethod()][Timeout(200)]
+        public void TryAddTestWin32()
+        {
+            var a = new Semaphore(1, 2);
+            var b = new Semaphore(2, 3);
+            var c = a.Combine(b);
+            var d = new Semaphore(3, 4);
+            c.Contains(d).ShouldBeFalse();
+            c.Contains(a).ShouldBeTrue();
+            c.TryAdd(b).ShouldBeFalse();
+            c.TryAdd(d).ShouldBeTrue();
+            c.Contains(d).ShouldBeTrue();
+        }
+
+        [TestMethod()][Timeout(200)]
+        public void ContainsTestSlim()
+        {
+            var a = new SemaphoreSlim(1, 2);
+            a.Combine().Contains(a).ShouldBeTrue();
+            a.Combine().Contains(new SemaphoreSlim(1,2)).ShouldBeFalse();
+        }
+
+        [TestMethod()][Timeout(200)]
+        public void ContainsTestWin32()
+        {
+            var a = new Semaphore(1, 2);
+            a.Combine().Contains(a).ShouldBeTrue();
+            a.Combine().Contains(new Semaphore(1, 2)).ShouldBeFalse();
+        }
+
+        [TestMethod()][Timeout(150)]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        public void GetUnitListTest()
+        {
+            var rnd = new Random();
+            var count = rnd.Next(10, 20);
+            var cse = new CombinedSemaphore(new SemaphoreSlim(1, 2));
+            for (var i = 1; i <= count; i++)
+            {
+                cse.Add(rnd.Next(1,3)==1?new SemaphoreSlim(1,2).ToSemaphoreUnit():new Semaphore(1,2).ToSemaphoreUnit());
+            }
+
+            cse.GetUnitList().ShouldContainAllInOrder(cse);
+        }
+
+        [TestMethod()]
+        public void GetAllSemaphoreWin32Test()
         {
             throw new NotImplementedException();
         }
 
-        [TestMethod]
-        public void CreateUnitsAsyncTestObjAsync()
+        [TestMethod()]
+        public void GetAllSemaphoreSlimTest()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod()]
+        public void RemoveAllDisposedUnitTest()
         {
             throw new NotImplementedException();
         }

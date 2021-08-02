@@ -162,21 +162,21 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<Semaphore> semaphores)
         {
-            await foreach (var semaphore in semaphores)
+            await foreach (var semaphore in semaphores.ConfigureAwait(false))
                 yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{SemaphoreSlim})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<SemaphoreSlim> semaphores)
         {
-            await foreach (var semaphore in semaphores)
+            await foreach (var semaphore in semaphores.ConfigureAwait(false))
                 yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="CreateUnitsAsync(System.Collections.Generic.IEnumerable{object})" />
         public static async IAsyncEnumerable<SemaphoreUnit> CreateUnitsAsync(IAsyncEnumerable<object> semaphores)
         {
-            await foreach (var semaphore in semaphores)
+            await foreach (var semaphore in semaphores.ConfigureAwait(false))
                 yield return await Task.Run(() => CreateUnit(semaphore)).ConfigureAwait(false);
         }
     }
