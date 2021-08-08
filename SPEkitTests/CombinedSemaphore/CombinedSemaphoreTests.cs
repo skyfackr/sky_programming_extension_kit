@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SPEkit.CombinedSemaphore.MainClass;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
     [TestClass]
     [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
     [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    [SuppressMessage("ReSharper", "IdentifierTypo")]
     public class CombinedSemaphoreTests
     {
         [TestInitialize]
@@ -32,10 +35,10 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         {
             var a1 = new Semaphore(1, 2).ToSemaphoreUnit();
             var a2 = new SemaphoreSlim(2, 3).ToSemaphoreUnit();
-            var a = new CombinedSemaphore(new[] {a1, a2});
+            var a = new CombinedSemaphore(new[] { a1, a2 });
             a2.GetCurrentSemaphoreAsSlim().CurrentCount.ShouldBeEqualTo(2);
             Assert.ThrowsException<TypeCannotConvertException>(a1.GetCurrentSemaphoreAsSlim);
-            a.Release().ShouldBeEqualTo(new[] {2, 3});
+            a.Release().ShouldBeEqualTo(new[] { 2, 3 });
             var rec = new Dictionary<ReleaseRecoverySession, Exception>();
             a.AllRecoveryCompleteEvent += (r, e) => { rec.Add(r, e); };
             try
@@ -70,7 +73,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a1 = new SemaphoreSlim(1);
             var a2 = new SemaphoreSlim(2);
             var a = a1.Combine(a2);
-            a.Release(2).ShouldBeEqualTo(new[] {3, 4});
+            a.Release(2).ShouldBeEqualTo(new[] { 3, 4 });
             a1.CurrentCount.ShouldBeEqualTo(3);
             a2.CurrentCount.ShouldBeEqualTo(4);
         }
@@ -105,8 +108,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             ans.First().ShouldBeEqualTo(1);
             ans.Remove(1);
             (from i in ans
-                where i != 0
-                select i).Any().ShouldBeFalse();
+             where i != 0
+             select i).Any().ShouldBeFalse();
         }
 
         [TestMethod]
@@ -147,7 +150,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a = new SemaphoreSlim(1, 2) as object;
             var b = new Semaphore(1, 2) as object;
             var c = new SemaphoreSlim(1, 2).ToSemaphoreUnit() as object;
-            var d = (object) 1;
+            var d = (object)1;
             CombinedSemaphore.CreateUnit(a).ShouldBeOfType<SemaphoreSlimUnit>();
             CombinedSemaphore.CreateUnit(b).ShouldBeOfType<SemaphoreWin32Unit>();
             CombinedSemaphore.CreateUnit(c).ShouldBeSameInstanceAs(c);
@@ -559,7 +562,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             }
 
             var c = list.Combine();
-            c.RemoveAllDisposedUnit();
+            c.RemoveAllDisposedUnit().ShouldBeEqualTo(disCount);
             c.Count.ShouldBeEqualTo(orgCount - disCount);
         }
 
@@ -664,39 +667,181 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
-        public void WaitTest()
+        [Timeout(400)]
+        public void WaitTestNoParam()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+
+            list.Combine().Wait();
+            foreach (var unit in list) unit.GetCurrentSemaphoreAsSlim().CurrentCount.ShouldBeEqualTo(0);
         }
 
         [TestMethod]
-        public void WaitTest1()
+        [Timeout(400)]
+        public void WaitTestInt()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+            var c = list.Combine();
+            c.Wait(400).ShouldBeTrue();
+            c.Wait(100).ShouldBeFalse();
+            var task = c.Wait(1000);
+            //task.IsCompleted.ShouldBeFalse();
+            c.Release();
+            task.ShouldBeTrue();
         }
 
         [TestMethod]
-        public void WaitTest2()
+        [Timeout(400)]
+        public void WaitTestIntTk()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+            var c = list.Combine();
+            var tks = new CancellationTokenSource();
+            c.Wait(400, tks.Token).ShouldBeTrue();
+            c.Wait(100, tks.Token).ShouldBeFalse();
+            var task1 = c.Wait(1000, tks.Token);
+            //task1.IsCompleted.ShouldBeFalse();
+            c.Release();
+            task1.ShouldBeTrue();
+            //var task2 = c.Wait(1000, tks.Token);
+            //task2.IsCompleted.ShouldBeFalse();
+            tks.Cancel();
+            Assert.ThrowsException<OperationCanceledException>((() => c.Wait(1000, tks.Token)));
         }
 
         [TestMethod]
-        public void WaitTest3()
+        [Timeout(400)]
+        public void WaitTestTk()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+            var c = list.Combine();
+            var tks = new CancellationTokenSource();
+            c.Wait(tks.Token);
+
+            //var task2 = c.Wait(tks.Token);
+            //task2.IsCompleted.ShouldBeFalse();
+            tks.Cancel();
+            Assert.ThrowsException<OperationCanceledException>((() => c.Wait(tks.Token)));
         }
 
         [TestMethod]
-        public void WaitTest4()
+        [Timeout(400)]
+        public void WaitTestTs()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+            var c = list.Combine();
+            c.Wait(TimeSpan.FromMilliseconds(400)).ShouldBeTrue();
+            c.Wait(TimeSpan.FromMilliseconds(100)).ShouldBeFalse();
+            var task = c.Wait(TimeSpan.FromMilliseconds(1000));
+            //task.IsCompleted.ShouldBeFalse();
+            c.Release();
+            task.ShouldBeTrue();
         }
 
         [TestMethod]
-        public void WaitTest5()
+        [Timeout(400)]
+        public void WaitTestTsTk()
         {
-            throw new NotImplementedException();
+            var list = CreateRndUnitList(10, 100, 1, 2);
+            var c = list.Combine();
+            var tks = new CancellationTokenSource();
+            c.Wait(TimeSpan.FromMilliseconds(400), tks.Token).ShouldBeTrue();
+            c.Wait(TimeSpan.FromMilliseconds(100), tks.Token).ShouldBeFalse();
+            var task1 = c.Wait(TimeSpan.FromMilliseconds(1000), tks.Token);
+            //task1.IsCompleted.ShouldBeFalse();
+            c.Release();
+            task1.ShouldBeTrue();
+            //var task2 = c.Wait(TimeSpan.FromMilliseconds(1000), tks.Token);
+            //task2.IsCompleted.ShouldBeFalse();
+            tks.Cancel();
+            Assert.ThrowsException<OperationCanceledException>((() => c.Wait(TimeSpan.FromMilliseconds(1000), tks.Token)));
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestSlim()
+        {
+            var se = new SemaphoreSlim(1, 2);
+            var c = new CombinedSemaphore(se);
+            c.Count.ShouldBeEqualTo(1);
+            c.Contains(se).ShouldBeTrue();
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestWin32()
+        {
+            var se = new Semaphore(1, 2);
+            var c = new CombinedSemaphore(se);
+            c.Count.ShouldBeEqualTo(1);
+            c.Contains(se).ShouldBeTrue();
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestUnit()
+        {
+            var se = new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+            var c = new CombinedSemaphore(se);
+            c.Count.ShouldBeEqualTo(1);
+            c.Contains(se).ShouldBeTrue();
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestIESlim()
+        {
+            var selist = new SemaphoreUnit[new Random().Next(10, 100)];
+            var orglist = new SemaphoreSlim[selist.Length];
+            for (var i = 1; i <= selist.Length; i++)
+            {
+                orglist[i - 1] = new SemaphoreSlim(1, 2);
+                selist[i - 1] = orglist[i - 1].ToSemaphoreUnit();
+            }
+
+            new CombinedSemaphore(orglist).ShouldContainAllInOrder(selist);
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestIEWin32()
+        {
+            var selist = new SemaphoreUnit[new Random().Next(10, 100)];
+            var orglist = new Semaphore[selist.Length];
+            for (var i = 1; i <= selist.Length; i++)
+            {
+                orglist[i - 1] = new Semaphore(1, 2);
+                selist[i - 1] = orglist[i - 1].ToSemaphoreUnit();
+            }
+
+            new CombinedSemaphore(orglist).ShouldContainAllInOrder(selist);
+        }
+
+        [TestMethod()]
+        [Timeout(400)]
+        public void CtorTestIEUnit()
+        {
+            var selist = new SemaphoreUnit[new Random().Next(10, 100)];
+            for (var i = 1; i <= selist.Length; i++)
+            {
+                selist[i - 1] = new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+
+            }
+
+            new CombinedSemaphore(selist).ShouldContainAllInOrder(selist);
+        }
+
+        [TestMethod()][Timeout(350)]
+        public void DisposeTest()
+        {
+            var list = CreateRndUnitList(10, 100,1,2).Combine();
+            var count = list.Count;
+            var units = list.GetUnitList();
+            list.RemoveAllDisposedUnit().ShouldBeEqualTo(0);
+            list.Count.ShouldBeEqualTo(count);
+            list.Dispose();
+            Assert.ThrowsException<ObjectDisposedException>(()=>list.RemoveAllDisposedUnit());
+            units.Combine().RemoveAllDisposedUnit().ShouldBeEqualTo(count);
         }
     }
 }
