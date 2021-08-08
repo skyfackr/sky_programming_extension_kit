@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +34,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             AssertNotDisposed();
             return (from unit in m_units
-                select unit.GetWaitHandle()).ToArray() as IEnumerable<WaitHandle>;
+                select unit.GetWaitHandle()).ToArray();
         }
 
         /// <summary>
@@ -90,7 +89,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             AssertNotDisposed();
             return (from unit in m_units
                 where unit.GetCurrentSemaphore() is Semaphore
-                select unit.GetCurrentSemaphoreAsWin32()).ToArray() as IEnumerable<Semaphore>;
+                select unit.GetCurrentSemaphoreAsWin32()).ToArray();
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             AssertNotDisposed();
             return (from unit in m_units
                 where unit.GetCurrentSemaphore() is SemaphoreSlim
-                select unit.GetCurrentSemaphoreAsSlim()).ToArray() as IEnumerable<SemaphoreSlim>;
+                select unit.GetCurrentSemaphoreAsSlim()).ToArray();
         }
 
         /// <summary>
