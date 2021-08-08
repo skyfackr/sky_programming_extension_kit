@@ -388,7 +388,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             }
         }
 
-        [TestMethod()][Timeout(200)]
+        [TestMethod()]
+        [Timeout(200)]
         public void TryAddTestUnit()
         {
             var a = new SemaphoreSlim(1, 2).ToSemaphoreUnit();
@@ -409,9 +410,9 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public void GetWaitHandlesTest()
         {
-            
+
             var rnd = new Random();
-            var count = rnd.Next(10,100);
+            var count = rnd.Next(10, 100);
             var origType = new int[count];//1 win32 2 slim
             var orig = new SemaphoreUnit[count];
             for (var i = 1; i <= count; i++)
@@ -440,7 +441,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             }
         }
 
-        [TestMethod()][Timeout(200)]
+        [TestMethod()]
+        [Timeout(200)]
         public void TryAddTestSlim()
         {
             var a = new SemaphoreSlim(1, 2);
@@ -454,7 +456,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             c.Contains(d).ShouldBeTrue();
         }
 
-        [TestMethod()][Timeout(200)]
+        [TestMethod()]
+        [Timeout(200)]
         public void TryAddTestWin32()
         {
             var a = new Semaphore(1, 2);
@@ -468,15 +471,17 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             c.Contains(d).ShouldBeTrue();
         }
 
-        [TestMethod()][Timeout(200)]
+        [TestMethod()]
+        [Timeout(200)]
         public void ContainsTestSlim()
         {
             var a = new SemaphoreSlim(1, 2);
             a.Combine().Contains(a).ShouldBeTrue();
-            a.Combine().Contains(new SemaphoreSlim(1,2)).ShouldBeFalse();
+            a.Combine().Contains(new SemaphoreSlim(1, 2)).ShouldBeFalse();
         }
 
-        [TestMethod()][Timeout(200)]
+        [TestMethod()]
+        [Timeout(200)]
         public void ContainsTestWin32()
         {
             var a = new Semaphore(1, 2);
@@ -484,7 +489,8 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             a.Combine().Contains(new Semaphore(1, 2)).ShouldBeFalse();
         }
 
-        [TestMethod()][Timeout(150)]
+        [TestMethod()]
+        [Timeout(150)]
         [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
         [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
         public void GetUnitListTest()
@@ -494,26 +500,118 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var cse = new CombinedSemaphore(new SemaphoreSlim(1, 2));
             for (var i = 1; i <= count; i++)
             {
-                cse.Add(rnd.Next(1,3)==1?new SemaphoreSlim(1,2).ToSemaphoreUnit():new Semaphore(1,2).ToSemaphoreUnit());
+                cse.Add(rnd.Next(1, 3) == 1 ? new SemaphoreSlim(1, 2).ToSemaphoreUnit() : new Semaphore(1, 2).ToSemaphoreUnit());
             }
 
             cse.GetUnitList().ShouldContainAllInOrder(cse);
         }
 
         [TestMethod()]
+        [Timeout(500)]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
         public void GetAllSemaphoreWin32Test()
         {
-            throw new NotImplementedException();
+            var rnd = new Random();
+            var count = rnd.Next(10, 50);
+            var list = new SemaphoreUnit[count];
+            for (var i = 1; i <= count; i++)
+            {
+                list[i - 1] = rnd.Next(1, 3) == 1
+                    ? new Semaphore(1, 2).ToSemaphoreUnit()
+                    : new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+            }
+
+            foreach (var unit in list)
+            {
+                if (unit is SemaphoreSlimUnit)
+                    Assert.ThrowsException<TypeCannotConvertException>(unit.GetCurrentSemaphoreAsWin32);
+                else (unit.GetCurrentSemaphoreAsWin32() != null).ShouldBeTrue();
+            }
         }
 
         [TestMethod()]
+        [Timeout(500)]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
         public void GetAllSemaphoreSlimTest()
+        {
+            var rnd = new Random();
+            var count = rnd.Next(10, 50);
+            var list = new SemaphoreUnit[count];
+            for (var i = 1; i <= count; i++)
+            {
+                list[i - 1] = rnd.Next(1, 3) == 1
+                    ? new Semaphore(1, 2).ToSemaphoreUnit()
+                    : new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+            }
+
+            foreach (var unit in list)
+            {
+                if (unit is SemaphoreWin32Unit)
+                    Assert.ThrowsException<TypeCannotConvertException>(unit.GetCurrentSemaphoreAsSlim);
+                else (unit.GetCurrentSemaphoreAsSlim() != null).ShouldBeTrue();
+            }
+        }
+
+        [TestMethod()]
+        [Timeout(1000)]
+        [SuppressMessage("Usage", "SecurityIntelliSenseCS:MS Security rules violation", Justification = "<挂起>")]
+        [SuppressMessage("Security", "SCS0005:Weak random number generator.", Justification = "<挂起>")]
+        public void RemoveAllDisposedUnitTest()
+        {
+            var rnd = new Random();
+            var orgCount = rnd.Next(10, 100);
+            var disCount = 0;
+            var list = new SemaphoreUnit[orgCount];
+            for (var i = 1; i <= orgCount; i++)
+            {
+                var index = new Index(i - 1);
+                list[index] = new SemaphoreSlim(1, 2).ToSemaphoreUnit();
+                if (rnd.Next(1, 3) == 1)
+                {
+                    disCount++;
+                    list[index].Dispose();
+                }
+            }
+
+            var c = list.Combine();
+            c.RemoveAllDisposedUnit();
+            c.Count.ShouldBeEqualTo(orgCount - disCount);
+        }
+
+        [TestMethod()]
+        public void WaitAsyncTest()
         {
             throw new NotImplementedException();
         }
 
         [TestMethod()]
-        public void RemoveAllDisposedUnitTest()
+        public void WaitAsyncTest1()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod()]
+        public void WaitAsyncTest2()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod()]
+        public void WaitAsyncTest3()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod()]
+        public void WaitAsyncTest4()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod()]
+        public void WaitAsyncTest5()
         {
             throw new NotImplementedException();
         }
