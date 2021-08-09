@@ -119,6 +119,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// </summary>
         /// <param name="dest">目标对象</param>
         /// <param name="orig">被吸收对象</param>
+        /// <remarks>此函数完成前不建议对<paramref name="orig" />执行其他操作</remarks>
         public static void Absorb(this CombinedSemaphore dest, CombinedSemaphore orig)
         {
             //var temp = orig.ToList();

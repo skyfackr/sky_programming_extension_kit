@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace SPEkit.InvokeReflection
 {
+    //public using MethodReflection=InvokeReflection;
     /// <summary>
     ///     便于通过反射进行动态调用函数的包装
     /// </summary>

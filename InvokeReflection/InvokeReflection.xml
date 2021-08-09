@@ -80,28 +80,33 @@
         <member name="M:SPEkit.InvokeReflection.InvokeReflection.InvokeAsync(System.Object,System.String,System.Object[])">
             <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.Invoke(System.Object,System.String,System.Object[])" />
         </member>
-        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String)">
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Boolean)">
             <summary>
                 通过反射查找一个无参函数并创建其委托
             </summary>
             <typeparam name="T">可用于该函数的委托类型</typeparam>
             <param name="caller">含有该函数的实例</param>
             <param name="methodName">函数名</param>
+            <param name="nonPublic">是否是非公开函数</param>
             <returns>函数委托</returns>
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
         </member>
-        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Type[])">
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Boolean,System.Type[])">
             <summary>
                 通过反射查找一个有参函数并创建其委托
             </summary>
             <typeparam name="T">可用于该函数的委托类型</typeparam>
             <param name="caller">含有该函数的实例</param>
             <param name="methodName">函数名</param>
+            <param name="nonPublic">是否公开函数</param>
             <param name="typeClass">此函数参数各自类型</param>
             <returns>函数委托</returns>
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.AmbiguousFuncError"></exception>
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
+        </member>
+        <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Type[])">
+            <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Boolean,System.Type[])"/>
         </member>
     </members>
 </doc>

@@ -1,0 +1,735 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CombinedSemaphore</name>
+    </assembly>
+    <members>
+        <member name="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore">
+            <summary>
+                支持针对<see cref="T:System.Threading.Semaphore" />和<see cref="T:System.Threading.SemaphoreSlim" />通过与<see cref="T:System.Threading.SemaphoreSlim" />同样的方法进行统一并行等待释放
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(System.Threading.SemaphoreSlim,System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(System.Threading.Semaphore,System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim},System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(System.Collections.Generic.IEnumerable{System.Threading.Semaphore},System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.#ctor(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit},System.Nullable{SPEkit.CombinedSemaphore.Utils.WaitActionFlag})">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Dispose">
+            <inheritdoc />
+            <remarks>
+                警告：执行dispose会对当前此实例中存储的所有<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />执行<see cref="M:System.IDisposable.Dispose" />，这会使全部绑定的
+                <see cref="T:System.Threading.Semaphore" />或者<see cref="T:System.Threading.SemaphoreSlim" />被dispose，在部分信号量实例被外部使用的场景下，此操作可能导致意外的
+                <see cref="T:System.ObjectDisposedException" />，如需避免进行dispose，请先执行<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Clear" />
+            </remarks>
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Option">
+            <summary>
+                当前等待设定
+            </summary>
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.DefaultFlag">
+            <summary>
+                <see cref="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Option" />默认值
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Release">
+            <summary>
+                对所有信号量释放一次
+            </summary>
+            <returns>返回数组，各自代表每个信号量的剩余信号</returns>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.ReleaseFailedException"></exception>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Release(System.Int32)">
+            <summary>
+                对所有信号量释放<paramref name="releaseCount" />次
+            </summary>
+            <returns>返回数组，各自代表每个信号量的剩余信号</returns>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.ReleaseFailedException"></exception>
+        </member>
+        <member name="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.AllRecoveryCompleteEvent">
+            <summary>
+                当一个<see cref="T:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession" />全部执行完成时启动事件，传入一个<see cref="T:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession" />和一个
+                <see cref="T:System.Exception" />
+                仅当还原时出错，<see cref="T:System.Exception" />才不为null
+            </summary>
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.IsCleanIntervalSet">
+            <summary>
+                是否设置了自动循环缓存清理
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache">
+            <summary>
+                清理一次<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.Semaphore)" />的缓存，使缓存中（包括重载）的所有已经被dispose的对象删除
+            </summary>
+            <returns>被清除的缓存数量</returns>
+            <remarks>
+                此代码将分开执行<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit" />和<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit" />的缓存清理并受到读写锁管理，对应缓存清理期间
+                相对的<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.Semaphore)" />或<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.SemaphoreSlim)" />
+                将被阻塞
+            </remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.SetCleanInterval(System.TimeSpan)">
+            <summary>
+                设置一个自动清理缓存循环，每隔指定时间调用一次<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />
+            </summary>
+            <param name="waitPerExecute">间歇时间</param>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.StopCleanInterval">
+            <summary>
+                终止<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.SetCleanInterval(System.TimeSpan)" />的循环
+            </summary>
+        </member>
+        <member name="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CompleteCleanOnceInInterval">
+            <summary>
+                当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="T:System.Int32" />参数作为<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />的返回值
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.Semaphore)">
+            <summary>
+                创建一个<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit" />，相同的信号量对象会导致返回同一个对象
+            </summary>
+            <param name="semaphore"></param>
+            <returns></returns>
+            <remarks>应当避免传入disposed的对象，否则如果应用周期内有调用<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />，可能会导致重复创建新对象</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.SemaphoreSlim)">
+            <summary>
+                创建一个<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit" />，相同的信号量对象会导致返回同一个对象
+            </summary>
+            <param name="semaphore"></param>
+            <returns></returns>
+            <remarks>应当避免传入disposed的对象，否则如果应用周期内有调用<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />，可能会导致重复创建新对象</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Object)">
+            <summary>
+                创建一个<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />，相同的信号量对象会导致返回同一个对象，如本身为<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />则返回自身
+            </summary>
+            <param name="semaphore"></param>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.TypeNotSupportedException"></exception>
+            <returns></returns>
+            <remarks>应当避免传入disposed的对象，否则如果应用周期内有调用<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />，可能会导致重复创建新对象</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnits(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit" />
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnits(System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit" />
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnits(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.TypeNotSupportedException"></exception>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit" />，异步形式创建
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit" />，异步形式创建
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Object})">
+            <summary>
+                创建一堆<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />，异步形式创建
+            </summary>
+            <param name="semaphores"></param>
+            <returns></returns>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.TypeNotSupportedException"></exception>
+            <remarks>此函数返回延迟查询对象，将在使用时实际执行，如有异常将在实际执行时抛出</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IAsyncEnumerable{System.Threading.Semaphore})">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IAsyncEnumerable{System.Threading.SemaphoreSlim})">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IAsyncEnumerable{System.Object})">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnitsAsync(System.Collections.Generic.IEnumerable{System.Object})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.GetEnumerator">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Add(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Clear">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Contains(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CopyTo(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit[],System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Remove(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Count">
+            <inheritdoc />
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.IsReadOnly">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.IndexOf(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Insert(System.Int32,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.RemoveAt(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Item(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.TryAdd(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <summary>
+                尝试添加<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />，如果已存在则添加并返回true，否则false
+            </summary>
+            <param name="semaphore"></param>
+            <returns></returns>
+            <remarks>此函数不是线程安全的</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.GetWaitHandles">
+            <summary>
+                对全部unit执行<see cref="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetWaitHandle" />并返回一个延迟执行可迭代对象用于查询结果
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.TryAdd(System.Threading.SemaphoreSlim)">
+            <summary>
+                尝试生成并添加<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />，如果已存在则添加并返回true，否则false
+            </summary>
+            <param name="semaphore"></param>
+            <returns></returns>
+            <remarks>此函数不是线程安全的</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.TryAdd(System.Threading.Semaphore)">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.TryAdd(System.Threading.SemaphoreSlim)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Contains(System.Threading.SemaphoreSlim)">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Contains(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Contains(System.Threading.Semaphore)">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Contains(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.GetUnitList">
+            <summary>
+                获取当前存储用列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.GetAllSemaphoreWin32">
+            <summary>
+                过滤出所有<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit" />并提取出<see cref="T:System.Threading.Semaphore" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.GetAllSemaphoreSlim">
+            <summary>
+                过滤出所有<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit" />并提取出<see cref="T:System.Threading.SemaphoreSlim" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.RemoveAllDisposedUnit">
+            <summary>
+                对所有unit检测一次，然后删除其中已经被disposed的对象
+            </summary>
+            <returns></returns>
+            <remarks>此函数运行期间，并不会锁定其他函数，不能保证其他函数运行时此函数已经完成全部清理，这可能导致无法避免<see cref="T:System.ObjectDisposedException" /></remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32,System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Threading.CancellationToken)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.Wait(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan,System.Threading.CancellationToken)" />
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx">
+            <summary>
+                <see cref="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore" />的拓展方法
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.Semaphore,System.Collections.Generic.IEnumerable{System.Threading.Semaphore})">
+            <summary>
+                将多个<see cref="T:System.Threading.Semaphore" />组合为<see cref="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore" />
+            </summary>
+            <param name="se"></param>
+            <param name="semaphores"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.SemaphoreSlim,System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})">
+            <summary>
+                将多个<see cref="T:System.Threading.SemaphoreSlim" />组合为<see cref="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore" />
+            </summary>
+            <param name="se"></param>
+            <param name="semaphores"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})">
+            <summary>
+                将多个<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />组合为<see cref="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore" />
+            </summary>
+            <param name="se"></param>
+            <param name="semaphores"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit},System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.Semaphore,System.Threading.Semaphore[])">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.Semaphore,System.Collections.Generic.IEnumerable{System.Threading.Semaphore})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.SemaphoreSlim,System.Threading.SemaphoreSlim[])">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.SemaphoreSlim,System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit[])">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit},SPEkit.CombinedSemaphore.Unit.SemaphoreUnit[])">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit},System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{System.Threading.Semaphore})">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.Semaphore,System.Collections.Generic.IEnumerable{System.Threading.Semaphore})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Threading.SemaphoreSlim,System.Collections.Generic.IEnumerable{System.Threading.SemaphoreSlim})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})">
+            <inheritdoc
+                cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Combine(System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit},System.Collections.Generic.IEnumerable{SPEkit.CombinedSemaphore.Unit.SemaphoreUnit})" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.Absorb(SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore,SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore)">
+            <summary>
+                将一个<see cref="T:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore" />内容全部转移吸收并清空
+            </summary>
+            <param name="dest">目标对象</param>
+            <param name="orig">被吸收对象</param>
+            <remarks>此函数完成前不建议对<paramref name="orig" />执行其他操作</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.ToSemaphoreUnit(System.Threading.Semaphore)">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.Semaphore)" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphoreEx.ToSemaphoreUnit(System.Threading.SemaphoreSlim)">
+            <inheritdoc cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.SemaphoreSlim)" />
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit">
+            <summary>
+                基本抽象类，可用于统一两种信号量的类声明
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetCurrentSemaphore">
+            <summary>
+            获取当前信号量实例的装箱对象
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetCurrentSemaphoreAsWin32">
+            <summary>
+            获取当前<see cref="T:System.Threading.Semaphore"/>信号量实例
+            </summary>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.TypeCannotConvertException"></exception>
+            <returns></returns>
+            <remarks>如果不兼容会导致无法转换并丢出异常</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetCurrentSemaphoreAsSlim">
+            <summary>
+            获取当前<see cref="T:System.Threading.SemaphoreSlim"/>信号量实例
+            </summary>
+            <exception cref="T:SPEkit.CombinedSemaphore.error.TypeCannotConvertException"></exception>
+            <returns></returns>
+            <remarks>如果不兼容会导致无法转换并丢出异常</remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Release">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Release(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Release(System.Int32)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Int32,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Wait(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.Wait(System.TimeSpan,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync(System.Int32)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Int32,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync(System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync(System.TimeSpan)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:System.Threading.SemaphoreSlim.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetWaitHandle">
+            <summary>
+            获取当前信号量实例的一个可用的<see cref="T:System.Threading.WaitHandle"/>
+            </summary>
+            <returns>如果信号量为<see cref="T:System.Threading.Semaphore"/>实例，会返回此信号量实例且不会触发<see cref="T:System.ObjectDisposedException"/></returns>
+            <exception cref="T:System.ObjectDisposedException"></exception>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Equals(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.op_Equality(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <summary>
+            
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.op_Inequality(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <summary>
+            
+            </summary>
+            <param name="left"></param>
+            <param name="right"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Dispose(System.Boolean)">
+            <summary>
+            dispose时执行
+            </summary>
+            <param name="disposing">若为true则代表从<see cref="M:System.IDisposable.Dispose"/>调用</param>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit">
+            <summary>
+                <see cref="T:System.Threading.Semaphore" />的<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />实现
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Equals(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.GetCurrentSemaphore">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.GetCurrentSemaphoreAsWin32">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.GetWaitHandle">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Release">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Release(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait(System.TimeSpan)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.Wait(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync(System.TimeSpan)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreWin32Unit.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit">
+            <summary>
+                <see cref="T:System.Threading.SemaphoreSlim" />的<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />实现
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Equals(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.ToString">
+            <inheritdoc />
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.CurrentCount">
+            <inheritdoc cref="P:System.Threading.SemaphoreSlim.CurrentCount" />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.GetCurrentSemaphore">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.GetCurrentSemaphoreAsSlim">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.GetWaitHandle">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Release">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Release(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait(System.TimeSpan)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.Wait(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync(System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync(System.TimeSpan)">
+            <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreSlimUnit.WaitAsync(System.TimeSpan,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Utils.WaitActionFlag">
+            <summary>
+                等待设定用标志
+            </summary>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.IgnoreDisposed">
+            <summary>
+                忽略disposed
+            </summary>
+            <remarks>与<see cref="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.ThrowWhenDisposed" />冲突，同时存在时，忽略此标志</remarks>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.ThrowWhenDisposed">
+            <summary>
+                不忽略disposed并丢异常
+            </summary>
+            <remarks>与<see cref="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.IgnoreDisposed" />冲突，同时存在时，以此标志为准</remarks>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded">
+            <summary>
+                遇到<see cref="T:System.Threading.SemaphoreFullException" />时，启动还原并丢出异常
+            </summary>
+            <remarks>与<see cref="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded" />冲突，同时存在时，以此标志为准</remarks>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded">
+            <summary>
+                遇到<see cref="T:System.Threading.SemaphoreFullException" />时，忽略并继续处理
+            </summary>
+            <remarks>与<see cref="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.RecoveryAndThrowWhenReleaseExceeded" />冲突，同时存在时，忽略此标志</remarks>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.All">
+            <summary>
+                全部标志的集合
+            </summary>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.WaitActionFlag.None">
+            <summary>
+                啥都没得
+            </summary>
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Utils.WaitActionFlagEx">
+            <summary>
+                <see cref="T:SPEkit.CombinedSemaphore.Utils.WaitActionFlag" />的拓展
+            </summary>
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession">
+            <summary>
+                如果释放时出现未被忽略的错误则会启动全部还原操作，此类的实例可以用于一次还原会话的查询与取消
+            </summary>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession.Units">
+            <summary>
+                本次会话操作的全部<see cref="T:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit" />对象
+            </summary>
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession.IsRecoveryCompleted">
+            <summary>
+                表明是否还原完毕
+            </summary>
+        </member>
+        <member name="P:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession.IsRecoveryCancelled">
+            <summary>
+                表明还原是否被取消
+            </summary>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession.Cancel">
+            <summary>
+                取消本次还原会话
+            </summary>
+            <remarks>
+                注意，此函数会对所有还原操作的等待信号方法发送取消通知，无法预知哪些被取消哪些运行成功，使用后可能导致不可预知的状态
+                取消完成后<see cref="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.AllRecoveryCompleteEvent" />将被立刻执行
+            </remarks>
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Utils.ReleaseRecoverySession.WaitAsync">
+            <summary>
+                等待完成
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.error.TypeCannotConvertException">
+            <summary>
+            类不支持，无法转换为对应类
+            </summary>
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.error.TypeNotSupportedException">
+            <summary>
+            类不支持
+            </summary>
+        </member>
+        <member name="T:SPEkit.CombinedSemaphore.error.ReleaseFailedException">
+            <summary>
+            释放出错并触发了操作还原，可以通过<see cref="F:SPEkit.CombinedSemaphore.error.ReleaseFailedException.RecoverySession"/>进行还原操作取消以及获取是否完成状态
+            也可以通过<see cref="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.AllRecoveryCompleteEvent"/>订阅完成事件
+            </summary>
+        </member>
+        <member name="F:SPEkit.CombinedSemaphore.error.ReleaseFailedException.RecoverySession">
+            <summary>
+            本次释放失败产生的还原会话
+            </summary>
+        </member>
+    </members>
+</doc>

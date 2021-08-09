@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace SPEkit.InvokeReflection
@@ -12,10 +11,11 @@ namespace SPEkit.InvokeReflection
         /// <typeparam name="T">可用于该函数的委托类型</typeparam>
         /// <param name="caller">含有该函数的实例</param>
         /// <param name="methodName">函数名</param>
+        /// <param name="nonPublic">是否是非公开函数</param>
         /// <returns>函数委托</returns>
         /// <exception cref="AmbiguousFuncError"></exception>
         /// <exception cref="FuncNotExistsError"></exception>
-        public static T MakeDelegate<T>(object caller, string methodName) where T : Delegate
+        public static T MakeDelegate<T>(object caller, string methodName, bool nonPublic = false) where T : Delegate
         {
             //if (!IsExists(caller, methodName))
             //{
@@ -25,7 +25,11 @@ namespace SPEkit.InvokeReflection
             MethodInfo method;
             try
             {
-                method = t.GetMethod(methodName, Type.EmptyTypes);
+                method = t.GetMethod(methodName,
+                    BindingFlags.Instance | (nonPublic ? BindingFlags.NonPublic : BindingFlags.Default), null,
+                    Type.EmptyTypes, null) ?? t.GetMethod(methodName,
+                    BindingFlags.Static | (nonPublic ? BindingFlags.NonPublic : BindingFlags.Default), null,
+                    Type.EmptyTypes, null);
             }
             catch (AmbiguousMatchException e)
             {
@@ -44,11 +48,12 @@ namespace SPEkit.InvokeReflection
         /// <typeparam name="T">可用于该函数的委托类型</typeparam>
         /// <param name="caller">含有该函数的实例</param>
         /// <param name="methodName">函数名</param>
+        /// <param name="nonPublic">是否公开函数</param>
         /// <param name="typeClass">此函数参数各自类型</param>
         /// <returns>函数委托</returns>
         /// <exception cref="AmbiguousFuncError"></exception>
         /// <exception cref="FuncNotExistsError"></exception>
-        public static T MakeDelegate<T>(object caller, string methodName, params Type[] typeClass)
+        public static T MakeDelegate<T>(object caller, string methodName, bool nonPublic, params Type[] typeClass)
             where T : Delegate
         {
             //if (!IsExists(caller, methodName,typeClass))
@@ -59,7 +64,12 @@ namespace SPEkit.InvokeReflection
             MethodInfo method;
             try
             {
-                method = t.GetMethod(methodName, typeClass);
+                method =
+                    t.GetMethod(methodName,
+                        BindingFlags.Instance | (nonPublic ? BindingFlags.NonPublic : BindingFlags.Default), null,
+                        typeClass, null) ?? t.GetMethod(methodName,
+                        BindingFlags.Static | (nonPublic ? BindingFlags.NonPublic : BindingFlags.Default), null,
+                        typeClass, null);
             }
             catch (AmbiguousMatchException e)
             {
@@ -71,7 +81,14 @@ namespace SPEkit.InvokeReflection
             return _createReturnDelegate<T>(caller, method);
         }
 
-        private static T _createReturnDelegate<T>(object caller, MethodInfo method) where T:Delegate
+        /// <inheritdoc cref="MakeDelegate{T}(object,string,bool,Type[])" />
+        public static T MakeDelegate<T>(object caller, string methodName, params Type[] typeClass)
+            where T : Delegate
+        {
+            return MakeDelegate<T>(caller, methodName, false, typeClass);
+        }
+
+        private static T _createReturnDelegate<T>(object caller, MethodInfo method) where T : Delegate
         {
             if (method.IsStatic) return method.CreateDelegate<T>(null);
             return method.CreateDelegate<T>(caller);
