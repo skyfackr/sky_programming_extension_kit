@@ -67,15 +67,29 @@ namespace SPEkit.CombinedSemaphore.Unit
         }
 
         /// <inheritdoc />
-        public override Task<bool> WaitAsync(int millisecondsTimeout, CancellationToken cancellationToken)
+        public override async Task<bool> WaitAsync(int millisecondsTimeout, CancellationToken cancellationToken)
         {
-            return m_semaphoreSlim.WaitAsync(millisecondsTimeout, cancellationToken);
+            try
+            {
+                return await m_semaphoreSlim.WaitAsync(millisecondsTimeout, cancellationToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException e)
+            {
+                throw new OperationCanceledException(null, e, cancellationToken);
+            }
         }
 
         /// <inheritdoc />
-        public override Task WaitAsync(CancellationToken cancellationToken)
+        public override async Task WaitAsync(CancellationToken cancellationToken)
         {
-            return m_semaphoreSlim.WaitAsync(cancellationToken);
+            try
+            {
+                await m_semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException e)
+            {
+                throw new OperationCanceledException(null, e, cancellationToken);
+            }
         }
 
         /// <inheritdoc />
@@ -85,9 +99,16 @@ namespace SPEkit.CombinedSemaphore.Unit
         }
 
         /// <inheritdoc />
-        public override Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken)
+        public override async Task<bool> WaitAsync(TimeSpan timeout, CancellationToken cancellationToken)
         {
-            return m_semaphoreSlim.WaitAsync(timeout, cancellationToken);
+            try
+            {
+                return await m_semaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException e)
+            {
+                throw new OperationCanceledException(null, e, cancellationToken);
+            }
         }
     }
 }

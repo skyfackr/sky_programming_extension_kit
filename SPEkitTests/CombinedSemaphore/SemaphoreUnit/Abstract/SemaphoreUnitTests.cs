@@ -70,8 +70,8 @@ namespace SPEkit.CombinedSemaphore.Unit.Tests
         public void ReleaseTestNoParam()
         {
             var (w, s) = CreateAll(1, 2);
-            w.Release().ShouldBeEqualTo(2);
-            s.Release().ShouldBeEqualTo(2);
+            w.Release().ShouldBeEqualTo(1);
+            s.Release().ShouldBeEqualTo(1);
             Assert.ThrowsException<SemaphoreFullException>(() => w.Release());
             Assert.ThrowsException<SemaphoreFullException>(() => s.Release());
         }
@@ -81,8 +81,8 @@ namespace SPEkit.CombinedSemaphore.Unit.Tests
         public void ReleaseTestInt()
         {
             var (w, s) = CreateAll(1, 3);
-            w.Release(2).ShouldBeEqualTo(3);
-            s.Release(2).ShouldBeEqualTo(3);
+            w.Release(2).ShouldBeEqualTo(1);
+            s.Release(2).ShouldBeEqualTo(1);
             Assert.ThrowsException<SemaphoreFullException>(() => w.Release(2));
             Assert.ThrowsException<SemaphoreFullException>(() => s.Release(2));
         }
@@ -106,6 +106,7 @@ namespace SPEkit.CombinedSemaphore.Unit.Tests
             w.Wait(100).ShouldBeFalse();
             s.Wait(100).ShouldBeFalse();
         }
+
 
         [TestMethod]
         [Timeout(800)]
@@ -173,7 +174,7 @@ namespace SPEkit.CombinedSemaphore.Unit.Tests
         }
 
         [TestMethod]
-        [Timeout(800)]
+        [Timeout(1000)]
         public void WaitAsyncTestInt()
         {
             var (w, s) = CreateAll(1, 2);
@@ -181,6 +182,17 @@ namespace SPEkit.CombinedSemaphore.Unit.Tests
             s.WaitAsync(100).WaitAndUnwrapException().ShouldBeTrue();
             w.WaitAsync(100).WaitAndUnwrapException().ShouldBeFalse();
             s.WaitAsync(100).WaitAndUnwrapException().ShouldBeFalse();
+            WaitAsyncTestInt_ReleaseWhenWaiting(w, 10000);
+            WaitAsyncTestInt_ReleaseWhenWaiting(s, 10000);
+        }
+
+        private void WaitAsyncTestInt_ReleaseWhenWaiting(SemaphoreUnit unit, int ms)
+        {
+            var task = unit.WaitAsync(ms);
+            Thread.Sleep(100);
+            task.IsCompleted.ShouldBeFalse();
+            unit.Release();
+            task.WaitAndUnwrapException().ShouldBeTrue();
         }
 
         [TestMethod]

@@ -586,16 +586,18 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
-        [Timeout(400)]
+        [Timeout(700)]
         public void WaitAsyncTestInt()
         {
             var list = CreateRndUnitList(10, 100, 1, 2);
             var c = list.Combine();
             c.WaitAsync(400).WaitAndUnwrapException().ShouldBeTrue();
             c.WaitAsync(100).WaitAndUnwrapException().ShouldBeFalse();
-            var task = c.WaitAsync(1000);
+
+            var task = c.WaitAsync(10000);
+            Thread.Sleep(300);
             task.IsCompleted.ShouldBeFalse();
-            c.Release();
+            c.Release(2);
             task.WaitAndUnwrapException().ShouldBeTrue();
         }
 
@@ -687,7 +689,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         }
 
         [TestMethod]
-        [Timeout(400)]
+        [Timeout(500)]
         public void WaitTestIntTk()
         {
             var list = CreateRndUnitList(10, 100, 1, 2);
@@ -706,7 +708,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         [Timeout(400)]
         public void WaitTestTk()
         {
-            var list = CreateRndUnitList(1, 3, 1, 2);
+            var list = CreateRndUnitList(10, 100, 1, 2);
             var c = list.Combine();
             var tks = new CancellationTokenSource();
             c.Wait(tks.Token);
@@ -724,11 +726,11 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             //var d = c.GetPrivate<Func<Func<SemaphoreUnit, Task<bool>>, bool>>("WaitingProcess");
             var de = InvokeReflection.InvokeReflection.MakeDelegate<Func<Func<SemaphoreUnit, Task<bool>>, bool>>(c,
                 "WaitingProcess", true, typeof(Func<SemaphoreUnit, Task<bool>>));
-            Assert.ThrowsException<AssertFailedException>(() =>
+            Assert.ThrowsException<OperationCanceledException>(() =>
                 de.Invoke(unit =>
                 {
                     Trace.WriteLine(unit);
-                    throw new AssertFailedException("This means successful");
+                    throw new OperationCanceledException("This means successful");
                 }).ShouldBeFalse());
         }
 

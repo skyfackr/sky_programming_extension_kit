@@ -106,7 +106,7 @@
             <exception cref="T:SPEkit.InvokeReflection.InvokeReflection.FuncNotExistsError"></exception>
         </member>
         <member name="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Type[])">
-            <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Boolean,System.Type[])"/>
+            <inheritdoc cref="M:SPEkit.InvokeReflection.InvokeReflection.MakeDelegate``1(System.Object,System.String,System.Boolean,System.Type[])" />
         </member>
     </members>
 </doc>

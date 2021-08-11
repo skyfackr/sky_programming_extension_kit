@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -15,6 +17,8 @@ namespace SPEkit.CombinedSemaphore.MainClass
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RecoveryAll(IEnumerable<WaitingSessions> sessions)
         {
+            //todo delete
+            Trace.WriteLine(Environment.NewLine + Environment.NewLine + "recovery executed");
             sessions = from session in sessions
                 where session != null
                 select session;
@@ -33,6 +37,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             IEnumerable<bool> sessionResults;
             try
             {
+                var exceptions = new ConcurrentBag<Exception>();
                 result = Parallel.ForEach(units, async (unit, state, index) =>
                 {
                     var session = new WaitingSessions(unit);
@@ -41,31 +46,38 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     {
                         session.Entered(await act(unit).ConfigureAwait(false));
                     }
-                    catch (ObjectDisposedException)
+                    catch (ObjectDisposedException e)
                     {
                         if (!option.CreateBinLikeClassSelectorUnit()
                             .Match((long) WaitActionFlag.IgnoreDisposed))
                         {
                             state.Stop();
+                            exceptions.Add(e);
                             throw;
                         }
                     }
-                    catch (OperationCanceledException)
+                    catch (OperationCanceledException e)
                     {
                         state.Stop();
+                        exceptions.Add(e);
                         throw;
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         state.Stop();
+                        exceptions.Add(e);
                         throw;
                     }
 
                     if (!session.IsEntered) state.Stop();
                 });
+                if (!exceptions.IsEmpty) throw new AggregateException(exceptions);
             }
             catch (AggregateException e)
             {
+                //todo delete
+                Trace.WriteLine("get exc");
+                e = e.Flatten();
                 var countMaker = from ex in e.InnerExceptions
                     group ex by ex.GetType();
                 //var a=e.InnerExceptions.Distinct()
@@ -80,6 +92,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
 
                 throw;
             }
+
             finally
             {
                 sessionResults = from session in sessions
@@ -94,6 +107,9 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 }
             }
 
+            //todo delete
+            Trace.WriteLine(result.Value.IsCompleted);
+            foreach (var sresult in sessionResults) Trace.Write($"{sresult} ");
             return result.Value.IsCompleted && !sessionResults.Contains(false);
         }
     }

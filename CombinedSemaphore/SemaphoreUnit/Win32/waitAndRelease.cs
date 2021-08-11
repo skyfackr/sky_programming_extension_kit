@@ -44,7 +44,7 @@ namespace SPEkit.CombinedSemaphore.Unit
                 m_semaphore,
                 cancellationToken.WaitHandle
             });
-            if (ans == 1) return;
+            if (ans == 0) return;
             throw new OperationCanceledException();
         }
 
@@ -65,7 +65,7 @@ namespace SPEkit.CombinedSemaphore.Unit
             return ans switch
             {
                 WaitHandle.WaitTimeout => false,
-                2 => throw new OperationCanceledException(),
+                1 => throw new OperationCanceledException(),
                 _ => true
             };
         }
@@ -85,7 +85,8 @@ namespace SPEkit.CombinedSemaphore.Unit
         /// <inheritdoc />
         public override async Task<bool> WaitAsync(int millisecondsTimeout, CancellationToken cancellationToken)
         {
-            return await Task.Run(() => Wait(millisecondsTimeout, cancellationToken), CancellationToken.None).ConfigureAwait(false);
+            return await Task.Run(() => Wait(millisecondsTimeout, cancellationToken), CancellationToken.None)
+                .ConfigureAwait(false);
         }
 
         /// <inheritdoc />
