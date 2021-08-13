@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssert;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nito.AsyncEx;
 using Nito.AsyncEx.Synchronous;
 using SPEkit.CombinedSemaphore.error;
 using SPEkit.CombinedSemaphore.Unit;
@@ -39,9 +38,11 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a = new CombinedSemaphore(new[] {a1, a2});
             a2.GetCurrentSemaphoreAsSlim().CurrentCount.ShouldBeEqualTo(2);
             Assert.ThrowsException<TypeCannotConvertException>(a1.GetCurrentSemaphoreAsSlim);
-            a.Release().ShouldBeEqualTo(new[] {2, 3});
+            a.Release().ShouldBeEqualTo(new[] {1, 2});
             var rec = new Dictionary<ReleaseRecoverySession, Exception>();
             a.AllRecoveryCompleteEvent += (r, e) => { rec.Add(r, e); };
+            var a25 = new SemaphoreSlim(1);
+            a.Add(a25.ToSemaphoreUnit());
             try
             {
                 a.Release();
@@ -49,6 +50,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             }
             catch (ReleaseFailedException e)
             {
+                Trace.WriteLine("get exception");
                 e.RecoverySession.IsRecoveryCancelled.ShouldBeFalse();
                 e.RecoverySession.WaitAsync().Wait();
                 e.RecoverySession.IsRecoveryCompleted.ShouldBeTrue();
@@ -59,12 +61,13 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             }
 
             a2.GetCurrentSemaphoreAsSlim().CurrentCount.ShouldBeEqualTo(3);
+            a25.CurrentCount.ShouldBeEqualTo(1);
             var a3 = new SemaphoreSlim(2);
             a.Add(a3.ToSemaphoreUnit());
             a.Option = WaitActionFlag.ContinueAndIgnoreWhenReleaseExceeded;
             a.Release();
             Thread.Sleep(100);
-            a3.CurrentCount.ShouldBeEqualTo(2);
+            a3.CurrentCount.ShouldBeEqualTo(3);
         }
 
         [TestMethod]
@@ -74,7 +77,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             var a1 = new SemaphoreSlim(1);
             var a2 = new SemaphoreSlim(2);
             var a = a1.Combine(a2);
-            a.Release(2).ShouldBeEqualTo(new[] {3, 4});
+            a.Release(2).ShouldBeEqualTo(new[] {1, 2});
             a1.CurrentCount.ShouldBeEqualTo(3);
             a2.CurrentCount.ShouldBeEqualTo(4);
         }
@@ -117,31 +120,18 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         [Timeout(200)]
         public void StopCleanIntervalTest()
         {
-            Trace.WriteLine(DateTime.UtcNow.Millisecond);
-            //todo delete start
-            CombinedSemaphore.CompleteCleanOnceInInterval += (i) =>
-            {
-                Trace.WriteLine("complete once");
-            };
-            var watch = new Stopwatch();
-            watch.Restart();
-            CombinedSemaphore.CleanCreateUnitCache();
-            watch.Stop();
-            Trace.WriteLine(watch.ElapsedMilliseconds);
-            //todo delete end
             Trace.WriteLine("check 1");
             CombinedSemaphore.IsCleanIntervalSet.ShouldBeFalse();
             CombinedSemaphore.SetCleanInterval(TimeSpan.FromDays(1));
-            
+
             CombinedSemaphore.IsCleanIntervalSet.ShouldBeTrue();
             Trace.WriteLine("check 2");
-            Trace.WriteLine(DateTime.UtcNow.Millisecond);
+            //Trace.WriteLine(DateTime.UtcNow.Millisecond);
             CombinedSemaphore.StopCleanInterval();
             Trace.WriteLine("check 3");
             CombinedSemaphore.IsCleanIntervalSet.ShouldBeFalse();
         }
 
-        
 
         [TestMethod]
         [Timeout(200)]
@@ -629,7 +619,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             watch.Stop();
             Trace.WriteLine(watch.ElapsedMilliseconds);
             Trace.WriteLine("complete 2");
-            
+
             //c.WaitAsync(100000).WaitAndUnwrapException();
             Trace.WriteLine("start 3");
             var task = c.WaitAsync(10000);
@@ -775,6 +765,33 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
                     Trace.WriteLine(unit);
                     throw new OperationCanceledException("This means successful");
                 }).ShouldBeFalse());
+            Trace.WriteLine("check 1");
+            Assert.ThrowsException<ObjectDisposedException>(() =>
+            {
+                de.Invoke(unit => throw new ObjectDisposedException("this means successful"));
+            });
+            Trace.WriteLine("check 2");
+            c.Add(new SemaphoreSlim(2, 3).ToSemaphoreUnit());
+            try
+            {
+                de.Invoke(unit =>
+                {
+                    if (unit.GetCurrentSemaphoreAsSlim().CurrentCount == 1) throw new ObjectDisposedException("1");
+                    throw new OperationCanceledException("2");
+                });
+                throw new AssertFailedException();
+            }
+            catch (Exception e)
+            {
+                var ae = e as AggregateException;
+                Debug.Assert(ae != null, $"{nameof(e)} should be {typeof(AggregateException)}");
+                var aec = ae.InnerExceptions;
+                aec.Count.ShouldBeEqualTo(2);
+                var aect = from ee in aec
+                    select ee.GetType();
+                aect.ToArray().ShouldContainAll(new[]
+                    {typeof(ObjectDisposedException), typeof(OperationCanceledException)});
+            }
         }
 
         [TestMethod]
@@ -885,13 +902,16 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
         [Timeout(350)]
         public void DisposeTest()
         {
-            var list = CreateRndUnitList(10, 100, 1, 2).Combine();
+            var list = CreateRndUnitList(50, 100, 1, 2).Combine();
             var count = list.Count;
+            Trace.WriteLine($"count:{count}");
             var units = list.GetUnitList();
+            foreach (var unit in units) Trace.WriteLine($"|-{unit}");
             list.RemoveAllDisposedUnit().ShouldBeEqualTo(0);
             list.Count.ShouldBeEqualTo(count);
             list.Dispose();
             Assert.ThrowsException<ObjectDisposedException>(() => list.RemoveAllDisposedUnit());
+            Trace.WriteLine("check 0");
             units.Combine().RemoveAllDisposedUnit().ShouldBeEqualTo(count);
         }
     }

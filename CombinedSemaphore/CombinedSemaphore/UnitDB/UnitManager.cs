@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using SPEkit.CombinedSemaphore.Unit;
 
 namespace SPEkit.CombinedSemaphore.MainClass
@@ -113,7 +112,25 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             AssertNotDisposed();
             var ans = 0;
-            _ = Parallel.ForEach(m_units, unit =>
+            //m_units.AsParallel().ForAll(unit =>
+            //{
+
+            //    var disposed = false;
+            //    try
+            //    {
+            //        var handle = unit.GetWaitHandle().SafeWaitHandle;
+            //        if (handle.IsInvalid || handle.IsClosed) disposed = true;
+            //    }
+            //    catch (ObjectDisposedException)
+            //    {
+            //        disposed = true;
+            //    }
+
+            //    if (!disposed) return;
+            //    m_units.Remove(unit);
+            //    Interlocked.Increment(ref ans);
+            //});
+            foreach (var unit in GetUnitList())
             {
                 var disposed = false;
                 try
@@ -126,10 +143,11 @@ namespace SPEkit.CombinedSemaphore.MainClass
                     disposed = true;
                 }
 
-                if (!disposed) return;
+                if (!disposed) continue;
                 m_units.Remove(unit);
-                Interlocked.Increment(ref ans);
-            });
+                ans++;
+            }
+
             return ans;
         }
 

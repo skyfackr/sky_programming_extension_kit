@@ -5,5 +5,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>", Scope = "type", Target = "~T:SPEkit.CombinedSemaphore.error.ReleaseFailedException")]
+[assembly:
+    SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>", Scope = "type",
+        Target = "~T:SPEkit.CombinedSemaphore.error.ReleaseFailedException")]
 [assembly: SuppressMessage("CodeQuality", "IDE0079:请删除不必要的忽略", Justification = "<挂起>")]

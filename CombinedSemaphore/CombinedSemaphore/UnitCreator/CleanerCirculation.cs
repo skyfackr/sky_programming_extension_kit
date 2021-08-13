@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx.Synchronous;
@@ -19,16 +18,16 @@ namespace SPEkit.CombinedSemaphore.Utils
                 while (true)
                 {
                     cleaner(token);
-                    //todo delete
-                    Trace.WriteLine("cleaner ok");
+
                     try
                     {
                         await Task.Delay(waitTime, token).ConfigureAwait(false);
                     }
-                    catch (TaskCanceledException )
+                    catch (TaskCanceledException)
                     {
                         break;
                     }
+
                     if (token.IsCancellationRequested) break;
                 }
             }, m_tks.Token);
@@ -38,11 +37,9 @@ namespace SPEkit.CombinedSemaphore.Utils
         {
             if (m_tks.IsCancellationRequested) return;
             m_tks.Cancel();
-            //todo delete
-            Trace.WriteLine("cancelled");
+
             if (wait) m_task.WaitAndUnwrapException();
-            //todo delete
-            Trace.WriteLine("waited");
+
             //m_task.Wait()
         }
 

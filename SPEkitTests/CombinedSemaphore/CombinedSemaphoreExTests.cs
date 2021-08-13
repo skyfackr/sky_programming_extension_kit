@@ -48,7 +48,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             for (var i = 1; i <= count; i++) s2.Add(new SemaphoreSlim(1, 2));
 
             var c = s1.Combine(s2);
-            c.GetAllSemaphoreWin32().Count().ShouldBeEqualTo(s2.Count + 1);
+            c.GetAllSemaphoreSlim().Count().ShouldBeEqualTo(s2.Count + 1);
             for (var i = 1; i <= s2.Count; i++)
             {
                 var index = new Index(i - 1);
@@ -131,7 +131,7 @@ namespace SPEkit.CombinedSemaphore.MainClass.Tests
             for (var i = 1; i <= count; i++) s2.Add(new SemaphoreSlim(1, 2));
 
             var c = s1.Combine(s2.ToArray());
-            c.GetAllSemaphoreWin32().Count().ShouldBeEqualTo(s2.Count + 1);
+            c.GetAllSemaphoreSlim().Count().ShouldBeEqualTo(s2.Count + 1);
             for (var i = 1; i <= s2.Count; i++)
             {
                 var index = new Index(i - 1);

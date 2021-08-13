@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -18,16 +17,16 @@ namespace SPEkit.CombinedSemaphore.MainClass
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RecoveryAll(IEnumerable<WaitingSessions> sessions)
         {
-            
             sessions = from session in sessions
                 where session != null
                 select session;
             //foreach (var session in sessions) session.Recovery();
-            sessions.AsParallel().ForAll((session => session.Recovery()));
+            sessions.AsParallel().ForAll(session => session.Recovery());
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         [SuppressMessage("ReSharper", "MethodHasAsyncOverload")]
+        [SuppressMessage("ReSharper", "PossibleIntendedRethrow")]
         private bool WaitingProcess(Func<SemaphoreUnit, Task<bool>> act)
         {
             AssertNotDisposed();
@@ -39,13 +38,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
             try
             {
                 var exceptions = new ConcurrentBag<Exception>();
-                result = Parallel.ForEach(units,  (unit, state, index) =>
+                result = Parallel.ForEach(units, (unit, state, index) =>
                 {
                     var session = new WaitingSessions(unit);
                     sessions[index] = session;
                     try
                     {
-                        session.Entered( act(unit).WaitAndUnwrapException());
+                        session.Entered(act(unit).WaitAndUnwrapException());
                     }
                     catch (ObjectDisposedException e)
                     {
@@ -54,29 +53,29 @@ namespace SPEkit.CombinedSemaphore.MainClass
                         {
                             state.Stop();
                             exceptions.Add(e);
-                            throw;
+                            //throw;
                         }
                     }
                     catch (OperationCanceledException e)
                     {
                         state.Stop();
                         exceptions.Add(e);
-                        throw;
+                        //throw;
                     }
                     catch (Exception e)
                     {
                         state.Stop();
                         exceptions.Add(e);
-                        throw;
+                        //throw;
                     }
 
                     if (!session.IsEntered) state.Stop();
                 });
+
                 if (!exceptions.IsEmpty) throw new AggregateException(exceptions);
             }
             catch (AggregateException e)
             {
-                
                 e = e.Flatten();
                 var countMaker = from ex in e.InnerExceptions
                     group ex by ex.GetType();
@@ -90,7 +89,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 if (onlyEx == typeof(OperationCanceledException))
                     throw new OperationCanceledException("Some waiting cancelled");
 
-                throw;
+                throw e;
             }
 
             finally
@@ -107,7 +106,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 }
             }
 
-            
+
             return result.Value.IsCompleted && !sessionResults.Contains(false);
         }
     }

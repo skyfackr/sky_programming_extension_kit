@@ -2,7 +2,7 @@
 
 namespace SPEkit.CombinedSemaphore.Unit
 {
-    public abstract partial class SemaphoreUnit 
+    public abstract partial class SemaphoreUnit
     {
         /// <inheritdoc />
         public abstract bool Equals(SemaphoreUnit other);
@@ -12,7 +12,7 @@ namespace SPEkit.CombinedSemaphore.Unit
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((SemaphoreUnit) obj);
+            return obj.GetType() == GetType() && Equals((SemaphoreUnit) obj);
         }
 
         /// <inheritdoc />
@@ -22,7 +22,6 @@ namespace SPEkit.CombinedSemaphore.Unit
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -33,7 +32,6 @@ namespace SPEkit.CombinedSemaphore.Unit
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>

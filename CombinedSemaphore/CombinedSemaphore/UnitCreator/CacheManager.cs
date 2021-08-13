@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
-using PostSharp.Patterns.Diagnostics;
 using SPEkit.CombinedSemaphore.Unit;
 using SPEkit.CombinedSemaphore.Utils;
 
@@ -48,7 +46,6 @@ namespace SPEkit.CombinedSemaphore.MainClass
             {
                 using (s_intervalLock.Lock(token))
                 {
-
                     using (s_win32DisposeCheckLock.WriterLock())
                     {
                         var result1 = Parallel.ForEach(s_win32Cache, pair =>
@@ -105,16 +102,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <param name="waitPerExecute">间歇时间</param>
         public static void SetCleanInterval(TimeSpan waitPerExecute)
         {
-            using(s_intervalLock.Lock())
+            using (s_intervalLock.Lock())
             {
                 if (IsCleanIntervalSet) s_interval.Stop();
-                s_interval = new CleanerCirculation((token) =>
+                s_interval = new CleanerCirculation(token =>
                 {
-                    //todo delete
-                    Trace.WriteLine($"clean start {DateTime.UtcNow.Millisecond}");
                     var ans = CleanCreateUnitCache(token);
-                    //todo delete
-                    Trace.WriteLine("clean executed");
+
                     CompleteCleanOnceInInterval?.Invoke(ans);
                 }, waitPerExecute);
             }
