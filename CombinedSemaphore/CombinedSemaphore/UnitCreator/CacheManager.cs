@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
+using PostSharp.Patterns.Diagnostics;
 using SPEkit.CombinedSemaphore.Unit;
 using SPEkit.CombinedSemaphore.Utils;
 
@@ -17,7 +19,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         private static readonly AsyncReaderWriterLock s_slimDisposeCheckLock = new();
 
         private static CleanerCirculation s_interval;
-        private static readonly object s_intervalLock = new();
+        private static readonly AsyncLock s_intervalLock = new();
 
         /// <summary>
         ///     是否设置了自动循环缓存清理
@@ -35,45 +37,64 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// </remarks>
         public static int CleanCreateUnitCache()
         {
-            lock (s_intervalLock)
+            return CleanCreateUnitCache(CancellationToken.None);
+        }
+
+        private static int CleanCreateUnitCache(CancellationToken token)
+        {
+            if (token.IsCancellationRequested) return 0;
+            var ans = 0;
+            try
             {
-                var ans = 0;
-                using (s_win32DisposeCheckLock.WriterLock())
+                using (s_intervalLock.Lock(token))
                 {
-                    var result1 = Parallel.ForEach(s_win32Cache, pair =>
-                    {
-                        var (key, value) = pair;
-                        try
-                        {
-                            var handle = value.GetWaitHandle().SafeWaitHandle;
-                            if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            s_win32Cache.Remove(key);
-                            Interlocked.Increment(ref ans);
-                        }
-                    });
-                }
 
-                using (s_slimDisposeCheckLock.WriterLock())
-                {
-                    var result2 = Parallel.ForEach(s_slimCache, pair =>
+                    using (s_win32DisposeCheckLock.WriterLock())
                     {
-                        var (key, value) = pair;
-                        try
+                        var result1 = Parallel.ForEach(s_win32Cache, pair =>
                         {
-                            var handle = value.GetWaitHandle().SafeWaitHandle;
-                            if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
-                        }
-                        catch (ObjectDisposedException)
-                        {
-                            s_slimCache.Remove(key);
-                            Interlocked.Increment(ref ans);
-                        }
-                    });
-                }
+                            var (key, value) = pair;
+                            try
+                            {
+                                var handle = value.GetWaitHandle().SafeWaitHandle;
+                                if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
+                            }
+                            catch (ObjectDisposedException)
+                            {
+                                s_win32Cache.Remove(key);
+                                Interlocked.Increment(ref ans);
+                            }
+                        });
+                    }
 
+                    token.ThrowIfCancellationRequested();
+                    using (s_slimDisposeCheckLock.WriterLock())
+                    {
+                        var result2 = Parallel.ForEach(s_slimCache, pair =>
+                        {
+                            var (key, value) = pair;
+                            try
+                            {
+                                var handle = value.GetWaitHandle().SafeWaitHandle;
+                                if (handle.IsInvalid || handle.IsClosed) throw new ObjectDisposedException(null);
+                            }
+                            catch (ObjectDisposedException)
+                            {
+                                s_slimCache.Remove(key);
+                                Interlocked.Increment(ref ans);
+                            }
+                        });
+                    }
+
+                    return ans;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                return ans;
+            }
+            catch (OperationCanceledException)
+            {
                 return ans;
             }
         }
@@ -84,12 +105,16 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// <param name="waitPerExecute">间歇时间</param>
         public static void SetCleanInterval(TimeSpan waitPerExecute)
         {
-            lock (s_intervalLock)
+            using(s_intervalLock.Lock())
             {
                 if (IsCleanIntervalSet) s_interval.Stop();
-                s_interval = new CleanerCirculation(() =>
+                s_interval = new CleanerCirculation((token) =>
                 {
-                    var ans = CleanCreateUnitCache();
+                    //todo delete
+                    Trace.WriteLine($"clean start {DateTime.UtcNow.Millisecond}");
+                    var ans = CleanCreateUnitCache(token);
+                    //todo delete
+                    Trace.WriteLine("clean executed");
                     CompleteCleanOnceInInterval?.Invoke(ans);
                 }, waitPerExecute);
             }
@@ -100,7 +125,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         /// </summary>
         public static void StopCleanInterval()
         {
-            lock (s_intervalLock)
+            using (s_intervalLock.Lock())
             {
                 s_interval?.Stop();
                 s_interval = null;
@@ -108,7 +133,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
         }
 
         /// <summary>
-        ///     当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="int" />参数作为<see cref="CleanCreateUnitCache" />的返回值
+        ///     当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="int" />参数作为<see cref="CleanCreateUnitCache" />的返回值，如果清理中被取消，将返回已清理数量
         /// </summary>
         [SuppressMessage("ReSharper", "EventNeverSubscribedTo.Global")]
         public static event Action<int> CompleteCleanOnceInInterval;

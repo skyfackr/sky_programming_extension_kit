@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Nito.AsyncEx.Synchronous;
 using SPEkit.BinLikeClassSelectors;
 using SPEkit.CombinedSemaphore.Unit;
 using SPEkit.CombinedSemaphore.Utils;
@@ -17,12 +18,12 @@ namespace SPEkit.CombinedSemaphore.MainClass
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void RecoveryAll(IEnumerable<WaitingSessions> sessions)
         {
-            //todo delete
-            Trace.WriteLine(Environment.NewLine + Environment.NewLine + "recovery executed");
+            
             sessions = from session in sessions
                 where session != null
                 select session;
-            foreach (var session in sessions) session.Recovery();
+            //foreach (var session in sessions) session.Recovery();
+            sessions.AsParallel().ForAll((session => session.Recovery()));
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
@@ -38,13 +39,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
             try
             {
                 var exceptions = new ConcurrentBag<Exception>();
-                result = Parallel.ForEach(units, async (unit, state, index) =>
+                result = Parallel.ForEach(units,  (unit, state, index) =>
                 {
                     var session = new WaitingSessions(unit);
                     sessions[index] = session;
                     try
                     {
-                        session.Entered(await act(unit).ConfigureAwait(false));
+                        session.Entered( act(unit).WaitAndUnwrapException());
                     }
                     catch (ObjectDisposedException e)
                     {
@@ -75,8 +76,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
             }
             catch (AggregateException e)
             {
-                //todo delete
-                Trace.WriteLine("get exc");
+                
                 e = e.Flatten();
                 var countMaker = from ex in e.InnerExceptions
                     group ex by ex.GetType();
@@ -107,9 +107,7 @@ namespace SPEkit.CombinedSemaphore.MainClass
                 }
             }
 
-            //todo delete
-            Trace.WriteLine(result.Value.IsCompleted);
-            foreach (var sresult in sessionResults) Trace.Write($"{sresult} ");
+            
             return result.Value.IsCompleted && !sessionResults.Contains(false);
         }
     }

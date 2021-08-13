@@ -95,7 +95,7 @@
         </member>
         <member name="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CompleteCleanOnceInInterval">
             <summary>
-                当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="T:System.Int32" />参数作为<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />的返回值
+                当缓存清理循环中调用完成一次时，调用此事件，传入一个<see cref="T:System.Int32" />参数作为<see cref="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CleanCreateUnitCache" />的返回值，如果清理中被取消，将返回已清理数量
             </summary>
         </member>
         <member name="M:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.CreateUnit(System.Threading.Semaphore)">
