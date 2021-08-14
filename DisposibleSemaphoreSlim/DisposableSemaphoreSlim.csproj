@@ -12,6 +12,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>D:\code\sky_programming_extension_kit\DisposibleSemaphoreSlim\DisposableSemaphoreSlim.xml</DocumentationFile>
+    <DefineConstants />
   </PropertyGroup>
 
   <ItemGroup>

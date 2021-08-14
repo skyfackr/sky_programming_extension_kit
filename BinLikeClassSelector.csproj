@@ -13,6 +13,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>D:\code\sky_programming_extension_kit\BinLikeClassSelector.xml</DocumentationFile>
+    <DefineConstants />
   </PropertyGroup>
 
   <ItemGroup>

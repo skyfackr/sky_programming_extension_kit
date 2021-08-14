@@ -8,9 +8,18 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>D:\code\sky_programming_extension_kit\WinFormVarData\WinFormVarData.xml</DocumentationFile>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <DefineConstants />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\code\sky_programming_extension_kit\WinFormVarData\WinFormVarData.xml</DocumentationFile>
+    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="PostSharp" Version="6.9.7" />
+    <PackageReference Include="PostSharp.Patterns.Threading" Version="6.9.7" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.2.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

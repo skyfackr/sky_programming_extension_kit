@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WinFormVarData
+namespace SPEkit.WinFormVarData
 {
     public class Class1
     {

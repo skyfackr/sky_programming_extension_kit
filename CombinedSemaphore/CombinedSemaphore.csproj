@@ -10,6 +10,10 @@
     <DocumentationFile>D:\code\sky_programming_extension_kit\CombinedSemaphore\CombinedSemaphore.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants />
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="PostSharp" Version="6.9.7" />
