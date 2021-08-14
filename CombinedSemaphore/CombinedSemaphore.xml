@@ -472,7 +472,6 @@
         </member>
         <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.op_Equality(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
             <summary>
-            
             </summary>
             <param name="left"></param>
             <param name="right"></param>
@@ -480,20 +479,19 @@
         </member>
         <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.op_Inequality(SPEkit.CombinedSemaphore.Unit.SemaphoreUnit,SPEkit.CombinedSemaphore.Unit.SemaphoreUnit)">
             <summary>
-            
             </summary>
             <param name="left"></param>
             <param name="right"></param>
             <returns></returns>
         </member>
-        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Dispose(System.Boolean)">
-            <summary>
-            dispose时执行
-            </summary>
-            <param name="disposing">若为true则代表从<see cref="M:System.IDisposable.Dispose"/>调用</param>
-        </member>
         <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Dispose">
             <inheritdoc />
+        </member>
+        <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.Dispose(System.Boolean)">
+            <summary>
+                dispose时执行
+            </summary>
+            <param name="disposing">若为true则代表从<see cref="M:System.IDisposable.Dispose" />调用</param>
         </member>
         <member name="M:SPEkit.CombinedSemaphore.Unit.SemaphoreUnit.ToString">
             <inheritdoc />
@@ -712,23 +710,23 @@
         </member>
         <member name="T:SPEkit.CombinedSemaphore.error.TypeCannotConvertException">
             <summary>
-            类不支持，无法转换为对应类
+                类不支持，无法转换为对应类
             </summary>
         </member>
         <member name="T:SPEkit.CombinedSemaphore.error.TypeNotSupportedException">
             <summary>
-            类不支持
+                类不支持
             </summary>
         </member>
         <member name="T:SPEkit.CombinedSemaphore.error.ReleaseFailedException">
             <summary>
-            释放出错并触发了操作还原，可以通过<see cref="F:SPEkit.CombinedSemaphore.error.ReleaseFailedException.RecoverySession"/>进行还原操作取消以及获取是否完成状态
-            也可以通过<see cref="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.AllRecoveryCompleteEvent"/>订阅完成事件
+                释放出错并触发了操作还原，可以通过<see cref="F:SPEkit.CombinedSemaphore.error.ReleaseFailedException.RecoverySession" />进行还原操作取消以及获取是否完成状态
+                也可以通过<see cref="E:SPEkit.CombinedSemaphore.MainClass.CombinedSemaphore.AllRecoveryCompleteEvent" />订阅完成事件
             </summary>
         </member>
         <member name="F:SPEkit.CombinedSemaphore.error.ReleaseFailedException.RecoverySession">
             <summary>
-            本次释放失败产生的还原会话
+                本次释放失败产生的还原会话
             </summary>
         </member>
     </members>

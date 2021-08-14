@@ -124,8 +124,13 @@ namespace SPEkit.CombinedSemaphore.MainClass
         {
             //var temp = orig.ToList();
 
-            foreach (var unit in orig) dest.Add(unit);
-            orig.Clear();
+            //foreach (var unit in orig) dest.Add(unit);
+            //orig.Clear();
+            foreach (var unit in orig.GetUnitList())
+            {
+                dest.Add(unit);
+                orig.Remove(unit);
+            }
         }
 
         /// <inheritdoc cref="CombinedSemaphore.CreateUnit(Semaphore)" />
