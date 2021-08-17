@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nito.AsyncEx" Version="5.1.0" />
     <PackageReference Include="PostSharp" Version="6.9.7" />
     <PackageReference Include="PostSharp.Patterns.Threading" Version="6.9.7" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.2.1">
