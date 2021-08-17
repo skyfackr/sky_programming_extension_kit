@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-//IBindableComponent
+//Control
 namespace SPEkit.WinFormVarData
 {
-    public sealed partial class DataBinder<T>:INotifyPropertyChanged
+    public sealed partial class DataBinder<T>:INotifyPropertyChanged,IDisposable,IAsyncDisposable
     {
         
     }

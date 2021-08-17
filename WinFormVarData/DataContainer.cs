@@ -32,7 +32,10 @@ namespace SPEkit.WinFormVarData
         {
             using (m_dataLock.WriterLock())
             {
-                m_data = value;
+                var newData = DataChangedHook is null ? value : DataChangedHook(this, value);
+                var oldData = m_data;
+                m_data = newData;
+                OnDataChanged?.BeginInvoke(this,oldData,value,IsDataChangeHooked,newData,null,null);
                 Refresh();
             }
         }
@@ -41,7 +44,10 @@ namespace SPEkit.WinFormVarData
         {
             using (await m_dataLock.WriterLockAsync().ConfigureAwait(false))
             {
-                m_data = value;
+                var newData = DataChangedHook is null ? value : await Task.Run((() => DataChangedHook(this, value))).ConfigureAwait(false);
+                var oldData = m_data;
+                m_data = newData;
+                OnDataChanged?.BeginInvoke(this, oldData, value, IsDataChangeHooked, newData, null, null);
                 await RefreshAsync().ConfigureAwait(false);
             }
         }
@@ -53,5 +59,10 @@ namespace SPEkit.WinFormVarData
         }
 
         public const string DataPropertyName = nameof(Data);
+
+        private void TrySubscription(T data)
+        {
+
+        }
     }
 }
