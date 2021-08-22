@@ -5,7 +5,7 @@ using System.Windows.Forms;
 //Control
 namespace SPEkit.WinFormVarData
 {
-    public sealed partial class DataBinder<T>:INotifyPropertyChanged,IDisposable,IAsyncDisposable
+    public sealed partial class DataBinder<T>:INotifyPropertyChanged,IDisposable,IAsyncDisposable, IEquatable<DataBinder<T>>
     {
         
     }

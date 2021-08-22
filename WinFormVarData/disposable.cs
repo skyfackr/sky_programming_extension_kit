@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SPEkit.WinFormVarData
 {
     public sealed partial class DataBinder<T>
-    {
+    {//todo 对需要的函数设定dispose检测
         public bool IsDisposed { get; private set; } = false;
         private readonly object m_disposeLock = new();
         public void Dispose()
@@ -18,9 +18,13 @@ namespace SPEkit.WinFormVarData
                 if (IsDisposed) return;
                 IsDisposed = true;
                 ClearAllNotify();
+                ClearDataSource();
                 (m_data as IDisposable)?.Dispose();
-                m_data = default(T);
-                //todo 未完成
+                m_data = default;
+                ClearUIContext();
+                OnDataChanged = null;
+                OnHookChanged = null;
+                DataChangedHook = null;
             }
 
         }

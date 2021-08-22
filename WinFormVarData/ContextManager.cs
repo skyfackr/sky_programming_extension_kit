@@ -52,6 +52,15 @@ namespace SPEkit.WinFormVarData
             }
         }
 
+        public void ClearUIContext()
+        {
+            using (m_contextAndThread_lock.WriterLock())
+            {
+                m_context = null;
+                m_thread = null;
+            }
+        }
+
         public bool IsContextBinded => CurrentContext is not null;
     }
 }
